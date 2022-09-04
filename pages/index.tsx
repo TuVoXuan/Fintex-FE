@@ -6,6 +6,7 @@ import { HiOutlineEye } from 'react-icons/hi';
 import Image from 'next/image';
 import { BoxShadow, Button, Input } from '../components';
 import { AuthLayout } from '../layouts';
+import { useRouter } from 'next/router';
 
 interface Props {
     phone: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const Home: NextPage = () => {
+    const router = useRouter();
     const {
         register,
         formState: { errors },
@@ -23,8 +25,12 @@ const Home: NextPage = () => {
         console.log(data);
     };
 
+    const handleSignup = () => {
+        router.push('/signup');
+    };
+
     return (
-        <AuthLayout title={'Đăng nhập'} subTitle={'Mừng trở lại, chắc có ai đó đang nhớ bạn!'}>
+        <AuthLayout title={'Đăng nhập'} subTitle={'💕Chào mừng trở lại, chúng tôi nhớ bạn💕'}>
             <div className="flex gap-5">
                 <Button icon={<AiOutlineGoogle size={24} />} title="Đăng nhập bằng Google" color="secondary-light" />
                 <Button icon={<AiFillApple size={24} />} title="Đăng nhập bằng Apple" color="secondary-light" />
@@ -83,7 +89,9 @@ const Home: NextPage = () => {
 
             <div className="flex items-center justify-center gap-2">
                 <p>Bạn chưa có tài khoản?</p>
-                <button className="font-bold text-primary-80 ">Đăng ký</button>
+                <button className="font-bold text-primary-80" onClick={handleSignup}>
+                    Đăng ký
+                </button>
             </div>
         </AuthLayout>
     );

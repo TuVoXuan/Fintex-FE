@@ -1,4 +1,5 @@
 import { RegisterOptions, UseFormRegister } from 'react-hook-form';
+import { TiWarning } from 'react-icons/ti';
 
 interface Props {
     icon: JSX.Element;
@@ -26,7 +27,12 @@ export const Input = ({ icon, placeholder, defaultValue, type, name, register, o
                     }`}
                 />
             </div>
-            {errors && <p className="text-red-500">{errors}</p>}
+            {errors && (
+                <div className="flex items-center gap-1">
+                    <TiWarning size={14} fill="#ef4444" />
+                    <p className="text-red-500">{errors}</p>
+                </div>
+            )}
         </>
     );
 };

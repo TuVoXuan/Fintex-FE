@@ -49,14 +49,18 @@ module.exports = {
                     50: '#E5A292',
                 },
             },
-            ripple: (theme) => ({
-                colors: theme('colors'),
-            }),
+
             fontFamily: {
                 primary: 'Montserrat',
                 secondary: 'sans-serif',
             },
         },
+        minWidth: {
+            '1/2': '50%',
+        },
+        ripple: (theme) => ({
+            colors: theme('colors'),
+        }),
     },
     plugins: [require('tailwindcss-ripple')()],
 };
