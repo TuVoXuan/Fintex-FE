@@ -4,6 +4,7 @@ import { AiOutlineGoogle, AiFillApple } from 'react-icons/ai';
 import { FiLock, FiSmartphone } from 'react-icons/fi';
 import { Button, Input } from '../components';
 import { AuthLayout } from '../layouts';
+import { useRouter } from 'next/router';
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import { app } from '../config/firebase';
 
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const Home: NextPage = () => {
+    const router = useRouter();
     const provider = new GoogleAuthProvider();
     const auth = getAuth(app);
 
@@ -43,8 +45,12 @@ const Home: NextPage = () => {
         console.log(data);
     };
 
+    const handleSignup = () => {
+        router.push('/signup');
+    };
+
     return (
-        <AuthLayout title={'Đăng nhập'} subTitle={'Mừng trở lại, chắc có ai đó đang nhớ bạn!'}>
+        <AuthLayout title={'Đăng nhập'} subTitle={'💕Chào mừng trở lại, chúng tôi nhớ bạn💕'}>
             <div className="flex gap-5">
                 <Button
                     icon={<AiOutlineGoogle size={24} />}
@@ -108,7 +114,9 @@ const Home: NextPage = () => {
 
             <div className="flex items-center justify-center gap-2">
                 <p>Bạn chưa có tài khoản?</p>
-                <button className="font-bold text-primary-80 ">Đăng ký</button>
+                <button className="font-bold text-primary-80" onClick={handleSignup}>
+                    Đăng ký
+                </button>
             </div>
         </AuthLayout>
     );

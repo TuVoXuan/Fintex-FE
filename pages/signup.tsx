@@ -19,9 +19,13 @@ interface BaseInfo {
     password: string;
 }
 import { AuthLayout } from '../layouts';
+import { TiWarning } from 'react-icons/ti';
+import { useRouter } from 'next/router';
 
 const Signup: NextPage = () => {
+    const router = useRouter();
     const [birthday, setBirthday] = useState<Date>(new Date());
+
     const {
         register,
         formState: { errors },
@@ -30,6 +34,7 @@ const Signup: NextPage = () => {
     } = useForm<BaseInfo>({
         defaultValues: {
             birthday: new Date(),
+            gender: 'male',
         },
     });
 
@@ -37,29 +42,12 @@ const Signup: NextPage = () => {
         console.log(data);
     };
 
+    const handleSignin = () => {
+        router.push('/');
+    };
+
     return (
-        // <section className="px-4 pt-4 pb-10 space-y-6">
-        //     <div className="flex justify-start">
-        //         <div className="w-[200px] h-12">
-        //             <div className="h-full image-container">
-        //                 <Image src="/logo-and-brand-name.svg" layout="fill" alt="logo" />
-        //             </div>
-        //         </div>
-        //     </div>
-
-        //     <div className="flex items-center justify-center h-full">
-        //         <div className="space-y-8">
-        //             <div className="text-center">
-        //                 <h1>Bắt đầu thôi !!!</h1>
-        //                 <p>Tạo một tài khoản để kết nối tới mọi người.</p>
-        //             </div>
-        //             <BoxShadow>
-
-        //             </BoxShadow>
-        //         </div>
-        //     </div>
-        // </section>
-        <AuthLayout title="Bắt đầu thôi !!!" subTitle="Tạo một tài khoản để kết nối tới mọi người.">
+        <AuthLayout title="🎉Hãy bắt đầu🎉" subTitle="✨Tạo một tài khoản để kết nối với mọi người.✨">
             <div className="flex gap-5">
                 <Button icon={<AiOutlineGoogle size={24} />} title="Đăng nhập bằng Google" color="secondary-light" />
                 <Button icon={<AiFillApple size={24} />} title="Đăng nhập bằng Apple" color="secondary-light" />
@@ -121,7 +109,7 @@ const Signup: NextPage = () => {
                     errors={errors.password?.message}
                 />
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-4">
                     <div className="w-full border flex items-center bg-white px-[10px] gap-3 rounded-lg focus-within:border-secondary-30">
                         <AiOutlineCalendar size={24} />
                         <DatePicker
@@ -166,14 +154,27 @@ const Signup: NextPage = () => {
                         />
                         <label htmlFor="gender">Khác</label>
                     </div>
-                    {errors.birthday?.message && <p className="text-red-500">{errors.birthday?.message}</p>}
-                    {errors.gender?.message && <p className="text-red-500">{errors.gender?.message}</p>}
+
+                    {errors.birthday?.message && (
+                        <div className="flex items-center gap-1">
+                            <TiWarning size={14} fill="#ef4444" />
+                            <p className="text-red-500">{errors.birthday?.message}</p>
+                        </div>
+                    )}
+                    {errors.gender?.message && (
+                        <div className="flex items-center col-start-2 gap-1">
+                            <TiWarning size={14} fill="#ef4444" />
+                            <p className="text-red-500">{errors.gender?.message}</p>
+                        </div>
+                    )}
                 </div>
             </form>
             <Button title="Đăng ký" color="primary" form="base-info" typeBtn="submit" />
             <div className="flex items-center justify-center gap-2">
-                <p>Đã có tài khoản?</p>
-                <button className="font-bold text-primary-80 ">Đăng nhập</button>
+                <p>Bạn đã có tài khoản?</p>
+                <button className="font-bold text-primary-80 " onClick={handleSignin}>
+                    Đăng nhập
+                </button>
             </div>
         </AuthLayout>
     );
