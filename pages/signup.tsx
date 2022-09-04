@@ -8,9 +8,33 @@ import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Image from 'next/image';
+import { BoxShadow, Button, Input } from '../components';
+import { useForm } from 'react-hook-form';
+
+interface BaseInfo {
+    name: string;
+    birthday: Date;
+    gender: 'male' | 'female' | 'other';
+    email: string;
+    password: string;
+}
 
 const Signup: NextPage = () => {
     const [birthday, setBirthday] = useState<Date>(new Date());
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        setValue,
+    } = useForm<BaseInfo>({
+        defaultValues: {
+            birthday: new Date(),
+        },
+    });
+
+    const onSubmit = (data: any) => {
+        console.log(data);
+    };
 
     return (
         <section className="px-4 pt-4 pb-10 space-y-6">
@@ -25,75 +49,134 @@ const Signup: NextPage = () => {
             <div className="flex items-center justify-center h-full">
                 <div className="space-y-8">
                     <div className="text-center">
-                        <h1>Getting started</h1>
-                        <p>Create an account to continue connect with the people.</p>
+                        <h1>Bắt đầu thôi !!!</h1>
+                        <p>Tạo một tài khoản để kết nối tới mọi người.</p>
                     </div>
-                    <div className="p-10 bg-white shadow-light rounded-[20px] space-y-9">
+                    <BoxShadow>
                         <div className="flex gap-5">
-                            <button className="btn bg-secondary-20 text-secondary-80 ripple-bg-secondary-20">
-                                <AiOutlineGoogle size={24} />
-                                Log in with Google
-                            </button>
-                            <button className="btn bg-secondary-20 text-secondary-80 ripple-bg-secondary-20">
-                                <AiFillApple size={24} />
-                                Log in with Apple
-                            </button>
+                            <Button
+                                icon={<AiOutlineGoogle size={24} />}
+                                title="Đăng nhập bằng Google"
+                                color="secondary-light"
+                            />
+                            <Button
+                                icon={<AiFillApple size={24} />}
+                                title="Đăng nhập bằng Apple"
+                                color="secondary-light"
+                            />
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="w-full h-0 border-t-2" />
-                            <h3>OR</h3>
+                            <h3>Hoặc</h3>
                             <div className="w-full h-0 border-t-2" />
                         </div>
-                        <div className="space-y-5">
-                            <div className="border flex items-center bg-white px-[10px] gap-3 rounded-lg focus-within:border-secondary-30 ">
-                                <FiAtSign size={24} className="font-normal" />
-                                <input
-                                    type="email"
-                                    placeholder="abc@gmail.com"
-                                    className="w-full py-[10px] focus:outline-none"
-                                />
-                            </div>
-                            <div className="border flex items-center bg-white px-[10px] gap-3 rounded-lg focus-within:border-secondary-30 ">
-                                <RiUserSmileLine size={24} className="font-normal" />
-                                <input
-                                    type="text"
-                                    placeholder="Peter Packer"
-                                    className="w-full py-[10px] focus:outline-none"
-                                />
-                            </div>
-                            <div className="border flex items-center bg-white px-[10px] gap-3 rounded-lg focus-within:border-secondary-30">
-                                <FiLock size={24} />
-                                <input
-                                    type="password"
-                                    placeholder="Create password"
-                                    className="w-full py-[10px] focus:outline-none"
-                                />
-                                <HiOutlineEye size={24} />
-                            </div>
-                            <div className="flex gap-2">
+                        <form className="space-y-5" id="base-info" onSubmit={handleSubmit(onSubmit)}>
+                            <Input
+                                icon={<FiAtSign size={24} className="font-normal" />}
+                                type="email"
+                                placeholder="abc@gmail.com"
+                                name="email"
+                                register={register}
+                                options={{
+                                    required: {
+                                        value: true,
+                                        message: 'Vui lòng nhập email.',
+                                    },
+                                }}
+                                errors={errors.email?.message}
+                            />
+
+                            <Input
+                                icon={<RiUserSmileLine size={24} className="font-normal" />}
+                                type="text"
+                                placeholder="Nguyễn Văn An"
+                                name="name"
+                                register={register}
+                                options={{
+                                    required: {
+                                        value: true,
+                                        message: 'Vui lòng nhập họ và tên của bạn.',
+                                    },
+                                    maxLength: {
+                                        value: 30,
+                                        message: 'Họ và tên chứa tối đa 30 kí tự.',
+                                    },
+                                }}
+                                errors={errors.name?.message}
+                            />
+
+                            <Input
+                                icon={<FiLock size={24} />}
+                                placeholder={'•••••••'}
+                                type={'password'}
+                                name={'password'}
+                                register={register}
+                                options={{
+                                    required: { value: true, message: 'Vui lòng nhập password' },
+                                    maxLength: { value: 20, message: 'Mật khẩu chứa không quá 20 kí tự' },
+                                    pattern: {
+                                        value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+                                        message: 'Mật khẩu phải chứa ít nhất 8 kí tự gồm chữ cái, số và kí tự đặc biệt',
+                                    },
+                                }}
+                                errors={errors.password?.message}
+                            />
+
+                            <div className="grid grid-cols-2 gap-2">
                                 <div className="w-full border flex items-center bg-white px-[10px] gap-3 rounded-lg focus-within:border-secondary-30">
                                     <AiOutlineCalendar size={24} />
                                     <DatePicker
+                                        {...register('birthday', {
+                                            required: { value: true, message: 'Vui lòng chọn ngày sinh.' },
+                                        })}
+                                        dateFormat="dd/MM/yyyy"
                                         className="w-full py-[10px] focus:outline-none"
                                         selected={birthday}
-                                        onChange={(date: Date) => setBirthday(date)}
+                                        onChange={(date: Date) => {
+                                            setValue('birthday', date), setBirthday(date);
+                                        }}
                                     />
                                 </div>
                                 <div className="w-full border flex items-center justify-between bg-white px-[10px] gap-3 rounded-lg focus-within:border-secondary-30">
                                     <BsGenderAmbiguous size={24} />
-                                    <input type="radio" name="gender" id="gender" />
-                                    <label htmlFor="gender">Male</label>
-                                    <input type="radio" name="gender" id="gender" />
-                                    <label htmlFor="gender">Female</label>
+                                    <input
+                                        {...register('gender', {
+                                            required: { value: true, message: 'Vui lòng chọn giới tính' },
+                                        })}
+                                        type="radio"
+                                        name="gender"
+                                        value="male"
+                                    />
+                                    <label htmlFor="gender">Nam</label>
+                                    <input
+                                        {...register('gender', {
+                                            required: { value: true, message: 'Vui lòng chọn giới tính' },
+                                        })}
+                                        type="radio"
+                                        name="gender"
+                                        value="female"
+                                    />
+                                    <label htmlFor="gender">Nữ</label>
+                                    <input
+                                        {...register('gender', {
+                                            required: { value: true, message: 'Vui lòng chọn giới tính' },
+                                        })}
+                                        type="radio"
+                                        name="gender"
+                                        value="other"
+                                    />
+                                    <label htmlFor="gender">Khác</label>
                                 </div>
+                                {errors.birthday?.message && <p className="text-red-500">{errors.birthday?.message}</p>}
+                                {errors.gender?.message && <p className="text-red-500">{errors.gender?.message}</p>}
                             </div>
-                        </div>
-                        <button className="w-full btn btn-primary ripple-bg-primary-80">Sign Up</button>
+                        </form>
+                        <Button title="Đăng ký" color="primary" form="base-info" typeBtn="submit" />
                         <div className="flex items-center justify-center gap-2">
-                            <p>Already have an account?</p>
-                            <button className="font-bold text-primary-80 ">Sign In</button>
+                            <p>Đã có tài khoản?</p>
+                            <button className="font-bold text-primary-80 ">Đăng nhập</button>
                         </div>
-                    </div>
+                    </BoxShadow>
                 </div>
             </div>
         </section>
