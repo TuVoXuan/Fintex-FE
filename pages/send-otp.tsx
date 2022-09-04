@@ -8,7 +8,7 @@ const SendOtp: NextPage = () => {
         console.log('fomr value : ', value);
     };
     return (
-        <AuthLayout title="Gửi mã OTP" subTitle="Nhập số điện thoại muốn nhận mã otp.">
+        <AuthLayout title="Gửi mã OTP" subTitle="Nhập số điện thoại của bạn tại đây.">
             <FormOneField
                 nameInput="phone"
                 icon={<FiSmartphone size={24} />}

@@ -4,9 +4,10 @@ interface Props {
     color: 'primary' | 'secondary' | 'secondary-light';
     typeBtn?: 'button' | 'submit';
     form?: string;
+    onClick?: () => void;
 }
 
-export const Button = ({ icon, title, color, typeBtn = 'button', form }: Props) => {
+export const Button = ({ icon, title, color, typeBtn = 'button', form, onClick }: Props) => {
     const colorButton = () => {
         switch (color) {
             case 'primary':
@@ -19,7 +20,12 @@ export const Button = ({ icon, title, color, typeBtn = 'button', form }: Props) 
     };
 
     return (
-        <button className={`btn ${colorButton()} ${icon ? 'justify-between' : 'w-full'}`} type={typeBtn} form={form}>
+        <button
+            className={`btn ${colorButton()} ${icon ? 'justify-between' : 'w-full'}`}
+            type={typeBtn}
+            form={form}
+            onClick={onClick}
+        >
             {icon && icon}
             {title}
         </button>

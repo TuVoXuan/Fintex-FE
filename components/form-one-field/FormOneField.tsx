@@ -31,7 +31,7 @@ export const FormOneField = ({ nameInput, placeholder, icon, options, onSubmit }
                 options={options}
                 errors={errors[nameInput]?.message}
             />
-            <Button title="Đăng nhập" color="primary" form="phoneOtp" typeBtn="submit" />
+            <Button title="Xong" color="primary" form="phoneOtp" typeBtn="submit" />
         </form>
     );
 };
