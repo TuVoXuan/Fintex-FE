@@ -62,4 +62,14 @@
         background-size: 100%;
         transition: background 0s;
     }
+    .image-container {
+        @apply relative;
+    }
+    .image-container span {
+        position: unset !important;
+        @apply !h-full;
+    }
+    .image-container .image {
+        @apply object-cover !w-full !h-full !relative;
+    }
 }
