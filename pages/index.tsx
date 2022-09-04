@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { AiOutlineGoogle, AiFillApple } from 'react-icons/ai';
 import { FiLock, FiSmartphone } from 'react-icons/fi';
 import { HiOutlineEye } from 'react-icons/hi';
-import { BoxShadow, Input } from '../components';
+import Image from 'next/image';
+import { BoxShadow, Button, Input } from '../components';
 import { AuthLayout } from '../layouts';
 
 interface Props {
@@ -25,14 +26,8 @@ const Home: NextPage = () => {
     return (
         <AuthLayout title={'Đăng nhập'} subTitle={'Mừng trở lại, chắc có ai đó đang nhớ bạn!'}>
             <div className="flex gap-5">
-                <button className="btn bg-secondary-20 text-secondary-80 ripple-bg-secondary-20">
-                    <AiOutlineGoogle size={24} />
-                    Đăng nhập với Google
-                </button>
-                <button className="btn bg-secondary-20 text-secondary-80 ripple-bg-secondary-20">
-                    <AiFillApple size={24} />
-                    Đăng nhập với Apple
-                </button>
+                <Button icon={<AiOutlineGoogle size={24} />} title="Đăng nhập bằng Google" color="secondary-light" />
+                <Button icon={<AiFillApple size={24} />} title="Đăng nhập bằng Apple" color="secondary-light" />
             </div>
             <div className="flex items-center gap-4">
                 <div className="w-full h-0 border-t-2" />
@@ -83,9 +78,7 @@ const Home: NextPage = () => {
                     </div>
                 </div>
 
-                <button form="login" type="submit" className="w-full btn btn-primary ripple-bg-primary-80">
-                    Đăng nhập
-                </button>
+                <Button title="Đăng nhập" color="primary" form="login" typeBtn="submit" />
             </form>
 
             <div className="flex items-center justify-center gap-2">

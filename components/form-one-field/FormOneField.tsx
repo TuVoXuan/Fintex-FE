@@ -1,7 +1,5 @@
-import { on } from 'events';
-import { ValidationRule, Validate, UseFormRegister, useForm, RegisterOptions } from 'react-hook-form';
-import { BoxShadow } from '../box-shadow/box-shadow';
-import { Input } from '../input/input';
+import { useForm, RegisterOptions } from 'react-hook-form';
+import { Button, Input } from '..';
 
 interface Props {
     nameInput: string;
@@ -23,7 +21,7 @@ export const FormOneField = ({ nameInput, placeholder, icon, options, onSubmit }
     } = useForm<FormData>();
 
     return (
-        <form id="phoneOtp" onSubmit={handleSubmit(onSubmit)} className="space-y-9">
+        <form id="phoneOtp" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <Input
                 icon={icon}
                 placeholder={placeholder}
@@ -33,9 +31,7 @@ export const FormOneField = ({ nameInput, placeholder, icon, options, onSubmit }
                 options={options}
                 errors={errors[nameInput]?.message}
             />
-            <button form="phoneOtp" type="submit" className="w-full btn btn-primary ripple-bg-primary-80">
-                Xong
-            </button>
+            <Button title="Đăng nhập" color="primary" form="phoneOtp" typeBtn="submit" />
         </form>
     );
 };
