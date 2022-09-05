@@ -18,8 +18,8 @@ export const AuthLayout = ({ title, subTitle, children }: Props) => {
                 </div>
             </div>
 
-            <div className="flex items-center justify-center">
-                <div className="space-y-8">
+            <div className="flex items-center justify-center h-full">
+                <div className="min-w-[50%] space-y-8">
                     <div className="text-center">
                         <h1>{title}</h1>
                         <p>{subTitle}</p>

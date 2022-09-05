@@ -2,11 +2,11 @@ import type { NextPage } from 'next';
 import { useForm } from 'react-hook-form';
 import { AiOutlineGoogle, AiFillApple } from 'react-icons/ai';
 import { FiLock, FiSmartphone } from 'react-icons/fi';
-import { HiOutlineEye } from 'react-icons/hi';
-import Image from 'next/image';
-import { BoxShadow, Button, Input } from '../components';
+import { Button, Input } from '../components';
 import { AuthLayout } from '../layouts';
 import { useRouter } from 'next/router';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
+import { app } from '../config/firebase';
 
 interface Props {
     phone: string;
@@ -15,6 +15,26 @@ interface Props {
 
 const Home: NextPage = () => {
     const router = useRouter();
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth(app);
+
+    const handleLoginGoogle = () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                console.log(result);
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential?.idToken;
+                console.log('id token', token);
+                const user = result.user;
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                const email = error.customData.email;
+                const credential = GoogleAuthProvider.credentialFromError(error);
+            });
+    };
+
     const {
         register,
         formState: { errors },
@@ -32,7 +52,12 @@ const Home: NextPage = () => {
     return (
         <AuthLayout title={'Đăng nhập'} subTitle={'💕Chào mừng trở lại, chúng tôi nhớ bạn💕'}>
             <div className="flex gap-5">
-                <Button icon={<AiOutlineGoogle size={24} />} title="Đăng nhập bằng Google" color="secondary-light" />
+                <Button
+                    icon={<AiOutlineGoogle size={24} />}
+                    title="Đăng nhập bằng Google"
+                    color="secondary-light"
+                    onClick={handleLoginGoogle}
+                />
                 <Button icon={<AiFillApple size={24} />} title="Đăng nhập bằng Apple" color="secondary-light" />
             </div>
             <div className="flex items-center gap-4">
