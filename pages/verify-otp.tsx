@@ -2,12 +2,14 @@ import { NextPage } from 'next';
 import { FormOneField } from '../components';
 import { AuthLayout } from '../layouts';
 import { MdOutlinePassword } from 'react-icons/md';
-import { useAppSelector } from '../hook/redux';
+import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { useRouter } from 'next/router';
 import { toastError } from '../util/toast';
+import { resetVerifyOtp } from '../redux/reducers/otp-slice';
 
 const VerifyOtp: NextPage = () => {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const verify = useAppSelector((state) => state.otp.verify);
     const redirectUrl = useAppSelector((state) => state.otp.redirectUrl);
 
@@ -16,6 +18,8 @@ const VerifyOtp: NextPage = () => {
             verify
                 .confirm(value.otp)
                 .then((result) => {
+                    dispatch(resetVerifyOtp());
+                    console.log('result: ', result);
                     router.push(redirectUrl ?? '');
                 })
                 .catch((err) => {

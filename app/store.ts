@@ -10,7 +10,8 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
-                ignoredActions: ['user/addVerifyOtp'],
+                ignoredActions: ['user/addVerifyOtp', 'user/resetVerifyOtp'],
+                ignoredPaths: ['otp.verify'],
             },
         }),
 });

@@ -2,10 +2,11 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { NextRouter, useRouter } from 'next/router';
 import { app } from '../config/firebase';
+import APP_PATH from '../constants/app-path';
 import { useAppDispatch } from '../hook/redux';
 import { userLoginWithGoogle } from '../redux/actions/user-action';
 import { addRedirectUrl } from '../redux/reducers/otp-slice';
-import { addSimpleInfo } from '../redux/reducers/user-slice';
+import { addPhone, addSimpleInfo } from '../redux/reducers/user-slice';
 import { sendOtp } from './handle-otp';
 import { toastError } from './toast';
 
@@ -37,13 +38,14 @@ export const handleLoginGoogle = (router: NextRouter, dispatch: any) => {
 
                 if (!result.isExisted) {
                     await dispatch(addSimpleInfo(user));
-                    await dispatch(addRedirectUrl('/signup'));
-                    router.push('/send-otp');
+                    await dispatch(addRedirectUrl(APP_PATH.SIGN_UP));
+                    router.push(APP_PATH.SEND_OTP);
                 } else {
                     await dispatch(addRedirectUrl('/'));
                     if (result.phone) {
+                        await dispatch(addPhone(result.phone));
                         sendOtp(result.phone, dispatch, router);
-                        router.push('/verify-otp');
+                        router.push(APP_PATH.VERIFY_OTP);
                     }
                 }
             } catch (error) {
