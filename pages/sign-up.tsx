@@ -47,7 +47,7 @@ const Signup: NextPage = () => {
         },
     });
 
-    const onSubmit = (data: BaseInfo) => {
+    const onSubmit = async (data: BaseInfo) => {
         console.log(data);
         console.log('phone: ', user.data?.phone);
 
@@ -59,7 +59,9 @@ const Signup: NextPage = () => {
         console.log('convertBirthday: ', convertBirthday);
 
         try {
-            dispatch(userSignUp({ birthday: convertBirthday, password, phone, email, name: newName, gender }));
+            await dispatch(
+                userSignUp({ birthday: convertBirthday, password, phone, email, name: newName, gender }),
+            ).unwrap();
             router.push(APP_PATH.HOME);
         } catch (error) {
             toastError((error as IResponseError).error);
