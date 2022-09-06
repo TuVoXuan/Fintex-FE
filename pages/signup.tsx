@@ -21,10 +21,12 @@ interface BaseInfo {
 import { AuthLayout } from '../layouts';
 import { TiWarning } from 'react-icons/ti';
 import { useRouter } from 'next/router';
+import { useAppSelector } from '../hook/redux';
 
 const Signup: NextPage = () => {
     const router = useRouter();
     const [birthday, setBirthday] = useState<Date>(new Date());
+    const user = useAppSelector((state) => state.user.data);
 
     const {
         register,
@@ -33,6 +35,8 @@ const Signup: NextPage = () => {
         setValue,
     } = useForm<BaseInfo>({
         defaultValues: {
+            name: `${user?.name.firstName} ${user?.name.lastName}`,
+            email: user?.email,
             birthday: new Date(),
             gender: 'male',
         },

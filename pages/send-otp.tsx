@@ -1,11 +1,20 @@
+import { ConfirmationResult, getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 import { NextPage } from 'next';
 import { FiSmartphone } from 'react-icons/fi';
 import { BoxShadow, FormOneField } from '../components';
 import { AuthLayout } from '../layouts';
+import { app } from '../config/firebase';
+import { useRouter } from 'next/router';
+import { useAppDispatch } from '../hook/redux';
+import { addVerifyOtp } from '../redux/reducers/otp-slice';
+import { sendOtp } from '../util/handle-otp';
 
 const SendOtp: NextPage = () => {
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+
     const handleSubmit = (value: any) => {
-        console.log('fomr value : ', value);
+        sendOtp(value.phone, dispatch, router);
     };
     return (
         <AuthLayout title="Gửi mã OTP" subTitle="Nhập số điện thoại của bạn tại đây.">
@@ -22,6 +31,7 @@ const SendOtp: NextPage = () => {
                     },
                 }}
             />
+            <div id="recaptcha-container"></div>
         </AuthLayout>
     );
 };
