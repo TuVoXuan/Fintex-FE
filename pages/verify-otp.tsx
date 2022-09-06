@@ -17,6 +17,7 @@ const VerifyOtp: NextPage = () => {
             verify
                 .confirm(value.otp)
                 .then((result) => {
+                    console.log('result: ', result);
                     router.push(redirectUrl ?? '');
                 })
                 .catch((err) => {

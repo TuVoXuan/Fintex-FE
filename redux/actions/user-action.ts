@@ -11,4 +11,11 @@ export const userLoginWithGoogle = createAsyncThunk('user/loginWithGoogle', asyn
     }
 });
 
-export const userRegister = createAsyncThunk('user/register', async (body: IRegisterUser, thunkAPI) => {});
+export const userSignUp = createAsyncThunk('user/signUp', async (body: IUserSignUp, thunkAPI) => {
+    try {
+        const response = await authApi.signUp(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

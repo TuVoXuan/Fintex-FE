@@ -8,6 +8,9 @@ const authApi = {
     verifyUser: (body: IVerifyUser) => {
         return axiosService.post<IResponseSuccess<IVerifyUserResponse>>(`${URL}/verify-user`, body);
     },
+    signUp: (body: IUserSignUp) => {
+        return axiosService.post<IResponseSuccess<IAuthResponse>>(`${URL}/sign-up`, body);
+    },
 };
 
 export default authApi;

@@ -30,6 +30,6 @@ export const otpSlice = createSlice({
 
 export const { addVerifyOtp, addRedirectUrl } = otpSlice.actions;
 
-export const selectUser = (state: RootState) => state.user;
+export const selectOTP = (state: RootState) => state.otp;
 
 export default otpSlice.reducer;

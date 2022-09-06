@@ -1,14 +1,12 @@
 import type { NextPage } from 'next';
 import { AiOutlineGoogle, AiFillApple, AiOutlineCalendar } from 'react-icons/ai';
 import { FiLock, FiAtSign } from 'react-icons/fi';
-import { HiOutlineEye } from 'react-icons/hi';
 import { RiUserSmileLine } from 'react-icons/ri';
 import { BsGenderAmbiguous } from 'react-icons/bs';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Image from 'next/image';
-import { BoxShadow, Button, Input } from '../components';
+import { Button, Input } from '../components';
 import { useForm } from 'react-hook-form';
 
 interface BaseInfo {
@@ -21,12 +19,19 @@ interface BaseInfo {
 import { AuthLayout } from '../layouts';
 import { TiWarning } from 'react-icons/ti';
 import { useRouter } from 'next/router';
-import { useAppSelector } from '../hook/redux';
+import { useAppDispatch, useAppSelector } from '../hook/redux';
+import { selectUser } from '../redux/reducers/user-slice';
+import { toastError } from '../util/toast';
+import { userSignUp } from '../redux/actions/user-action';
+import APP_PATH from '../constants/app-path';
+import { handleFullName } from '../util/handle-name';
 
 const Signup: NextPage = () => {
     const router = useRouter();
+    const dispatch = useAppDispatch();
+
+    const user = useAppSelector(selectUser);
     const [birthday, setBirthday] = useState<Date>(new Date());
-    const user = useAppSelector((state) => state.user.data);
 
     const {
         register,
@@ -35,15 +40,30 @@ const Signup: NextPage = () => {
         setValue,
     } = useForm<BaseInfo>({
         defaultValues: {
-            name: `${user?.name.firstName} ${user?.name.lastName}`,
-            email: user?.email,
+            name: user.data ? user.data?.name.firstName + user.data.name.lastName : undefined,
+            email: user.data?.email || undefined,
             birthday: new Date(),
             gender: 'male',
         },
     });
 
-    const onSubmit = (data: any) => {
+    const onSubmit = (data: BaseInfo) => {
         console.log(data);
+        console.log('phone: ', user.data?.phone);
+
+        const { birthday, email, gender, name, password } = data;
+        const phone = user.data?.phone || '';
+        const newName = handleFullName(name);
+        console.log('newName: ', newName);
+        const convertBirthday = birthday.toISOString();
+        console.log('convertBirthday: ', convertBirthday);
+
+        try {
+            dispatch(userSignUp({ birthday: convertBirthday, password, phone, email, name: newName, gender }));
+            router.push(APP_PATH.HOME);
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
     };
 
     const handleSignin = () => {
@@ -52,15 +72,6 @@ const Signup: NextPage = () => {
 
     return (
         <AuthLayout title="🎉Hãy bắt đầu🎉" subTitle="✨Tạo một tài khoản để kết nối với mọi người.✨">
-            <div className="flex gap-5">
-                <Button icon={<AiOutlineGoogle size={24} />} title="Đăng nhập bằng Google" color="secondary-light" />
-                <Button icon={<AiFillApple size={24} />} title="Đăng nhập bằng Apple" color="secondary-light" />
-            </div>
-            <div className="flex items-center gap-4">
-                <div className="w-full h-0 border-t-2" />
-                <h3>Hoặc</h3>
-                <div className="w-full h-0 border-t-2" />
-            </div>
             <form className="space-y-5" id="base-info" onSubmit={handleSubmit(onSubmit)}>
                 <Input
                     icon={<FiAtSign size={24} className="font-normal" />}

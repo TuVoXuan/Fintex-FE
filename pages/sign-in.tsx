@@ -7,7 +7,8 @@ import { AuthLayout } from '../layouts';
 import { useRouter } from 'next/router';
 import { handleLoginGoogle } from '../util/google-login';
 import { useAppDispatch } from '../hook/redux';
-import { userLoginWithGoogle } from '../redux/actions/user-action';
+import APP_PATH from '../constants/app-path';
+import { addRedirectUrl } from '../redux/reducers/otp-slice';
 
 interface Props {
     phone: string;
@@ -28,8 +29,9 @@ const SignIn: NextPage = () => {
         console.log(data);
     };
 
-    const handleSignup = () => {
-        router.push('/signup');
+    const handleSendOtp = () => {
+        dispatch(addRedirectUrl(APP_PATH.SIGN_UP));
+        router.push(APP_PATH.SEND_OTP);
     };
 
     const handleGoogle = () => {
@@ -101,7 +103,7 @@ const SignIn: NextPage = () => {
 
             <div className="flex items-center justify-center gap-2">
                 <p>Bạn chưa có tài khoản?</p>
-                <button className="font-bold text-primary-80" onClick={handleSignup}>
+                <button className="font-bold text-primary-80" onClick={handleSendOtp}>
                     Đăng ký
                 </button>
             </div>

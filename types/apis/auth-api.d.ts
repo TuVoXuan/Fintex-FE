@@ -16,6 +16,7 @@ declare interface IAuthUser {
 }
 
 declare interface IAuthUserResponse {
+    _id: string;
     name: {
         firstName: string;
         lastName: string;
@@ -28,13 +29,19 @@ declare interface IAuthUserResponse {
     gender: 'male' | 'female' | 'other';
 }
 
-declare interface IRegisterUser {
+declare interface IUserSignUp {
     name: {
         firstName: string;
         lastName: string;
     };
     email: string;
+    password: string;
     phone: string;
-    birthday: Date;
+    birthday: string;
     gender: 'male' | 'female' | 'other';
+}
+
+declare interface IAuthResponse {
+    token: string;
+    user: IUser;
 }
