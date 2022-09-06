@@ -9,10 +9,3 @@ declare interface IUser {
     avatar: string;
     email: string;
 }
-
-declare interface IAuthUser {
-    name: string;
-    phone: string;
-    avatar: string;
-    email: string;
-}

@@ -1,3 +1,4 @@
+import { async } from '@firebase/util';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import authApi from '../../api/auth-api';
 
@@ -9,3 +10,5 @@ export const userLoginWithGoogle = createAsyncThunk('user/loginWithGoogle', asyn
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const userRegister = createAsyncThunk('user/register', async (body: IRegisterUser, thunkAPI) => {});

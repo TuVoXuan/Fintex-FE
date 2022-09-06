@@ -6,6 +6,7 @@ import { useAppDispatch } from '../hook/redux';
 import { userLoginWithGoogle } from '../redux/actions/user-action';
 import { addRedirectUrl } from '../redux/reducers/otp-slice';
 import { addSimpleInfo } from '../redux/reducers/user-slice';
+import { sendOtp } from './handle-otp';
 import { toastError } from './toast';
 
 const provider = new GoogleAuthProvider();
@@ -31,10 +32,18 @@ export const handleLoginGoogle = (router: NextRouter, dispatch: any) => {
 
             try {
                 console.log('da vo');
-                //await dispatch(userLoginWithGoogle(dto)).unwrap();
-                await dispatch(addSimpleInfo(user));
-                await dispatch(addRedirectUrl('/signup'));
-                router.push('/send-otp');
+                const result = (await dispatch(userLoginWithGoogle(dto)).unwrap()) as IVerifyUserResponse;
+
+                if (result.isExisted) {
+                    await dispatch(addSimpleInfo(user));
+                    await dispatch(addRedirectUrl('/signup'));
+                    router.push('/send-otp');
+                } else {
+                    await dispatch(addRedirectUrl('/'));
+                    if (result.user) {
+                        sendOtp(result.user.phone, dispatch, router);
+                    }
+                }
             } catch (error) {
                 console.log(error);
                 toastError("Can't not login with google");

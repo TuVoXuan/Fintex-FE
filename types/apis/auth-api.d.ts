@@ -5,5 +5,36 @@ declare interface IVerifyUser {
 
 declare interface IVerifyUserResponse {
     isExisted: boolean;
-    user?: IAuthUser;
+    user?: IAuthUserResponse;
+}
+
+declare interface IAuthUser {
+    name: string;
+    phone: string;
+    avatar: string;
+    email: string;
+}
+
+declare interface IAuthUserResponse {
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    email: string;
+    phone: string;
+    birthday: Date;
+    avatar: string;
+    address: string;
+    gender: 'male' | 'female' | 'other';
+}
+
+declare interface IRegisterUser {
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    email: string;
+    phone: string;
+    birthday: Date;
+    gender: 'male' | 'female' | 'other';
 }
