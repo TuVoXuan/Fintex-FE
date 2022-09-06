@@ -12,7 +12,6 @@ const VerifyOtp: NextPage = () => {
     const redirectUrl = useAppSelector((state) => state.otp.redirectUrl);
 
     const handleSubmit = (value: any) => {
-        console.log('fomr value : ', value);
         if (verify) {
             verify
                 .confirm(value.otp)

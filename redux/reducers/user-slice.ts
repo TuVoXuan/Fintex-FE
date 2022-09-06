@@ -28,20 +28,7 @@ export const userSlice = createSlice({
             };
         },
     },
-    extraReducers(builder) {
-        builder.addCase(userLoginWithGoogle.fulfilled, (state, { payload }) => {
-            const { isExisted, user } = payload;
-            if (!isExisted && user) {
-                const name = handleFullName(user.name);
-                state.data = {
-                    ...user,
-                    name: name,
-                    birthday: new Date(),
-                    gender: 'female',
-                };
-            }
-        });
-    },
+    extraReducers(builder) {},
 });
 
 export const { addSimpleInfo } = userSlice.actions;

@@ -33,15 +33,17 @@ export const handleLoginGoogle = (router: NextRouter, dispatch: any) => {
             try {
                 console.log('da vo');
                 const result = (await dispatch(userLoginWithGoogle(dto)).unwrap()) as IVerifyUserResponse;
+                console.log('result: ', result);
 
-                if (result.isExisted) {
+                if (!result.isExisted) {
                     await dispatch(addSimpleInfo(user));
                     await dispatch(addRedirectUrl('/signup'));
                     router.push('/send-otp');
                 } else {
                     await dispatch(addRedirectUrl('/'));
-                    if (result.user) {
-                        sendOtp(result.user.phone, dispatch, router);
+                    if (result.phone) {
+                        sendOtp(result.phone, dispatch, router);
+                        router.push('/verify-otp');
                     }
                 }
             } catch (error) {
