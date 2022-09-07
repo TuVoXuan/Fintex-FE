@@ -43,7 +43,6 @@ const SendOtp: NextPage = () => {
                     },
                 }}
             />
-            <div id="recaptcha-container"></div>
         </AuthLayout>
     );
 };

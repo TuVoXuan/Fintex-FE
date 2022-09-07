@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { handleFullName } from '../../util/handle-name';
-import { userLoginWithGoogle, userSignUp } from '../actions/user-action';
+import { userVerify, userSignUp, userLoginGoogle } from '../actions/user-action';
 
 interface UserState {
     isLogin: boolean;
@@ -50,6 +50,13 @@ export const userSlice = createSlice({
     },
     extraReducers(builder) {
         builder.addCase(userSignUp.fulfilled, (state: UserState, action: PayloadAction<IAuthResponse>) => {
+            state.isLogin = true;
+            localStorage.setItem('token', action.payload.token);
+
+            const user = action.payload.user;
+            state.data = { ...user };
+        });
+        builder.addCase(userLoginGoogle.fulfilled, (state: UserState, action: PayloadAction<IAuthResponse>) => {
             state.isLogin = true;
             localStorage.setItem('token', action.payload.token);
 

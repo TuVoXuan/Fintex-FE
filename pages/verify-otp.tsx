@@ -6,20 +6,29 @@ import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { useRouter } from 'next/router';
 import { toastError } from '../util/toast';
 import { resetVerifyOtp } from '../redux/reducers/otp-slice';
+import { userLoginGoogle } from '../redux/actions/user-action';
 
 const VerifyOtp: NextPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const verify = useAppSelector((state) => state.otp.verify);
     const redirectUrl = useAppSelector((state) => state.otp.redirectUrl);
+    const isLoginGoogle = useAppSelector((state) => state.otp.isLoginGoogle);
+    const phone = useAppSelector((state) => state.user.data?.phone);
 
     const handleSubmit = (value: any) => {
         if (verify) {
             verify
                 .confirm(value.otp)
-                .then((result) => {
+                .then(async (result) => {
                     dispatch(resetVerifyOtp());
-                    console.log('result: ', result);
+                    if (isLoginGoogle && phone) {
+                        await dispatch(
+                            userLoginGoogle({
+                                phone: phone,
+                            }),
+                        );
+                    }
                     router.push(redirectUrl ?? '');
                 })
                 .catch((err) => {

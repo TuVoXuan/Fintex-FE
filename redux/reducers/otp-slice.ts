@@ -2,18 +2,20 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ConfirmationResult } from 'firebase/auth';
 import { RootState } from '../../app/store';
 import { handleFullName } from '../../util/handle-name';
-import { userLoginWithGoogle } from '../actions/user-action';
+import { userVerify } from '../actions/user-action';
 
 interface OtpState {
     verify: ConfirmationResult | null;
     redirectUrl: string | null;
     isSignUp: boolean;
+    isLoginGoogle: boolean;
 }
 
 const initialState: OtpState = {
     verify: null,
     redirectUrl: null,
     isSignUp: false,
+    isLoginGoogle: false,
 };
 
 export const otpSlice = createSlice({
@@ -32,11 +34,14 @@ export const otpSlice = createSlice({
         setIsSignUp: (state, action: PayloadAction<boolean>) => {
             state.isSignUp = action.payload;
         },
+        setIsLoginGoogle: (state, action: PayloadAction<boolean>) => {
+            state.isLoginGoogle = action.payload;
+        },
     },
     extraReducers(builder) {},
 });
 
-export const { addVerifyOtp, addRedirectUrl, resetVerifyOtp, setIsSignUp } = otpSlice.actions;
+export const { addVerifyOtp, addRedirectUrl, resetVerifyOtp, setIsSignUp, setIsLoginGoogle } = otpSlice.actions;
 
 export const selectOTP = (state: RootState) => state.otp;
 

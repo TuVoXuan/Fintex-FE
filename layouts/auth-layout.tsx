@@ -27,6 +27,7 @@ export const AuthLayout = ({ title, subTitle, children }: Props) => {
                     <BoxShadow>{children}</BoxShadow>
                 </div>
             </div>
+            <div id="recaptcha-container"></div>
         </section>
     );
 };

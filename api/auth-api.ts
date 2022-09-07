@@ -14,6 +14,9 @@ const authApi = {
     checkUserWithPhone: (body: ICheckUserWithPhone) => {
         return axiosService.post<IResponseSuccess<IVerifyUserResponse>>(`${URL}/check-user-with-phone`, body);
     },
+    signInWithGoogle: (body: ICheckUserWithPhone) => {
+        return axiosService.post<IResponseSuccess<IAuthResponse>>(`${URL}/sign-in-with-google`, body);
+    },
 };
 
 export default authApi;
