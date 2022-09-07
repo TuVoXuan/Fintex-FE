@@ -20,7 +20,7 @@ export const sendOtp = (phone: string, dispatch: any, router: NextRouter) => {
 
         signInWithPhoneNumber(auth, phoneNumber.number, verify)
             .then(async (result: ConfirmationResult) => {
-                dispatch(addVerifyOtp(result));
+                await dispatch(addVerifyOtp(result));
                 router.push('/verify-otp');
             })
             .catch((err) => {
