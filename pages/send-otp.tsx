@@ -6,8 +6,9 @@ import { useRouter } from 'next/router';
 import { useAppDispatch } from '../hook/redux';
 import { sendOtp } from '../util/handle-otp';
 import { addPhone } from '../redux/reducers/user-slice';
+import { NextPageWithProtect } from '../types/pages/auth';
 
-const SendOtp: NextPage = () => {
+const SendOtp: NextPageWithProtect = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
 

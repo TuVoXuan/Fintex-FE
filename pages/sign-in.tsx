@@ -9,13 +9,14 @@ import { handleLoginGoogle } from '../util/google-login';
 import { useAppDispatch } from '../hook/redux';
 import APP_PATH from '../constants/app-path';
 import { addRedirectUrl } from '../redux/reducers/otp-slice';
+import { NextPageWithProtect } from '../types/pages/auth';
 
 interface Props {
     phone: string;
     password: string;
 }
 
-const SignIn: NextPage = () => {
+const SignIn: NextPageWithProtect = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
 

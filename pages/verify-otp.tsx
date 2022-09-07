@@ -5,8 +5,9 @@ import { MdOutlinePassword } from 'react-icons/md';
 import { useAppSelector } from '../hook/redux';
 import { useRouter } from 'next/router';
 import { toastError } from '../util/toast';
+import { NextPageWithProtect } from '../types/pages/auth';
 
-const VerifyOtp: NextPage = () => {
+const VerifyOtp: NextPageWithProtect = () => {
     const router = useRouter();
     const verify = useAppSelector((state) => state.otp.verify);
     const redirectUrl = useAppSelector((state) => state.otp.redirectUrl);
