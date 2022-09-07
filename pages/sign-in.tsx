@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { handleLoginGoogle } from '../util/google-login';
 import { useAppDispatch } from '../hook/redux';
 import APP_PATH from '../constants/app-path';
-import { addRedirectUrl } from '../redux/reducers/otp-slice';
+import { addRedirectUrl, setIsSignUp } from '../redux/reducers/otp-slice';
 import { NextPageWithProtect } from '../types/pages/auth';
 
 interface Props {
@@ -31,6 +31,7 @@ const SignIn: NextPageWithProtect = () => {
     };
 
     const handleSendOtp = () => {
+        dispatch(setIsSignUp(true));
         dispatch(addRedirectUrl(APP_PATH.SIGN_UP));
         router.push(APP_PATH.SEND_OTP);
     };

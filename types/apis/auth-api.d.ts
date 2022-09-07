@@ -5,7 +5,7 @@ declare interface IVerifyUser {
 
 declare interface IVerifyUserResponse {
     isExisted: boolean;
-    user?: IAuthUserResponse;
+    phone?: string;
 }
 
 declare interface IAuthUser {
@@ -44,4 +44,8 @@ declare interface IUserSignUp {
 declare interface IAuthResponse {
     token: string;
     user: IUser;
+}
+
+declare interface ICheckUserWithPhone {
+    phone: string;
 }

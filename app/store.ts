@@ -7,6 +7,13 @@ export const store = configureStore({
         user,
         otp,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: ['user/addVerifyOtp', 'user/resetVerifyOtp'],
+                ignoredPaths: ['otp.verify'],
+            },
+        }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

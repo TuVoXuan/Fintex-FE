@@ -11,6 +11,9 @@ const authApi = {
     signUp: (body: IUserSignUp) => {
         return axiosService.post<IResponseSuccess<IAuthResponse>>(`${URL}/sign-up`, body);
     },
+    checkUserWithPhone: (body: ICheckUserWithPhone) => {
+        return axiosService.post<IResponseSuccess<IVerifyUserResponse>>(`${URL}/check-user-with-phone`, body);
+    },
 };
 
 export default authApi;

@@ -2,22 +2,24 @@ import { NextPage } from 'next';
 import { FormOneField } from '../components';
 import { AuthLayout } from '../layouts';
 import { MdOutlinePassword } from 'react-icons/md';
-import { useAppSelector } from '../hook/redux';
+import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { useRouter } from 'next/router';
 import { toastError } from '../util/toast';
+import { resetVerifyOtp } from '../redux/reducers/otp-slice';
 import { NextPageWithProtect } from '../types/pages/auth';
 
 const VerifyOtp: NextPageWithProtect = () => {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const verify = useAppSelector((state) => state.otp.verify);
     const redirectUrl = useAppSelector((state) => state.otp.redirectUrl);
 
     const handleSubmit = (value: any) => {
-        console.log('fomr value : ', value);
         if (verify) {
             verify
                 .confirm(value.otp)
                 .then((result) => {
+                    dispatch(resetVerifyOtp());
                     console.log('result: ', result);
                     router.push(redirectUrl ?? '');
                 })

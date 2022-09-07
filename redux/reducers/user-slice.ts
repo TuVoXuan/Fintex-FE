@@ -19,6 +19,7 @@ export const userSlice = createSlice({
     reducers: {
         addSimpleInfo: (state, action: PayloadAction<IAuthUser>) => {
             const user = action.payload;
+            console.log('user: ', user);
             const name = handleFullName(user.name);
             state.data = {
                 _id: '',
@@ -29,37 +30,31 @@ export const userSlice = createSlice({
             };
         },
         addPhone: (state, action: PayloadAction<string>) => {
-            state.data = {
-                _id: '',
-                avatar: '',
-                birthday: new Date().toISOString(),
-                email: '',
-                gender: 'male',
-                phone: action.payload,
-                name: {
-                    firstName: '',
-                    lastName: '',
-                },
-            };
+            if (state.data) {
+                state.data.phone = action.payload;
+            } else {
+                state.data = {
+                    _id: '',
+                    avatar: '',
+                    birthday: new Date().toISOString(),
+                    email: '',
+                    gender: 'male',
+                    phone: action.payload,
+                    name: {
+                        firstName: '',
+                        lastName: '',
+                    },
+                };
+            }
         },
     },
     extraReducers(builder) {
-        builder.addCase(userLoginWithGoogle.fulfilled, (state, { payload }) => {
-            const { isExisted, user } = payload;
-            if (!isExisted && user) {
-                state.data = {
-                    ...user,
-                    birthday: new Date().toISOString(),
-                    gender: 'female',
-                };
-            }
-        });
-
-        builder.addCase(userSignUp.fulfilled, (state, { payload }) => {
-            const { token, user } = payload;
+        builder.addCase(userSignUp.fulfilled, (state: UserState, action: PayloadAction<IAuthResponse>) => {
             state.isLogin = true;
-            state.data = user;
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', action.payload.token);
+
+            const user = action.payload.user;
+            state.data = { ...user };
         });
     },
 });

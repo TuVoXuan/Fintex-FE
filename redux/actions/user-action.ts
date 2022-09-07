@@ -19,3 +19,15 @@ export const userSignUp = createAsyncThunk('user/signUp', async (body: IUserSign
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const checkUserWithPhone = createAsyncThunk(
+    'user/checkUserWithPhone',
+    async (body: ICheckUserWithPhone, thunkAPI) => {
+        try {
+            const response = await authApi.checkUserWithPhone(body);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);
