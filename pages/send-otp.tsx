@@ -8,8 +8,9 @@ import { sendOtp } from '../util/handle-otp';
 import { addPhone } from '../redux/reducers/user-slice';
 import { checkUserWithPhone } from '../redux/actions/user-action';
 import { toastError } from '../util/toast';
+import { NextPageWithProtect } from '../types/pages/auth';
 
-const SendOtp: NextPage = () => {
+const SendOtp: NextPageWithProtect = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const isSignUp = useAppSelector((state) => state.otp.isSignUp);
