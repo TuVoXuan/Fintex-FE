@@ -6,11 +6,10 @@ import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { sendOtp } from '../util/handle-otp';
 import { addPhone } from '../redux/reducers/user-slice';
-import { checkUserWithPhone } from '../redux/actions/user-action';
+import { userCheckWithPhone } from '../redux/actions/user-action';
 import { toastError } from '../util/toast';
-import { NextPageWithProtect } from '../types/pages/auth';
 
-const SendOtp: NextPageWithProtect = () => {
+const SendOtp: NextPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const isSignUp = useAppSelector((state) => state.otp.isSignUp);
@@ -18,7 +17,7 @@ const SendOtp: NextPageWithProtect = () => {
     const handleSubmit = async (value: any) => {
         try {
             dispatch(addPhone(value.phone));
-            const response = (await dispatch(checkUserWithPhone({ phone: value.phone })).unwrap()).isExisted;
+            const response = (await dispatch(userCheckWithPhone({ phone: value.phone })).unwrap()).isExisted;
 
             if (isSignUp && response) {
                 toastError('Số điện thoại này đã được đăng ký.');

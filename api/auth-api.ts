@@ -17,6 +17,12 @@ const authApi = {
     signInWithGoogle: (body: ICheckUserWithPhone) => {
         return axiosService.post<IResponseSuccess<IAuthResponse>>(`${URL}/sign-in-with-google`, body);
     },
+    signInWithPhone: (body: IUserLoginWithPhone) => {
+        return axiosService.post<IResponseSuccess<IAuthResponse>>(`${URL}/sign-in-with-phone`, body);
+    },
+    getCurrentUser: () => {
+        return axiosService.get<IResponseSuccess<IAuthResponse>>(`${URL}/current-user`);
+    },
 };
 
 export default authApi;

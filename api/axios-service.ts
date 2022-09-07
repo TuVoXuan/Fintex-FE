@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { getCookie } from 'cookies-next';
 
 const axiosService = axios.create({
     baseURL: 'https://api.example.com',
 });
 axiosService.interceptors.request.use(
     function (config) {
-        const token = localStorage.getItem('token');
+        const token = getCookie('Authorization');
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }

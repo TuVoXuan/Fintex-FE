@@ -25,9 +25,8 @@ import { toastError } from '../util/toast';
 import { userSignUp } from '../redux/actions/user-action';
 import APP_PATH from '../constants/app-path';
 import { handleFullName } from '../util/handle-name';
-import { NextPageWithProtect } from '../types/pages/auth';
 
-const Signup: NextPageWithProtect = () => {
+const Signup: NextPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
 

@@ -9,14 +9,15 @@ import { handleLoginGoogle } from '../util/google-login';
 import { useAppDispatch } from '../hook/redux';
 import APP_PATH from '../constants/app-path';
 import { addRedirectUrl, setIsSignUp } from '../redux/reducers/otp-slice';
-import { NextPageWithProtect } from '../types/pages/auth';
+import { toastError } from '../util/toast';
+import { userLoginPhone } from '../redux/actions/user-action';
 
 interface Props {
     phone: string;
     password: string;
 }
 
-const SignIn: NextPageWithProtect = () => {
+const SignIn: NextPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
 
@@ -26,8 +27,13 @@ const SignIn: NextPageWithProtect = () => {
         handleSubmit,
     } = useForm<Props>();
 
-    const onSubmit = (data: any) => {
-        console.log(data);
+    const onSubmit = async (data: any) => {
+        try {
+            await dispatch(userLoginPhone(data)).unwrap();
+            router.push(APP_PATH.HOME);
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
     };
 
     const handleSendOtp = () => {

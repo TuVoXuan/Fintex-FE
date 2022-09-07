@@ -49,3 +49,8 @@ declare interface IAuthResponse {
 declare interface ICheckUserWithPhone {
     phone: string;
 }
+
+declare interface IUserLoginWithPhone {
+    phone: string;
+    password: string;
+}

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
+    reactStrictMode: false,
     env: {
         API_URL: process.env.API_URL,
         FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,

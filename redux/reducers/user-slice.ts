@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { handleFullName } from '../../util/handle-name';
-import { userVerify, userSignUp, userLoginGoogle } from '../actions/user-action';
-import { setCookie } from 'cookies-next';
+import { userSignUp, userLoginGoogle, userLoginPhone, userGetCurrentUser } from '../actions/user-action';
+import { setCookie, deleteCookie } from 'cookies-next';
 
 interface UserState {
     isLogin: boolean;
@@ -69,6 +69,28 @@ export const userSlice = createSlice({
 
             const user = action.payload.user;
             state.data = { ...user };
+        });
+        builder.addCase(userLoginPhone.fulfilled, (state, action: PayloadAction<IAuthResponse>) => {
+            state.isLogin = true;
+
+            setCookie('Authorization', action.payload.token, {
+                maxAge: 60 * 60 * 24 * 7,
+            });
+
+            const user = action.payload.user;
+            state.data = { ...user };
+        });
+        builder.addCase(userGetCurrentUser.fulfilled, (state, action: PayloadAction<IAuthResponse>) => {
+            state.data = action.payload.user;
+            state.isLogin = true;
+            setCookie('Authorization', action.payload.token, {
+                maxAge: 60 * 60 * 24 * 7,
+            });
+        });
+        builder.addCase(userGetCurrentUser.rejected, (state) => {
+            state.data = null;
+            state.isLogin = false;
+            deleteCookie('Authorization');
         });
     },
 });
