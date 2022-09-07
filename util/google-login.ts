@@ -16,8 +16,7 @@ const auth = getAuth();
 export const handleLoginGoogle = (router: NextRouter, dispatch: any) => {
     signInWithPopup(auth, provider)
         .then(async (result) => {
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential?.idToken;
+            const idToken = await result.user.getIdToken();
 
             const user: IAuthUser = {
                 name: result.user.displayName ?? '',
@@ -27,7 +26,7 @@ export const handleLoginGoogle = (router: NextRouter, dispatch: any) => {
             };
 
             const dto: IVerifyUser = {
-                idToken: token ?? '',
+                idToken: idToken ?? '',
                 user: user,
             };
 
