@@ -1,5 +1,5 @@
 interface Props {
-    children: Array<JSX.Element>;
+    children: React.ReactNode;
 }
 
 export const BoxShadow = ({ children }: Props) => {
