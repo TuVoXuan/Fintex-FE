@@ -31,6 +31,24 @@
     h6 {
         @apply text-h6 leading-h6;
     }
+    /* width */
+    ::-webkit-scrollbar {
+        width: 7px;
+        height: 5px;
+    }
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #e8e8e8;
+    }
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #b7b7b7;
+        border-radius: 5px;
+    }
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #777e8b;
+    }
 }
 
 @tailwind components;

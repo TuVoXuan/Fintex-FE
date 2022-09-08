@@ -71,8 +71,8 @@ export const MainLayout = ({ children }: Props) => {
                 }
             }}
         >
-            <div className="grid grid-cols-6 h-[20%] p-4">
-                <div className="w-full h-full">
+            <div className="grid grid-cols-6 p-4 h-[12vh]">
+                <div className="w-full">
                     <div className="w-1/2 h-full mx-auto cursor-pointer image-container">
                         <Image src={'/logo-and-brand-name.svg'} alt="logo" layout="fill" />
                     </div>
@@ -128,13 +128,18 @@ export const MainLayout = ({ children }: Props) => {
                     <div className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm">
                         <p className="h-full p-3 bg-white rounded-l-md">nguyen van a</p>
                         <div className="h-full overflow-hidden rounded-md aspect-square image-container">
-                            <Image src={'/avatar1.jpg'} alt="avatar" layout="fill" />
+                            <Image
+                                src="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                                alt="avatar"
+                                layout="fill"
+                                objectFit="cover"
+                            />
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-6 h-[20%] px-4">
-                <div className="space-y-2.5">
+            <div className="flex w-full px-4">
+                <div className="w-1/6 space-y-2.5 h-full">
                     <div className="pl-1 pr-5">
                         <MenuItem
                             icon={<HiOutlineViewGrid size={20} />}
@@ -151,22 +156,33 @@ export const MainLayout = ({ children }: Props) => {
                             link={APP_PATH.MY_COMMUNITY}
                         />
                     </div>
-                    {/* <div className="pl-1 pr-5">
-                        <MenuItem icon={<RiChatSmileLine size={20} />} title={'Message'} isActive={false} />
+                    <div className="pl-1 pr-5">
+                        <MenuItem icon={<RiChatSmileLine size={20} />} title={'Message'} isActive={false} link={'#'} />
                     </div>
                     <div className="pl-1 pr-5">
-                        <MenuItem icon={<RiNotification3Line size={20} />} title={'Notification'} isActive={false} />
+                        <MenuItem
+                            icon={<RiNotification3Line size={20} />}
+                            title={'Notification'}
+                            isActive={false}
+                            link={'#'}
+                        />
                     </div>
                     <div className="pl-1 pr-5">
-                        <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} />
+                        <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} link={'#'} />
                     </div>
                     <div className="pl-1 pr-5">
-                        <MenuItem icon={<IoSettingsOutline size={20} />} title={'Setting'} isActive={false} />
+                        <MenuItem
+                            icon={<IoSettingsOutline size={20} />}
+                            title={'Setting'}
+                            isActive={false}
+                            link={'#'}
+                        />
                     </div>
                     <div className="pl-1 pr-5">
-                        <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} />
-                    </div> */}
+                        <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
+                    </div>
                 </div>
+                <div className="w-5/6 overflow-y-auto">{children}</div>
             </div>
         </section>
     );
