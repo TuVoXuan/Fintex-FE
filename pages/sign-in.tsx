@@ -5,7 +5,7 @@ import { MdMoreHoriz } from 'react-icons/md';
 import { useState } from 'react';
 import Avatar from '../components/avatar/avatar';
 import HeaderPost from '../components/post/header-post';
-import ImageContainer from '../components/image.tsx/image-container';
+import ImageContainer from '../components/image/image-container';
 
 export default function SignIn() {
     const [ratio, setRatio] = useState(16 / 9);
@@ -58,30 +58,26 @@ export default function SignIn() {
                     visibleFor="public"
                 />
 
-                <div className="flex gap-x-4">
+                <div className="grid grid-cols-2 gap-4">
                     <ImageContainer
-                        quantity="single"
-                        className="w-1/2"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                        quantity="multiple"
                     />
-
-                    <div className="flex flex-col w-1/2 gap-y-4">
+                    <div className="space-y-4">
                         <ImageContainer
-                            quantity="single"
-                            className="w-full"
-                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606364/wallpaperflare.com_wallpaper_rtc6e8.jpg"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                            quantity="multiple"
+                            className="aspect-video"
                         />
-
                         <ImageContainer
-                            quantity="single"
-                            className="w-full"
-                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                            quantity="multiple"
+                            className="aspect-video"
                         />
-
                         <ImageContainer
-                            quantity="single"
-                            className="w-full"
-                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                            quantity="multiple"
+                            className="aspect-video"
                         />
                     </div>
                 </div>
@@ -95,26 +91,60 @@ export default function SignIn() {
                     visibleFor="public"
                 />
 
-                <div className="flex flex-wrap gap-y-4">
-                    <div className="flex w-full gap-4">
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
                         <ImageContainer
-                            quantity="single"
-                            className="w-1/2"
-                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606364/wallpaperflare.com_wallpaper_rtc6e8.jpg"
+                            quantity="multiple"
+                            className="aspect-video"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
                         />
-
                         <ImageContainer
-                            quantity="single"
-                            className="w-1/2"
-                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                            quantity="multiple"
+                            className="aspect-video"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
                         />
                     </div>
-
                     <ImageContainer
-                        quantity="single"
-                        className="w-full"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                        quantity="multiple"
+                        className="aspect-video"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662606364/wallpaperflare.com_wallpaper_rtc6e8.jpg"
                     />
+                </div>
+            </div>
+
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <HeaderPost
+                    avatarUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                    displayName="Munn No"
+                    timeAgo={'16h'}
+                    visibleFor="public"
+                />
+
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <ImageContainer
+                            quantity="multiple"
+                            className="aspect-video"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                        />
+                        <ImageContainer
+                            quantity="multiple"
+                            className="aspect-video"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <ImageContainer
+                            quantity="multiple"
+                            className="aspect-video"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                        />
+                        <ImageContainer
+                            quantity="multiple"
+                            className="aspect-video"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -126,13 +156,23 @@ export default function SignIn() {
                     visibleFor="public"
                 />
 
-                <div className="flex">
-                    <ImageContainer
-                        quantity="single"
-                        className="w-full"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662606360/wallpaperflare.com_wallpaper_1_tzlhiy.jpg"
-                    />
-                </div>
+                <ImageContainer
+                    quantity="single"
+                    url="https://res.cloudinary.com/cake-shop/image/upload/v1662606360/wallpaperflare.com_wallpaper_1_tzlhiy.jpg"
+                />
+            </div>
+
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <HeaderPost
+                    avatarUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                    displayName="Sepural Gallery"
+                    timeAgo={'16h'}
+                    visibleFor="public"
+                />
+                <ImageContainer
+                    quantity="single"
+                    url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
+                />
             </div>
 
             <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
@@ -143,11 +183,16 @@ export default function SignIn() {
                     visibleFor="public"
                 />
 
-                <div className="flex">
+                <div className="grid grid-cols-2 gap-4">
                     <ImageContainer
-                        quantity="single"
-                        className="w-full"
+                        quantity="multiple"
+                        className="aspect-square"
                         url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
+                    />
+                    <ImageContainer
+                        quantity="multiple"
+                        className="aspect-square"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
                     />
                 </div>
             </div>
