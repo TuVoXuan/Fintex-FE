@@ -1,10 +1,12 @@
 import type { NextPage } from 'next';
-import { NextPageWithProtect } from '../types/pages/auth';
+import { MainLayout } from '../layouts/main-layout';
 
-const Home: NextPageWithProtect = () => {
-    return <h1>This is home page</h1>;
+const Home: NextPage = () => {
+    return (
+        <MainLayout>
+            <h1>This is home page</h1>
+        </MainLayout>
+    );
 };
-
-Home.protected = true;
 
 export default Home;
