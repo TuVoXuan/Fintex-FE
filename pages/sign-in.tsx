@@ -1,122 +1,156 @@
-import type { NextPage } from 'next';
-import { useForm } from 'react-hook-form';
-import { AiOutlineGoogle, AiFillApple } from 'react-icons/ai';
-import { FiLock, FiSmartphone } from 'react-icons/fi';
-import { Button, Input } from '../components';
-import { AuthLayout } from '../layouts';
-import { useRouter } from 'next/router';
-import { handleLoginGoogle } from '../util/google-login';
-import { useAppDispatch } from '../hook/redux';
-import APP_PATH from '../constants/app-path';
-import { addRedirectUrl, setIsSignUp } from '../redux/reducers/otp-slice';
-import { toastError } from '../util/toast';
-import { userLoginPhone } from '../redux/actions/user-action';
+import Image from 'next/image';
+import { BsCameraVideo, BsImage } from 'react-icons/bs';
+import { RiUserSmileLine } from 'react-icons/ri';
+import { MdMoreHoriz } from 'react-icons/md';
+import { useState } from 'react';
+import Avatar from '../components/avatar/avatar';
+import HeaderPost from '../components/post/header-post';
+import ImageContainer from '../components/image.tsx/image-container';
 
-interface Props {
-    phone: string;
-    password: string;
-}
-
-const SignIn: NextPage = () => {
-    const router = useRouter();
-    const dispatch = useAppDispatch();
-
-    const {
-        register,
-        formState: { errors },
-        handleSubmit,
-    } = useForm<Props>();
-
-    const onSubmit = async (data: any) => {
-        try {
-            await dispatch(userLoginPhone(data)).unwrap();
-            router.push(APP_PATH.HOME);
-        } catch (error) {
-            toastError((error as IResponseError).error);
-        }
-    };
-
-    const handleSendOtp = () => {
-        dispatch(setIsSignUp(true));
-        dispatch(addRedirectUrl(APP_PATH.SIGN_UP));
-        router.push(APP_PATH.SEND_OTP);
-    };
-
-    const handleGoogle = () => {
-        handleLoginGoogle(router, dispatch);
-    };
+export default function SignIn() {
+    const [ratio, setRatio] = useState(16 / 9);
+    const [ratio1, setRatio1] = useState(16 / 9);
+    const [ratio2, setRatio2] = useState(16 / 9);
+    const [ratio3, setRatio3] = useState(9 / 16);
+    const [ratio4, setRatio4] = useState(1);
+    const [ratio5, setRatio5] = useState(9 / 16);
 
     return (
-        <AuthLayout title={'Đăng nhập'} subTitle={'💕Chào mừng trở lại, chúng tôi nhớ bạn💕'}>
-            <div className="flex gap-5">
-                <Button
-                    icon={<AiOutlineGoogle size={24} />}
-                    title="Đăng nhập bằng Google"
-                    color="secondary-light"
-                    onClick={handleGoogle}
+        <section className="p-[30px] rounded-[15px] bg-secondary-10 space-y-7">
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <div className="flex items-center gap-3">
+                    <Avatar
+                        size="small"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662612184/avatar2_kin9jc.jpg"
+                    />
+                    <input
+                        type="text"
+                        className="w-full rounded-[10px] bg-secondary-10 text-secondary-40 px-[10px] py-[15px] focus:outline-none"
+                        placeholder="what's happening?"
+                    />
+                </div>
+
+                <div className="flex items-center justify-between">
+                    <div className="flex gap-7">
+                        <button className="flex items-center gap-2">
+                            <BsCameraVideo size={16} />
+                            Live video
+                        </button>
+                        <button className="flex items-center gap-2">
+                            <BsImage size={16} />
+                            Photo/Video
+                        </button>
+                        <button className="flex items-center gap-2">
+                            <RiUserSmileLine size={16} />
+                            Feeling
+                        </button>
+                    </div>
+
+                    <button className="rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center">Post</button>
+                </div>
+            </div>
+
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <HeaderPost
+                    avatarUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                    displayName="Munn No"
+                    timeAgo={'16h'}
+                    visibleFor="public"
                 />
-                <Button icon={<AiFillApple size={24} />} title="Đăng nhập bằng Apple" color="secondary-light" />
-            </div>
-            <div className="flex items-center gap-4">
-                <div className="w-full h-0 border-t-2" />
-                <h3>HOẶC</h3>
-                <div className="w-full h-0 border-t-2" />
-            </div>
-            <form id="login" onSubmit={handleSubmit(onSubmit)} className="space-y-9">
-                <div className="space-y-5">
-                    <Input
-                        icon={<FiSmartphone size={24} />}
-                        placeholder={'0987654321'}
-                        type={'text'}
-                        name={'phone'}
-                        register={register}
-                        options={{
-                            required: { value: true, message: 'Vui lòng nhập số điện thoại' },
-                            pattern: {
-                                value: /(03|05|07|08|09|01[2689])+([0-9]{8})\b/,
-                                message: 'Số điện thoại không đúng định dạng',
-                            },
-                        }}
-                        errors={errors.phone?.message}
+
+                <div className="flex gap-x-4">
+                    <ImageContainer
+                        quantity="single"
+                        className="w-1/2"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
                     />
-                    <Input
-                        icon={<FiLock size={24} />}
-                        placeholder={'•••••••'}
-                        type={'password'}
-                        name={'password'}
-                        register={register}
-                        options={{
-                            required: { value: true, message: 'Vui lòng nhập password' },
-                            maxLength: { value: 20, message: 'Mật khẩu chứa không quá 20 kí tự' },
-                            pattern: {
-                                value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-                                message: 'Mật khẩu phải chứa ít nhất 8 kí tự gồm chữ cái, số và kí tự đặc biệt',
-                            },
-                        }}
-                        errors={errors.password?.message}
-                    />
-                </div>
-                <div className="flex justify-between">
-                    <div className="flex items-center gap-2">
-                        <input type="checkbox" name="remember-me" />
-                        <label htmlFor="remember-me">Nhớ tôi</label>
-                    </div>
-                    <div>
-                        <button>Quên mật khẩu?</button>
+
+                    <div className="flex flex-col w-1/2 gap-y-4">
+                        <ImageContainer
+                            quantity="single"
+                            className="w-full"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606364/wallpaperflare.com_wallpaper_rtc6e8.jpg"
+                        />
+
+                        <ImageContainer
+                            quantity="single"
+                            className="w-full"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                        />
+
+                        <ImageContainer
+                            quantity="single"
+                            className="w-full"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                        />
                     </div>
                 </div>
-
-                <Button title="Đăng nhập" color="primary" form="login" typeBtn="submit" />
-            </form>
-
-            <div className="flex items-center justify-center gap-2">
-                <p>Bạn chưa có tài khoản?</p>
-                <button className="font-bold text-primary-80" onClick={handleSendOtp}>
-                    Đăng ký
-                </button>
             </div>
-        </AuthLayout>
+
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <HeaderPost
+                    avatarUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                    displayName="Munn No"
+                    timeAgo={'16h'}
+                    visibleFor="public"
+                />
+
+                <div className="flex flex-wrap gap-y-4">
+                    <div className="flex w-full gap-4">
+                        <ImageContainer
+                            quantity="single"
+                            className="w-1/2"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662606364/wallpaperflare.com_wallpaper_rtc6e8.jpg"
+                        />
+
+                        <ImageContainer
+                            quantity="single"
+                            className="w-1/2"
+                            url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                        />
+                    </div>
+
+                    <ImageContainer
+                        quantity="single"
+                        className="w-full"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662601782/wallpaper1_im7d6h.jpg"
+                    />
+                </div>
+            </div>
+
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <HeaderPost
+                    avatarUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                    displayName="Sepural Monn"
+                    timeAgo={'8h'}
+                    visibleFor="public"
+                />
+
+                <div className="flex">
+                    <ImageContainer
+                        quantity="single"
+                        className="w-full"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662606360/wallpaperflare.com_wallpaper_1_tzlhiy.jpg"
+                    />
+                </div>
+            </div>
+
+            <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+                <HeaderPost
+                    avatarUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                    displayName="Sepural Gallery"
+                    timeAgo={'16h'}
+                    visibleFor="public"
+                />
+
+                <div className="flex">
+                    <ImageContainer
+                        quantity="single"
+                        className="w-full"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662606355/dongvat_utqia8.jpg"
+                    />
+                </div>
+            </div>
+        </section>
     );
-};
-
-export default SignIn;
+}

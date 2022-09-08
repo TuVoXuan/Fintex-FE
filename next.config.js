@@ -12,6 +12,9 @@ const nextConfig = {
         FIREBASE_MEASURMENT_ID: process.env.FIREBASE_MEASURMENT_ID,
     },
     swcMinify: true,
+    images: {
+        domains: ['res.cloudinary.com'],
+    },
 };
 
 module.exports = nextConfig;

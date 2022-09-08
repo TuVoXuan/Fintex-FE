@@ -8,18 +8,16 @@ module.exports = {
                 h2: '2rem',
                 h3: '1.25rem',
                 h4: '1rem',
-                h2: '1.5rem',
-                h3: '1.5rem',
-                h4: '1.25rem',
+                h5: '0.8rem',
+                h6: '0.5rem',
             },
             lineHeight: {
                 h1: '52px',
                 h2: '42px',
                 h3: '26px',
                 h4: '20px',
-                h2: '32px',
-                h3: '32px',
-                h4: '26px',
+                h5: '16px',
+                h6: '12px',
             },
             colors: {
                 primary: {
@@ -31,6 +29,7 @@ module.exports = {
                     40: '#777E8B',
                     30: '#C7C8C9',
                     20: '#e8e8e8',
+                    10: '#f4f4f4',
                 },
                 greenury: {
                     100: '#2DA26E',
