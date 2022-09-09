@@ -28,6 +28,7 @@ module.exports = {
                 secondary: {
                     80: '#3E4A60',
                     40: '#777E8B',
+                    35: '#999FA9',
                     30: '#C7C8C9',
                     20: '#e8e8e8',
                     10: '#f4f4f4',
@@ -53,6 +54,9 @@ module.exports = {
             fontFamily: {
                 primary: 'Montserrat',
                 secondary: 'sans-serif',
+            },
+            aspectRatio: {
+                '9/16': '9 / 16',
             },
         },
         minWidth: {
