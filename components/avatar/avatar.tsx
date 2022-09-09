@@ -3,13 +3,14 @@ import Image from 'next/image';
 interface Props {
     size: 'tiny' | 'small' | 'medium';
     url: string;
+    className?: string;
 }
 
-export default function Avatar({ size, url }: Props) {
+export default function Avatar({ size, url, className }: Props) {
     const handleSize = () => {
         switch (size) {
             case 'tiny':
-                return 'w-5 h-5';
+                return 'w-8 h-8';
             case 'small':
                 return 'w-10 h-10';
             case 'medium':
@@ -21,7 +22,7 @@ export default function Avatar({ size, url }: Props) {
 
     return (
         <section>
-            <div className={`object-none ${handleSize()} overflow-hidden rounded-full image-container`}>
+            <div className={`${handleSize()} overflow-hidden rounded-full image-container ${className}`}>
                 <Image src={url} alt="avatar" layout="fill" objectFit="cover" />
             </div>
         </section>

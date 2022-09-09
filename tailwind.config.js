@@ -23,6 +23,7 @@ module.exports = {
                 primary: {
                     80: '#377DFF',
                     70: '#4C79CC',
+                    10: '#EBF2FF',
                 },
                 secondary: {
                     80: '#3E4A60',

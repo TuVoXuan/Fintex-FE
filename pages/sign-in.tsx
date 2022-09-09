@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Avatar from '../components/avatar/avatar';
 import HeaderPost from '../components/post/header-post';
 import ImageContainer from '../components/image/image-container';
+import { FooterPost } from '../components/post/footer-post';
 
 export default function SignIn() {
     const [ratio, setRatio] = useState(16 / 9);
@@ -18,16 +19,19 @@ export default function SignIn() {
     return (
         <section className="p-[30px] rounded-[15px] bg-secondary-10 space-y-7">
             <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
-                <div className="flex items-center gap-3">
+                <div className="flex gap-3">
                     <Avatar
-                        size="small"
+                        size="medium"
                         url="https://res.cloudinary.com/cake-shop/image/upload/v1662612184/avatar2_kin9jc.jpg"
                     />
-                    <input
-                        type="text"
-                        className="w-full rounded-[10px] bg-secondary-10 text-secondary-40 px-[10px] py-[15px] focus:outline-none"
-                        placeholder="what's happening?"
-                    />
+                    <div className="w-full flex items-center bg-secondary-10 overflow-hidden rounded-[10px] pr-[10px]">
+                        <input
+                            type="text"
+                            className="w-full items-center bg-secondary-10 text-secondary-40 px-[10px] focus:outline-none"
+                            placeholder="what's happening?"
+                        />
+                        {/* <RiUserSmileLine size={24} /> */}
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -81,6 +85,7 @@ export default function SignIn() {
                         />
                     </div>
                 </div>
+                <FooterPost />
             </div>
 
             <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">

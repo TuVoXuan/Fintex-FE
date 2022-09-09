@@ -80,6 +80,7 @@ const Signup: NextPage = () => {
                     type="email"
                     placeholder="abc@gmail.com"
                     name="email"
+                    border={true}
                     register={register}
                     options={{
                         required: {
@@ -95,6 +96,7 @@ const Signup: NextPage = () => {
                     type="text"
                     placeholder="Nguyễn Văn An"
                     name="name"
+                    border={true}
                     register={register}
                     options={{
                         required: {
@@ -115,6 +117,7 @@ const Signup: NextPage = () => {
                     type={'password'}
                     name={'password'}
                     register={register}
+                    border={true}
                     options={{
                         required: { value: true, message: 'Vui lòng nhập password' },
                         maxLength: { value: 20, message: 'Mật khẩu chứa không quá 20 kí tự' },
@@ -134,7 +137,7 @@ const Signup: NextPage = () => {
                                 required: { value: true, message: 'Vui lòng chọn ngày sinh.' },
                             })}
                             dateFormat="dd/MM/yyyy"
-                            className="w-full py-[10px] focus:outline-none"
+                            className="w-full py-4 focus:outline-none"
                             selected={birthday}
                             onChange={(date: Date) => {
                                 setValue('birthday', date), setBirthday(date);

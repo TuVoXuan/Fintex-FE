@@ -80,6 +80,7 @@ export const MainLayout = ({ children }: Props) => {
                 <div className="relative col-span-3">
                     <Input
                         name="search"
+                        border={true}
                         placeholder="Tìm kiếm tại đây..."
                         icon={<FiSearch size={24} />}
                         type="text"

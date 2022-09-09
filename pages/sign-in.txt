@@ -68,6 +68,7 @@ const SignIn: NextPage = () => {
                         icon={<FiSmartphone size={24} />}
                         placeholder={'0987654321'}
                         type={'text'}
+                        border={true}
                         name={'phone'}
                         register={register}
                         options={{
@@ -83,6 +84,7 @@ const SignIn: NextPage = () => {
                         icon={<FiLock size={24} />}
                         placeholder={'•••••••'}
                         type={'password'}
+                        border={true}
                         name={'password'}
                         register={register}
                         options={{

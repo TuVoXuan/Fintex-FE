@@ -27,6 +27,7 @@ export const FormOneField = ({ nameInput, placeholder, icon, options, onSubmit }
                 placeholder={placeholder}
                 type={'text'}
                 register={register}
+                border={true}
                 name={nameInput}
                 options={options}
                 errors={errors[nameInput]?.message}
