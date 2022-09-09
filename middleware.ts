@@ -6,6 +6,7 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     if (
         pathname.startsWith('/_next') ||
+        pathname.startsWith('/image') ||
         pathname.startsWith('/favicon.ico') ||
         pathname.startsWith('/logo.svg') ||
         pathname.startsWith('/logo-and-brand-name.svg')

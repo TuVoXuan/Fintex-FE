@@ -9,9 +9,10 @@ import { RiChatSmileLine, RiNotification3Line } from 'react-icons/ri';
 import { IoSettingsOutline } from 'react-icons/io5';
 import APP_PATH from '../constants/app-path';
 import { useRouter } from 'next/router';
+import ImageContainer from '../components/image/image-container';
 
 interface Props {
-    children?: Array<JSX.Element> | JSX.Element;
+    children?: React.ReactNode;
 }
 
 interface FormData {
@@ -65,125 +66,131 @@ export const MainLayout = ({ children }: Props) => {
 
     return (
         <section
+            className="flex justify-center"
             onClick={() => {
                 if (ref.current) {
                     ref.current.classList.add('hidden');
                 }
             }}
         >
-            <div className="grid grid-cols-6 p-4 h-[12vh]">
-                <div className="w-full">
-                    <div className="w-1/2 h-full mx-auto cursor-pointer image-container">
-                        <Image src={'/logo-and-brand-name.svg'} alt="logo" layout="fill" />
+            <section className="max-w-[1366px] w-full">
+                <div className="grid items-center grid-cols-6 p-4">
+                    <div className="w-full">
+                        <div className="w-2/3 h-full mx-auto cursor-pointer image-container">
+                            <ImageContainer url="/logo-and-brand-name.svg" background="bg-white" quantity="single" />
+                        </div>
                     </div>
-                </div>
-                <div className="relative col-span-3">
-                    <Input
-                        name="search"
-                        placeholder="Tìm kiếm tại đây..."
-                        icon={<FiSearch size={24} />}
-                        type="text"
-                        register={register}
-                    />
-                    <div
-                        ref={ref}
-                        className="absolute hidden w-full p-4 space-y-1 bg-white rounded-md drop-shadow-lg top-14"
-                    >
-                        {!loading ? (
-                            <>
-                                <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
-                                    <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
-                                        <Image src={'/avatar1.jpg'} alt="avatar" layout="fill" />
-                                    </div>
-                                    <p>Nguyen Van Thang</p>
-                                </section>
-                                <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
-                                    <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
-                                        <Image src={'/avatar1.jpg'} alt="avatar" layout="fill" />
-                                    </div>
-                                    <p>Nguyen Van Thang</p>
-                                </section>
-                                <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
-                                    <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
-                                        <Image src={'/avatar1.jpg'} alt="avatar" layout="fill" />
-                                    </div>
-                                    <p>Nguyen Van Thang</p>
-                                </section>
-                            </>
-                        ) : (
-                            <>
-                                <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">
-                                    <div className="h-12 overflow-hidden rounded-full bg-slate-200 image-container aspect-square"></div>
-                                    <div className="w-1/2 h-6 rounded bg-slate-200"></div>
-                                </section>
-                                <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">
-                                    <div className="h-12 overflow-hidden rounded-full bg-slate-200 image-container aspect-square"></div>
-                                    <div className="w-1/2 h-6 rounded bg-slate-200"></div>
-                                </section>
-                            </>
-                        )}
+                    <div className="relative col-span-3">
+                        <Input
+                            name="search"
+                            placeholder="Tìm kiếm tại đây..."
+                            icon={<FiSearch size={24} />}
+                            type="text"
+                            register={register}
+                        />
+                        <div
+                            ref={ref}
+                            className="absolute z-10 hidden w-full p-4 space-y-1 bg-white rounded-md drop-shadow-lg top-14"
+                        >
+                            {!loading ? (
+                                <>
+                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
+                                        <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
+                                            <Image src={'/images/avatar4.jpg'} alt="avatar" layout="fill" />
+                                        </div>
+                                        <p>Nguyen Van Thang</p>
+                                    </section>
+                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
+                                        <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
+                                            <Image src={'/images/avatar4.jpg'} alt="avatar" layout="fill" />
+                                        </div>
+                                        <p>Nguyen Van Thang</p>
+                                    </section>
+                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
+                                        <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
+                                            <Image src={'/images/avatar4.jpg'} alt="avatar" layout="fill" />
+                                        </div>
+                                        <p>Nguyen Van Thang</p>
+                                    </section>
+                                </>
+                            ) : (
+                                <>
+                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">
+                                        <div className="h-12 overflow-hidden rounded-full bg-slate-200 image-container aspect-square"></div>
+                                        <div className="w-1/2 h-6 rounded bg-slate-200"></div>
+                                    </section>
+                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">
+                                        <div className="h-12 overflow-hidden rounded-full bg-slate-200 image-container aspect-square"></div>
+                                        <div className="w-1/2 h-6 rounded bg-slate-200"></div>
+                                    </section>
+                                </>
+                            )}
+                        </div>
                     </div>
-                </div>
-                <div className="col-span-2">
-                    <div className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm">
-                        <p className="h-full p-3 bg-white rounded-l-md">nguyen van a</p>
-                        <div className="h-full overflow-hidden rounded-md aspect-square image-container">
-                            <Image
-                                src="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
-                                alt="avatar"
-                                layout="fill"
-                                objectFit="cover"
-                            />
+                    <div className="col-span-2">
+                        <div className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm">
+                            <p className="h-full p-3 bg-white rounded-l-md">nguyen van a</p>
+                            <div className="w-12">
+                                <ImageContainer
+                                    url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                                    quantity="multiple"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex w-full px-4">
-                <div className="w-1/6 space-y-2.5 h-full">
-                    <div className="pl-1 pr-5">
-                        <MenuItem
-                            icon={<HiOutlineViewGrid size={20} />}
-                            title={'Feed'}
-                            isActive={path === APP_PATH.HOME}
-                            link={APP_PATH.HOME}
-                        />
+                <div className="flex w-full px-4">
+                    <div className="w-1/6 space-y-2.5 h-full">
+                        <div className="pl-1 pr-5">
+                            <MenuItem
+                                icon={<HiOutlineViewGrid size={20} />}
+                                title={'Feed'}
+                                isActive={path === APP_PATH.HOME}
+                                link={APP_PATH.HOME}
+                            />
+                        </div>
+                        <div className="pl-1 pr-5">
+                            <MenuItem
+                                icon={<FiUsers size={20} />}
+                                title={'My community'}
+                                isActive={path === APP_PATH.MY_COMMUNITY}
+                                link={APP_PATH.MY_COMMUNITY}
+                            />
+                        </div>
+                        <div className="pl-1 pr-5">
+                            <MenuItem
+                                icon={<RiChatSmileLine size={20} />}
+                                title={'Message'}
+                                isActive={false}
+                                link={'#'}
+                            />
+                        </div>
+                        <div className="pl-1 pr-5">
+                            <MenuItem
+                                icon={<RiNotification3Line size={20} />}
+                                title={'Notification'}
+                                isActive={false}
+                                link={'#'}
+                            />
+                        </div>
+                        <div className="pl-1 pr-5">
+                            <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} link={'#'} />
+                        </div>
+                        <div className="pl-1 pr-5">
+                            <MenuItem
+                                icon={<IoSettingsOutline size={20} />}
+                                title={'Setting'}
+                                isActive={false}
+                                link={'#'}
+                            />
+                        </div>
+                        <div className="pl-1 pr-5">
+                            <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
+                        </div>
                     </div>
-                    <div className="pl-1 pr-5">
-                        <MenuItem
-                            icon={<FiUsers size={20} />}
-                            title={'My community'}
-                            isActive={path === APP_PATH.MY_COMMUNITY}
-                            link={APP_PATH.MY_COMMUNITY}
-                        />
-                    </div>
-                    <div className="pl-1 pr-5">
-                        <MenuItem icon={<RiChatSmileLine size={20} />} title={'Message'} isActive={false} link={'#'} />
-                    </div>
-                    <div className="pl-1 pr-5">
-                        <MenuItem
-                            icon={<RiNotification3Line size={20} />}
-                            title={'Notification'}
-                            isActive={false}
-                            link={'#'}
-                        />
-                    </div>
-                    <div className="pl-1 pr-5">
-                        <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} link={'#'} />
-                    </div>
-                    <div className="pl-1 pr-5">
-                        <MenuItem
-                            icon={<IoSettingsOutline size={20} />}
-                            title={'Setting'}
-                            isActive={false}
-                            link={'#'}
-                        />
-                    </div>
-                    <div className="pl-1 pr-5">
-                        <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
-                    </div>
+                    <div className="w-5/6 overflow-y-auto">{children}</div>
                 </div>
-                <div className="w-5/6 overflow-y-auto">{children}</div>
-            </div>
+            </section>
         </section>
     );
 };
