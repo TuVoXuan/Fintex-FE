@@ -13,7 +13,7 @@ import { useRef, useState } from 'react';
 
 export const FooterPost = () => {
     const { register } = useForm();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const refComment = useRef<HTMLDivElement>(null);
 
@@ -26,6 +26,51 @@ export const FooterPost = () => {
             }
         }
     };
+
+    const data: IComment[] = [
+        {
+            _id: '1234567890',
+            avatar: '/images/avatar2.jpg',
+            name: {
+                firstName: 'Nguyen',
+                lastName: 'Thang',
+            },
+            content: 'Oh, verfy beautiful. haha.',
+            image: 'https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg',
+            commentChildren: 1,
+            reaction: [
+                {
+                    title: 'like',
+                    userId: '1234',
+                },
+                {
+                    title: 'haha',
+                    userId: '1234',
+                },
+                {
+                    title: 'love',
+                    userId: '1234',
+                },
+            ],
+        },
+        {
+            _id: '1234567890',
+            avatar: '/images/avatar.jpg',
+            name: {
+                firstName: 'Kim',
+                lastName: 'Tuyen',
+            },
+            content: 'Oh, verfy beautiful. haha. Oh, verfy beautiful. haha. Oh, verfy beautiful. haha.',
+            image: '',
+            commentChildren: 1,
+            reaction: [
+                {
+                    title: 'like',
+                    userId: '123456',
+                },
+            ],
+        },
+    ];
 
     return (
         <section className="space-y-3">
@@ -50,7 +95,8 @@ export const FooterPost = () => {
                 <Avatar url="/images/avatar1.jpg" size="medium" />
                 <div className="w-4/5">
                     <Input
-                        iconEnds={[<RiUserSmileLine size={24} key={1} />, <BsImage size={24} key={2} />]}
+                        isHasEmojiIcon={true}
+                        isHasPhotoIcon={true}
                         register={register}
                         placeholder={'Write a comment...'}
                         type={'text'}
@@ -71,7 +117,10 @@ export const FooterPost = () => {
                         <div className="w-4/5 h-20 rounded-lg bg-slate-200"></div>
                     </div>
                 ) : (
-                    <Commnent />
+                    <>
+                        <Commnent comment={data[0]} />
+                        <Commnent comment={data[1]} />
+                    </>
                 )}
             </div>
         </section>

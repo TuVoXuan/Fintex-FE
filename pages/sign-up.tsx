@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import { AiOutlineGoogle, AiFillApple, AiOutlineCalendar } from 'react-icons/ai';
+import { AiOutlineCalendar } from 'react-icons/ai';
 import { FiLock, FiAtSign } from 'react-icons/fi';
 import { RiUserSmileLine } from 'react-icons/ri';
 import { BsGenderAmbiguous } from 'react-icons/bs';
@@ -8,14 +8,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button, Input } from '../components';
 import { useForm } from 'react-hook-form';
-
-interface BaseInfo {
-    name: string;
-    birthday: Date;
-    gender: 'male' | 'female' | 'other';
-    email: string;
-    password: string;
-}
 import { AuthLayout } from '../layouts';
 import { TiWarning } from 'react-icons/ti';
 import { useRouter } from 'next/router';
@@ -25,6 +17,14 @@ import { toastError } from '../util/toast';
 import { userSignUp } from '../redux/actions/user-action';
 import APP_PATH from '../constants/app-path';
 import { handleFullName } from '../util/handle-name';
+
+interface BaseInfo {
+    name: string;
+    birthday: Date;
+    gender: 'male' | 'female' | 'other';
+    email: string;
+    password: string;
+}
 
 const Signup: NextPage = () => {
     const router = useRouter();

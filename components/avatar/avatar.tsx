@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 interface Props {
-    size: 'tiny' | 'small' | 'medium';
+    size: 'nano' | 'tiny' | 'small' | 'medium';
     url: string;
     className?: string;
 }
@@ -9,6 +9,8 @@ interface Props {
 export default function Avatar({ size, url, className }: Props) {
     const handleSize = () => {
         switch (size) {
+            case 'nano':
+                return 'w-6 h-6';
             case 'tiny':
                 return 'w-8 h-8';
             case 'small':
