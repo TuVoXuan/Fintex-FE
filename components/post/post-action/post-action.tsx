@@ -5,9 +5,9 @@ interface Props {
 
 export const PostAction = ({ icon, name }: Props) => {
     return (
-        <div className="flex gap-3 items-center">
+        <button className="flex items-center gap-3">
             {icon}
             <p>{name}</p>
-        </div>
+        </button>
     );
 };

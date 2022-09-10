@@ -5,15 +5,14 @@ import { RiHeart2Line, RiSendPlane2Line, RiUserSmileLine } from 'react-icons/ri'
 import { FiMessageSquare } from 'react-icons/fi';
 import Avatar from '../avatar/avatar';
 import { Input } from '..';
-import { useForm, useFormState } from 'react-hook-form';
-import { MdMoreHoriz } from 'react-icons/md';
+import { useForm } from 'react-hook-form';
 import { BsImage } from 'react-icons/bs';
 import { Commnent } from './comment/comment';
 import { useRef, useState } from 'react';
 
 export const FooterPost = () => {
     const { register } = useForm();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const refComment = useRef<HTMLDivElement>(null);
 

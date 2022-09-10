@@ -12,3 +12,13 @@ declare interface IFeeling {
     name: string;
     emoji: string;
 }
+
+declare interface IPost {
+    images: IImage[];
+    avatarUrl: string;
+    displayName: string;
+    timeAgo: string;
+    content: string;
+    visibleFor: 'public' | 'friends' | 'only me';
+    feeling?: IFeeling;
+}

@@ -10,18 +10,23 @@ import Feeling from './feeling';
 
 interface Props {
     onClose: () => void;
+    imageUrl: string;
+    name: {
+        firstName: string;
+        lastName: string;
+    };
 }
 
 interface IFormCreatePost {
     content: string;
 }
 
-export default function CreatePost({ onClose }: Props) {
+export default function CreatePost({ onClose, imageUrl, name }: Props) {
     const [visibleFor, setVisibleFor] = useState<string>('public');
     const [images, setImages] = useState<IImage[]>([]);
     const [feeling, setFeeling] = useState<IFeeling>();
-    // const [content, setContent] = useState<string>();
 
+    const contentRef = useRef<HTMLTextAreaElement>(null);
     const uploadBtnRef = useRef<HTMLInputElement>(null);
     const feelingRef = useRef<HTMLDivElement>(null);
     const createPostRef = useRef<HTMLDivElement>(null);
@@ -134,6 +139,13 @@ export default function CreatePost({ onClose }: Props) {
         return false;
     };
 
+    const handleExceedLength = (e: any) => {
+        if (contentRef.current) {
+            console.log('input width: ', contentRef.current.offsetWidth);
+            console.log('content width: ', Math.ceil(contentRef.current.clientWidth));
+        }
+    };
+
     useEffect(() => {
         const subscription = watch((value, { name, type }) => {
             if (images.length === 0 && value.content?.length === 0 && !feeling) {
@@ -175,13 +187,11 @@ export default function CreatePost({ onClose }: Props) {
                 </div>
                 <hr />
                 <div className="flex gap-3">
-                    <Avatar
-                        size="small"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662612184/avatar2_kin9jc.jpg"
-                    />
+                    <Avatar size="small" url={imageUrl} />
                     <div>
                         <h4 className="font-semibold text-secondary-80">
-                            Võ Xuân Tú{feeling && ` đang ${feeling.emoji} cảm thấy ${feeling.name}.`}
+                            {name.lastName ? `${name.firstName} ${name.lastName}` : name.firstName}
+                            {feeling && ` đang ${feeling.emoji} cảm thấy ${feeling.name}.`}
                         </h4>
                         <h5 className="font-medium capitalize text-secondary-40">{visibleFor}</h5>
                     </div>
@@ -197,9 +207,11 @@ export default function CreatePost({ onClose }: Props) {
                 </div>
                 <textarea
                     {...register('content')}
+                    onChange={handleExceedLength}
+                    ref={contentRef}
                     rows={3}
                     className="w-full rounded-[10px] bg-secondary-10 text-secondary-40 px-[10px] py-[15px] focus:outline-none"
-                    placeholder="what's happening?"
+                    placeholder={`${name.lastName} ơi, bạn  đang nghỉ gì thế?`}
                 />
                 <div className="relative overflow-y-auto max-h-64">
                     {images && (
