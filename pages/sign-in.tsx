@@ -7,14 +7,12 @@ import Avatar from '../components/avatar/avatar';
 import HeaderPost from '../components/post/header-post';
 import ImageContainer from '../components/image/image-container';
 import { MainLayout } from '../layouts/main-layout';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
-import ImageLayout from '../layouts/image-layout';
 import { FooterPost } from '../components/post/footer-post';
+import CreatePost from '../components/post/creat-post/create-post';
+import Feeling from '../components/post/creat-post/feeling';
 
 export default function SignIn() {
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
-    const [images, setImages] = useState<IImage[]>([]);
-    const uploadBtnRef = useRef<HTMLInputElement>(null);
 
     const handleForcus = () => {
         setIsShowModal(true);
@@ -24,50 +22,9 @@ export default function SignIn() {
         setIsShowModal(false);
     };
 
-    const handleUploadImages = () => {
-        if (uploadBtnRef.current) {
-            uploadBtnRef.current.click();
-        }
-    };
-
-    const handleFileInput = async (e: any) => {
-        const filesLength = e.target.files.length;
-        const tempImages: IImage[] = [];
-
-        for (let index = 0; index < filesLength; index++) {
-            const file: File = e.target.files[index];
-            const dimension: IDimension = await imageDimensions(file);
-            const url = URL.createObjectURL(file);
-
-            tempImages.push({
-                url,
-                orientation: dimension.width > dimension.height ? 'horizontal' : 'vertical',
-            });
-        }
-
-        setImages(tempImages);
-    };
-
-    const imageDimensions = (file: File) =>
-        new Promise<IDimension>((resolve, reject) => {
-            const img = document.createElement('img');
-
-            // the following handler will fire after a successful loading of the image
-            img.onload = () => {
-                const { naturalWidth: width, naturalHeight: height } = img;
-                resolve({ width, height });
-            };
-
-            // and this handler will fire if there was an error with the image (like if it's not really an image or a corrupted one)
-            img.onerror = () => {
-                reject('There was some problem with the image.');
-            };
-
-            img.src = URL.createObjectURL(file);
-        });
-
     return (
         <MainLayout>
+            {' '}
             <section className="grid grid-cols-3 ">
                 <div className="h-[88vh] col-span-2 overflow-y-auto">
                     <section className="relative py-[30px] px-20 rounded-[15px] bg-secondary-10 space-y-7">
@@ -105,77 +62,12 @@ export default function SignIn() {
                                 </div>
 
                                 <button className="rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center">
-                                    Post
+                                    <h4>Post</h4>
                                 </button>
                             </div>
                         </div>
 
-                        {isShowModal && (
-                            <div className="fixed rounded-[15px] p-[18px] top-14 bg-white shadow-light space-y-4 z-20 w-[calc(100%-728px)]">
-                                <div className="flex justify-between">
-                                    <p>Create post</p>
-                                    <div>
-                                        <div className="flex items-center gap-4">
-                                            <label htmlFor="" className="text-secondary-40">
-                                                Visible for
-                                            </label>
-                                            <select>
-                                                <option value="friends">Friends</option>
-                                                <option value="public">Public</option>
-                                                <option value="only me">Only me</option>
-                                            </select>
-                                            <button onClick={handleColseModal}>
-                                                <AiOutlineCloseCircle size={24} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="flex gap-3">
-                                    <Avatar
-                                        size="small"
-                                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662612184/avatar2_kin9jc.jpg"
-                                    />
-                                    <textarea
-                                        rows={5}
-                                        className="w-full rounded-[10px] bg-secondary-10 text-secondary-40 px-[10px] py-[15px] focus:outline-none"
-                                        placeholder="what's happening?"
-                                    />
-                                    <input
-                                        type="file"
-                                        name="images"
-                                        multiple
-                                        hidden
-                                        accept="image/png, image/jpg, image/jpeg"
-                                        ref={uploadBtnRef}
-                                        onChange={handleFileInput}
-                                    />
-                                </div>
-                                <div className="overflow-y-auto max-h-72">
-                                    <ImageLayout images={images} />
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex gap-7">
-                                        <button className="flex items-center gap-2">
-                                            <BsCameraVideo size={16} />
-                                            Live video
-                                        </button>
-                                        <button onClick={handleUploadImages} className="flex items-center gap-2">
-                                            <BsImage size={16} />
-                                            Photo/Video
-                                        </button>
-                                        <button className="flex items-center gap-2">
-                                            <RiUserSmileLine size={16} />
-                                            Feeling
-                                        </button>
-                                    </div>
-
-                                    <button className="rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center">
-                                        Post
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        {isShowModal && <CreatePost onClose={handleColseModal} />}
                         {/* 1 doc 3 vuong */}
                         <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
                             <HeaderPost
@@ -327,7 +219,6 @@ export default function SignIn() {
                                 />
                             </div>
                         </div>
-
                         {/* 2 ngang */}
                         <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
                             <HeaderPost
@@ -350,7 +241,6 @@ export default function SignIn() {
                                 />
                             </div>
                         </div>
-
                         {/* 2 doc */}
                         <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
                             <HeaderPost
@@ -431,7 +321,6 @@ export default function SignIn() {
                     </div>
                 </div>
             </section>
-
             {isShowModal && (
                 <div
                     onClick={handleColseModal}
