@@ -1,15 +1,19 @@
 import { BsCameraVideo, BsImage } from 'react-icons/bs';
 import { RiUserSmileLine } from 'react-icons/ri';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Avatar from '../components/avatar/avatar';
 import { MainLayout } from '../layouts/main-layout';
 import CreatePost from '../components/post/creat-post/create-post';
 import { posts } from '../fake-data/fake-data';
 import Post from '../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
+import { fail } from 'assert';
 
 export default function SignIn() {
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
+    const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+
+    const postsRef = useRef<HTMLDivElement>(null);
 
     const handleForcus = () => {
         setIsShowModal(true);
@@ -19,10 +23,31 @@ export default function SignIn() {
         setIsShowModal(false);
     };
 
+    const handleScrollToTop = () => {
+        if (postsRef.current) {
+            postsRef.current.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            });
+        }
+    };
+
+    const handleShowScrollTop = (e: any) => {
+        if (e.target.scrollTop > 400) {
+            setShowScrollTop(true);
+        } else {
+            setShowScrollTop(false);
+        }
+    };
+
     return (
         <MainLayout>
             <section className="grid grid-cols-3 ">
-                <div className="h-[88vh] col-span-2 overflow-y-auto">
+                <div
+                    onScroll={handleShowScrollTop}
+                    ref={postsRef}
+                    className="h-[88vh] xl:h-[90vh] 2xl:h-[94vh] col-span-2 overflow-y-auto"
+                >
                     <div className="relative py-[30px] px-20 rounded-[15px] bg-secondary-10 space-y-7">
                         <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
                             <div className="flex gap-3">
@@ -73,9 +98,16 @@ export default function SignIn() {
                         {posts.map((post) => (
                             <Post post={post} />
                         ))}
-                        <button className="sticky left-0 p-2 bg-white border rounded-md bottom-4 hover:bg-secondary-30">
-                            <IoIosArrowUp size={20} />
-                        </button>
+                        {showScrollTop && (
+                            <div className="absolute w-10 h-10 bottom-3 right-3">
+                                <button
+                                    onClick={handleScrollToTop}
+                                    className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
+                                >
+                                    <IoIosArrowUp size={20} />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="relative">
