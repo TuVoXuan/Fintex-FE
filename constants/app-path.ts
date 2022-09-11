@@ -5,5 +5,6 @@ const APP_PATH = {
     SEND_OTP: '/send-otp',
     VERIFY_OTP: '/verify-otp',
     MY_COMMUNITY: '/my-community',
+    TEMP_PAGE: '/temp-page',
 };
 export default APP_PATH;

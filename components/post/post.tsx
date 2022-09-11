@@ -4,12 +4,14 @@ import HeaderPost from './header-post';
 
 interface Props {
     post: IPost;
+    hasFrame?: boolean;
+    isViewedDetail?: boolean;
 }
 
-export default function Post({ post }: Props) {
+export default function Post({ post, hasFrame = true, isViewedDetail = true }: Props) {
     const { avatarUrl, displayName, images, timeAgo, visibleFor, content, feeling } = post;
     return (
-        <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
+        <div className={`p-[18px] bg-white  space-y-4 ${hasFrame && 'shadow-light rounded-[15px]'}`}>
             <HeaderPost
                 avatarUrl={avatarUrl}
                 displayName={displayName}
@@ -18,7 +20,7 @@ export default function Post({ post }: Props) {
                 feeling={feeling}
             />
             <p>{content}</p>
-            <ImageLayout images={images} />
+            {isViewedDetail && <ImageLayout images={images} />}
             <FooterPost />
         </div>
     );

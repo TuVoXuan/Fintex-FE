@@ -7,7 +7,6 @@ import CreatePost from '../components/post/creat-post/create-post';
 import { posts } from '../fake-data/fake-data';
 import Post from '../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
-import { fail } from 'assert';
 
 export default function SignIn() {
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
