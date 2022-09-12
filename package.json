@@ -24,6 +24,7 @@
         "react-hot-toast": "^2.3.0",
         "react-icons": "^4.4.0",
         "react-redux": "^8.0.2",
+        "swiper": "^8.3.2",
         "tailwindcss-ripple": "^0.7.1",
         "timeago-react": "^3.0.5",
         "uuid": "^9.0.0"

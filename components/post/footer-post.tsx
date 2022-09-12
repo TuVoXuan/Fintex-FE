@@ -21,8 +21,8 @@ export const FooterPost = ({ postId }: Props) => {
     const handdleShowComment = () => {
         if (refComment.current) {
             if (refComment.current.classList.contains('hidden')) {
-                refComment.current.classList.remove('hidden');
                 handleLoadCommentsNoParent();
+                refComment.current.classList.remove('hidden');
             } else {
                 refComment.current.classList.add('hidden');
             }

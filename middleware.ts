@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
     }
 
     const cookie = request.cookies.get('Authorization');
-    const noAuthPage = [APP_PATH.SIGN_IN, APP_PATH.SIGN_UP, APP_PATH.VERIFY_OTP, APP_PATH.SEND_OTP];
+    const noAuthPage = [APP_PATH.SIGN_IN, APP_PATH.SIGN_UP, APP_PATH.VERIFY_OTP, APP_PATH.SEND_OTP, APP_PATH.TEMP_PAGE];
     if (cookie && noAuthPage.includes(pathname)) {
         return NextResponse.redirect(new URL('/', request.url));
     }

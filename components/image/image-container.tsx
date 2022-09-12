@@ -7,14 +7,20 @@ interface Props {
     className?: string;
     moreImage?: number;
     background?: string;
+    isBorder?: boolean;
+    isCenter?: boolean;
 }
 
-export default function ImageContainer({ quantity, url, className, moreImage, background }: Props) {
+export default function ImageContainer({ quantity, url, className, moreImage, background, isBorder = true }: Props) {
     const [ratio, setRatio] = useState(1);
 
     if (quantity === 'single') {
         return (
-            <div className={`overflow-hidden rounded-[15px] ${background ? background : `bg-slate-200`} ${className}`}>
+            <div
+                className={`overflow-hidden ${isBorder && 'rounded-[15px]'} ${
+                    background ? background : `bg-slate-200`
+                } ${className}`}
+            >
                 <div>
                     <Image
                         src={url}

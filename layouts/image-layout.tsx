@@ -99,9 +99,9 @@ export default function ImageLayout({ images }: Props) {
             }
         } else if (imagesLength === 3 || imagesLength === 4) {
             return (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2">
                     <ImageContainer url={images[0].url} quantity="multiple" />
-                    <div className="space-y-4">
+                    <div className="space-y-2">
                         {images.slice(1).map((image) => (
                             <ImageContainer
                                 key={image.url + Date.now().toString()}
