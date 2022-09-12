@@ -1,36 +1,37 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { MdMoreHoriz } from 'react-icons/md';
 import { ReactionEnum } from '../../../constants/reaction';
+import { useAppSelector } from '../../../hook/redux';
 import { findReaction } from '../../../util/find-reactioin';
 import Avatar from '../../avatar/avatar';
 import ImageContainer from '../../image/image-container';
-import { Input } from '../../input/input';
+import TimeAgo from 'timeago-react';
+import * as timeago from 'timeago.js';
+import vi from 'timeago.js/lib/lang/vi';
+import { useStore } from 'react-redux';
+import { RootState } from '../../../app/store';
+import { NewComment } from './new-comment';
 
 interface Props {
-    comment: IComment;
+    id: string;
 }
 
-interface IWriteComment {
-    comment: string;
-}
-
-export const Commnent = ({ comment }: Props) => {
+export const Commnent = ({ id }: Props) => {
+    const store = useStore();
     const refReply = useRef<HTMLDivElement>(null);
     const refReact = useRef<HTMLDivElement>(null);
     const refButtonCommentSetting = React.createRef<HTMLDivElement>();
     const refCommentSetting = React.createRef<HTMLDivElement>();
+    const refButtonShowCommentReply = React.createRef<HTMLButtonElement>();
 
     const [isClose, setIsClose] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
-    const { register } = useForm<IWriteComment>({
-        defaultValues: {
-            comment: comment.content,
-        },
-    });
+    const [childComments, setChildComment] = useState<JSX.Element[]>([]);
 
-    console.log('render');
+    const comment = useAppSelector((state) => state.comments.find((item) => item._id === id));
+
+    timeago.register('vi', vi);
 
     const handleWriteComment = () => {
         if (refReply.current) {
@@ -75,6 +76,20 @@ export const Commnent = ({ comment }: Props) => {
         setIsEdit((value) => !value);
     };
 
+    const handleShowCommentReply = () => {
+        if (refButtonShowCommentReply.current) {
+            refButtonShowCommentReply.current.classList.add('hidden');
+            // if (typeof showChildComment === 'function') {
+            //     setChildComment(showChildComment(comment?._id ?? ''));
+            // }
+            const state = store.getState() as RootState;
+            const child = state.comments
+                .filter((item) => item.parentComment === id)
+                .map((item) => <Commnent key={item._id} id={item._id} />);
+            setChildComment(child);
+        }
+    };
+
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
             console.log('da vo');
@@ -107,11 +122,11 @@ export const Commnent = ({ comment }: Props) => {
         return () => clearTimeout(timer);
     }, [isClose]);
 
-    return (
-        <div className="flex gap-x-3">
-            <Avatar url={comment.avatar} size="medium" />
-            <div className="w-full space-y-3">
-                {!isEdit ? (
+    return comment ? (
+        !isEdit ? (
+            <div className="flex gap-x-3">
+                <Avatar url={comment.avatar} size="medium" />
+                <div className="w-full space-y-3">
                     <div className="relative p-3 space-y-2 rounded-lg w-fit bg-secondary-10">
                         <div className="flex items-center justify-between">
                             <p className="font-medium">
@@ -171,35 +186,14 @@ export const Commnent = ({ comment }: Props) => {
                             </div>
                         )}
                     </div>
-                ) : (
-                    <>
-                        <Input
-                            isHasEmojiIcon={true}
-                            isHasPhotoIcon={true}
-                            register={register}
-                            placeholder={'Write a comment...'}
-                            type={'text'}
-                            name={'comment'}
-                            defaultValue={comment.content}
-                            isTextArea={true}
-                            border={false}
-                            background={true}
-                        />
-                    </>
-                )}
-                {comment.image && (
-                    <div className="w-full">
-                        <div className="w-56">
-                            <ImageContainer url={comment.image} quantity="single" />
+
+                    {comment.image && (
+                        <div className="w-full">
+                            <div className="relative w-56">
+                                <ImageContainer url={comment.image} quantity="single" />
+                            </div>
                         </div>
-                    </div>
-                )}
-                {!isEdit ? null : (
-                    <button className="text-blue-400 underline" onClick={handleShowCloseEditComment}>
-                        Cancel
-                    </button>
-                )}
-                {!isEdit ? (
+                    )}
                     <div className="relative">
                         <div ref={refReact} className="hidden">
                             <div
@@ -236,31 +230,43 @@ export const Commnent = ({ comment }: Props) => {
                             >
                                 Like
                             </button>
-                            <button onClick={handleWriteComment} className="hover:text-black">
-                                Reply
-                            </button>
-                            <p>16 minutes</p>
+                            {comment.level < 3 && (
+                                <button onClick={handleWriteComment} className="hover:text-black">
+                                    Reply
+                                </button>
+                            )}
+                            <TimeAgo datetime={comment.createAt} locale="vi" />
                         </div>
                     </div>
-                ) : null}
-                <div ref={refReply} className="hidden">
-                    <div className="flex gap-x-3">
-                        <Avatar url="/images/avatar2.jpg" size="tiny" />
-                        <div className="w-full">
-                            <Input
-                                isHasEmojiIcon={true}
-                                isHasPhotoIcon={true}
-                                register={register}
-                                placeholder={'Write a comment...'}
-                                type={'text'}
-                                name={'comment'}
-                                border={false}
-                                background={true}
-                            />
-                        </div>
-                    </div>
+                    {comment.commentsChildren != 0 && (
+                        <button
+                            ref={refButtonShowCommentReply}
+                            onClick={handleShowCommentReply}
+                            className="hover:underline"
+                        >
+                            {comment.commentsChildren} phản hồi
+                        </button>
+                    )}
+                    <NewComment
+                        inputName="commentReply"
+                        postId={comment.postId}
+                        isHidden={true}
+                        ref={refReply}
+                        hasCancel={true}
+                    />
+                    {childComments}
                 </div>
             </div>
-        </div>
+        ) : (
+            <NewComment
+                inputName="commentEdit"
+                postId={comment.postId}
+                commentId={comment._id}
+                hasCancel={true}
+                handleCancel={handleShowCloseEditComment}
+            />
+        )
+    ) : (
+        <></>
     );
 };

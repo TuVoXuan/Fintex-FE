@@ -19,7 +19,7 @@ const initialState: OtpState = {
 };
 
 export const otpSlice = createSlice({
-    name: 'user',
+    name: 'otp',
     initialState,
     reducers: {
         addVerifyOtp: (state, action: PayloadAction<ConfirmationResult>) => {

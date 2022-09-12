@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { RegisterOptions, UseFormRegister } from 'react-hook-form';
 import { TiWarning } from 'react-icons/ti';
 import dynamic from 'next/dynamic';
 import { RiUserSmileLine } from 'react-icons/ri';
 import { BsImage } from 'react-icons/bs';
+import { IEmojiData } from 'emoji-picker-react';
 const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false });
+import { useAppDispatch } from '../../hook/redux';
 
 interface Props {
     icon?: JSX.Element | Array<JSX.Element>;
@@ -20,6 +22,9 @@ interface Props {
     isTextArea?: boolean;
     isHasEmojiIcon?: boolean;
     isHasPhotoIcon?: boolean;
+    commentId?: string;
+    onKeyPress?: (event: any) => void;
+    onChangeImage?: (data: IImageStore) => void;
 }
 
 export const Input = ({
@@ -36,14 +41,35 @@ export const Input = ({
     isTextArea,
     isHasEmojiIcon,
     isHasPhotoIcon,
+    commentId,
+    onKeyPress,
+    onChangeImage,
 }: Props) => {
-    const refTextArea = useRef<HTMLTextAreaElement>(null);
-    const refContainer = useRef<HTMLDivElement>(null);
+    const refTextArea = useRef<HTMLTextAreaElement | null>(null);
     const refPickerEmoji = useRef<HTMLDivElement>(null);
     const refIconEmoji = useRef<HTMLDivElement>(null);
+    const refInput = useRef<HTMLInputElement | null>(null);
+    const refInputFile = useRef<HTMLInputElement>(null);
+    const { ref, onChange } = register(name);
 
-    const onEmojiClick = (event: any, emojiObject: any) => {
-        console.log('hi');
+    const dispatch = useAppDispatch();
+
+    const onEmojiClick = (event: any, emojiObject: IEmojiData) => {
+        if (refTextArea.current && isTextArea) {
+            refTextArea.current.value = refTextArea.current.value + emojiObject.emoji;
+            console.log('refTextArea.current.value: ', refTextArea.current.value);
+            onChange({
+                target: refTextArea.current,
+            });
+            refTextArea.current.focus();
+        } else if (refInput.current) {
+            refInput.current.value = refInput.current.value + emojiObject.emoji;
+            onChange({
+                target: refInput.current,
+            });
+            refInput.current.focus();
+        }
+        autosize();
     };
 
     const handleShowPickerEmoji = () => {
@@ -51,12 +77,44 @@ export const Input = ({
             refPickerEmoji.current.classList.remove('hidden');
         }
     };
+
     function autosize() {
         if (refTextArea.current) {
             refTextArea.current.style.height = 'auto';
             refTextArea.current.style.height = refTextArea.current.scrollHeight + 'px';
         }
     }
+
+    const openInputFile = () => {
+        if (refInputFile.current) {
+            refInputFile.current.click();
+        }
+    };
+
+    const handleInputFileChange = (event: any) => {
+        const file = event.target.files[0];
+        console.log('file: ', file);
+
+        const url = URL.createObjectURL(file);
+
+        if (onChangeImage) {
+            onChangeImage({
+                id: '1212',
+                url: url,
+                file: file,
+            });
+        }
+
+        // dispatch(resetStoreImages());
+        // dispatch(
+        //     addImage({
+        //         id: commentId ?? '',
+        //         url: url,
+        //         file: file,
+        //     }),
+        // );
+    };
+
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
             console.log('da vo');
@@ -86,7 +144,6 @@ export const Input = ({
         <>
             {/* remove h-full */}
             <div
-                ref={refContainer}
                 className={`${border ? 'border' : ''} flex ${
                     background ? 'bg-secondary-10' : 'bg-white'
                 }  px-[10px] gap-3 relative rounded-lg focus-within:border-secondary-30 `}
@@ -96,9 +153,13 @@ export const Input = ({
                     <input
                         {...register(name, { ...options })}
                         type={type}
+                        //ref={refInput}
+                        ref={(e) => {
+                            ref(e);
+                            refInput.current = e;
+                        }}
                         defaultValue={defaultValue}
                         placeholder={placeholder}
-                        multiple={true}
                         className={`w-full items-center focus:outline-none py-4 bg-transparent ${
                             type === 'password' && 'font-extrabold tracking-widest'
                         }`}
@@ -106,7 +167,11 @@ export const Input = ({
                 ) : (
                     <textarea
                         {...register(name, { ...options })}
-                        ref={refTextArea}
+                        ref={(e) => {
+                            ref(e);
+                            refTextArea.current = e;
+                        }}
+                        onKeyDown={onKeyPress}
                         placeholder={placeholder}
                         defaultValue={defaultValue}
                         rows={1}
@@ -120,7 +185,18 @@ export const Input = ({
                             <RiUserSmileLine onClick={handleShowPickerEmoji} size={24} key={1} />
                         </div>
                     )}
-                    {isHasPhotoIcon && <BsImage className="cursor-pointer" size={24} key={2} />}
+                    {isHasPhotoIcon && (
+                        <>
+                            <BsImage onClick={openInputFile} className="cursor-pointer" size={24} key={2} />
+                            <input
+                                ref={refInputFile}
+                                type="file"
+                                onChange={handleInputFileChange}
+                                accept="image/png,image/jpg,image/jpeg"
+                                className="hidden"
+                            />
+                        </>
+                    )}
                 </div>
                 {isHasEmojiIcon && (
                     <div ref={refPickerEmoji} className="absolute right-0 z-10 hidden translate-x-1/2 top-10">

@@ -208,7 +208,7 @@ export default function SignIn() {
                                     />
                                 </div>
                             </div>
-                            <FooterPost />
+                            <FooterPost postId="1234567890" />
                         </div>
                         {/* 1 ngang 2 vuong */}
                         <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
