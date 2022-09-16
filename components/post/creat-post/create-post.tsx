@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { AiOutlineCloseCircle, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BsCameraVideo, BsImage } from 'react-icons/bs';
 import { IoClose } from 'react-icons/io5';
 import { RiUserSmileLine } from 'react-icons/ri';
+import { useAppDispatch } from '../../../hook/redux';
 import ImageLayout from '../../../layouts/image-layout';
+import { postCreate } from '../../../redux/actions/post-action';
+import { toastError } from '../../../util/toast';
 import Avatar from '../../avatar/avatar';
 import Feeling from './feeling';
 
@@ -22,11 +25,14 @@ interface IFormCreatePost {
 }
 
 export default function CreatePost({ onClose, imageUrl, name }: Props) {
+    const dispatch = useAppDispatch();
+
     const [visibleFor, setVisibleFor] = useState<string>('public');
     const [images, setImages] = useState<IImage[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [feeling, setFeeling] = useState<IFeeling>();
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const contentRef = useRef<HTMLTextAreaElement>(null);
     const uploadBtnRef = useRef<HTMLInputElement>(null);
     const feelingRef = useRef<HTMLDivElement>(null);
     const createPostRef = useRef<HTMLDivElement>(null);
@@ -34,7 +40,7 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
 
     console.log('re-render create post');
 
-    const { register, watch, getValues } = useForm<IFormCreatePost>();
+    const { register, watch, getValues, handleSubmit } = useForm<IFormCreatePost>();
 
     const handleVisibleFor = (e: any) => {
         setVisibleFor(e.target.value);
@@ -48,6 +54,7 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
 
     const handleDeleteImages = () => {
         setImages([]);
+        setImageFiles([]);
     };
 
     const handleFeeling = (fell: IFeeling) => () => {
@@ -93,9 +100,12 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
         }
 
         const tempImages: IImage[] = [];
+        const tempImageFiles: File[] = [];
 
         for (let index = 0; index < length; index++) {
             const file: File = e.target.files[index];
+            tempImageFiles.push(file);
+
             const dimension: IDimension = await imageDimensions(file);
             const url = URL.createObjectURL(file);
 
@@ -106,6 +116,7 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
         }
 
         setImages([...images, ...tempImages]);
+        setImageFiles([...imageFiles, ...tempImageFiles]);
     };
 
     const imageDimensions = (file: File) =>
@@ -124,12 +135,35 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
             img.src = URL.createObjectURL(file);
         });
 
-    const handleCreatePost = () => {
+    const handleCreatePost = async () => {
         const content = getValues('content');
         console.log('content: ', content);
-        console.log('images: ', images);
+        console.log('imageFiles: ', imageFiles);
         console.log('feeling: ', feeling);
         console.log('visible for: ', visibleFor);
+
+        const formData = new FormData();
+        if (content) {
+            formData.append('content', content);
+        }
+        if (feeling) {
+            formData.append('feeling', feeling._id);
+        }
+        formData.append('visibleFor', visibleFor);
+
+        if (imageFiles) {
+            for (let file of imageFiles) {
+                formData.append('images', file);
+            }
+        }
+
+        try {
+            setLoading(true);
+            await dispatch(postCreate(formData)).unwrap();
+            onClose();
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
     };
 
     const isAbleCreatePost = (): boolean => {
@@ -137,13 +171,6 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
             return true;
         }
         return false;
-    };
-
-    const handleExceedLength = (e: any) => {
-        if (contentRef.current) {
-            console.log('input width: ', contentRef.current.offsetWidth);
-            console.log('content width: ', Math.ceil(contentRef.current.clientWidth));
-        }
     };
 
     useEffect(() => {
@@ -205,14 +232,14 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
                         onChange={handleFileInput}
                     />
                 </div>
-                <textarea
-                    {...register('content')}
-                    onChange={handleExceedLength}
-                    ref={contentRef}
-                    rows={3}
-                    className="w-full rounded-[10px] bg-secondary-10 text-secondary-40 px-[10px] py-[15px] focus:outline-none"
-                    placeholder={`${name.lastName} ơi, bạn  đang nghỉ gì thế?`}
-                />
+                <form id="createPostForm" onSubmit={handleSubmit(handleCreatePost)}>
+                    <textarea
+                        {...register('content')}
+                        rows={3}
+                        className="w-full rounded-[10px] bg-secondary-10 text-secondary-40 px-[10px] py-[15px] focus:outline-none"
+                        placeholder={`${name.lastName} ơi, bạn  đang nghỉ gì thế?`}
+                    />
+                </form>
                 <div className="relative overflow-y-auto max-h-64">
                     {images && (
                         <button
@@ -244,14 +271,24 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
                         </button>
                     </div>
 
-                    <button
-                        ref={submitPostRef}
-                        disabled={isAbleCreatePost()}
-                        onClick={handleCreatePost}
-                        className=" rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center disabled:bg-secondary-30 disabled:text-secondary-40 disabled:cursor-not-allowed"
-                    >
-                        <h4>Post</h4>
-                    </button>
+                    {loading ? (
+                        <button
+                            disabled
+                            className=" rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center disabled:cursor-not-allowed"
+                        >
+                            <AiOutlineLoading3Quarters className="animate-spin" size={20} />
+                        </button>
+                    ) : (
+                        <button
+                            form="createPostForm"
+                            type="submit"
+                            ref={submitPostRef}
+                            disabled={isAbleCreatePost()}
+                            className=" rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center disabled:bg-secondary-30 disabled:text-secondary-40 disabled:cursor-not-allowed"
+                        >
+                            <h4>Post</h4>
+                        </button>
+                    )}
                 </div>
             </div>
             <div ref={feelingRef} className="hidden translate-x-[110%] space-y-4 transition duration-300 ease-in-out">
