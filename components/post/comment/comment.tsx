@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { MdMoreHoriz } from 'react-icons/md';
 import { ReactionEnum } from '../../../constants/reaction';
-import { useAppSelector } from '../../../hook/redux';
+import { useAppDispatch, useAppSelector } from '../../../hook/redux';
 import { findReaction } from '../../../util/find-reactioin';
 import Avatar from '../../avatar/avatar';
 import ImageContainer from '../../image/image-container';
@@ -11,7 +11,8 @@ import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import { useStore } from 'react-redux';
 import { RootState } from '../../../app/store';
-import { NewComment } from './new-comment';
+import { ISuccess, NewComment } from './new-comment';
+import { getComments } from '../../../redux/actions/comment-action';
 
 interface Props {
     id: string;
@@ -19,6 +20,8 @@ interface Props {
 
 export const Commnent = ({ id }: Props) => {
     const store = useStore();
+    const dispatch = useAppDispatch();
+
     const refReply = useRef<HTMLDivElement>(null);
     const refReact = useRef<HTMLDivElement>(null);
     const refButtonCommentSetting = React.createRef<HTMLDivElement>();
@@ -28,6 +31,9 @@ export const Commnent = ({ id }: Props) => {
     const [isClose, setIsClose] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [childComments, setChildComment] = useState<JSX.Element[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [ended, setEnded] = useState(false);
+    const [after, setAfter] = useState<string | undefined>();
 
     const comment = useAppSelector((state) => state.comments.find((item) => item._id === id));
 
@@ -76,17 +82,49 @@ export const Commnent = ({ id }: Props) => {
         setIsEdit((value) => !value);
     };
 
-    const handleShowCommentReply = () => {
+    const handleShowCommentReply = async () => {
         if (refButtonShowCommentReply.current) {
             refButtonShowCommentReply.current.classList.add('hidden');
-            // if (typeof showChildComment === 'function') {
-            //     setChildComment(showChildComment(comment?._id ?? ''));
-            // }
+            if (!ended) {
+                setLoading(true);
+                const res = (
+                    await dispatch(
+                        getComments({
+                            postId: comment?.postId || '',
+                            limit: 2,
+                            after: after,
+                            parentId: comment?._id || '',
+                        }),
+                    )
+                ).payload as ICommentPagination;
+
+                setAfter(res.after);
+                setEnded(res.ended);
+                const state = store.getState() as RootState;
+                const child = state.comments
+                    .filter((item) => item.parentId === id)
+                    .map((item) => <Commnent key={item._id} id={item._id} />);
+                setChildComment(child);
+                setLoading(false);
+            }
+        }
+    };
+
+    const handleReplySuccess = async (data?: ISuccess) => {
+        if (data) {
             const state = store.getState() as RootState;
             const child = state.comments
-                .filter((item) => item.parentComment === id)
+                .filter((item) => item.parentId === data.parentId)
                 .map((item) => <Commnent key={item._id} id={item._id} />);
             setChildComment(child);
+
+            console.log('child: ', child);
+            if (data.id) {
+                setAfter((value) => {
+                    if (value) return value;
+                    return data.id;
+                });
+            }
         }
     };
 
@@ -238,27 +276,39 @@ export const Commnent = ({ id }: Props) => {
                             <TimeAgo datetime={comment.createAt} locale="vi" />
                         </div>
                     </div>
-                    {comment.commentsChildren != 0 && (
-                        <button
-                            ref={refButtonShowCommentReply}
-                            onClick={handleShowCommentReply}
-                            className="hover:underline"
-                        >
-                            {comment.commentsChildren} phản hồi
-                        </button>
-                    )}
                     <NewComment
+                        avatar={comment.avatar}
                         inputName="commentReply"
                         postId={comment.postId}
                         isHidden={true}
+                        parentId={comment._id}
                         ref={refReply}
                         hasCancel={true}
+                        handleSuccess={handleReplySuccess}
                     />
                     {childComments}
+
+                    {/* Todo: update number of childs comments, reset after */}
+                    {comment.commentsChildren > childComments.length &&
+                        (loading ? (
+                            <div className="flex w-full space-x-4 animate-pulse">
+                                <div className="w-12 h-12 rounded-full bg-slate-200"></div>
+                                <div className="w-4/5 h-20 rounded-lg bg-slate-200"></div>
+                            </div>
+                        ) : (
+                            <button
+                                ref={refButtonShowCommentReply}
+                                onClick={handleShowCommentReply}
+                                className="hover:underline"
+                            >
+                                {comment.commentsChildren - childComments.length} phản hồi
+                            </button>
+                        ))}
                 </div>
             </div>
         ) : (
             <NewComment
+                avatar={comment.avatar}
                 inputName="commentEdit"
                 postId={comment.postId}
                 commentId={comment._id}

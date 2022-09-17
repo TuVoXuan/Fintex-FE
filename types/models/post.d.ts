@@ -45,7 +45,7 @@ declare interface IComment {
     };
     content: string;
     image: string;
-    parentComment: string | null | undefined;
+    parentId: string | null | undefined;
     commentsChildren: number;
     reaction: IReaction[];
     createAt: string;

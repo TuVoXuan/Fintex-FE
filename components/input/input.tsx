@@ -23,7 +23,7 @@ interface Props {
     isHasEmojiIcon?: boolean;
     isHasPhotoIcon?: boolean;
     commentId?: string;
-    onKeyPress?: (event: any) => void;
+    onKeyPress?: () => void;
     onChangeImage?: (data: IImageStore) => void;
 }
 
@@ -115,6 +115,13 @@ export const Input = ({
         // );
     };
 
+    const handleOnPress = (values: any) => {
+        if (values.key === 'Enter') {
+            refTextArea.current?.blur();
+            if (onKeyPress) onKeyPress();
+        }
+    };
+
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
             console.log('da vo');
@@ -171,7 +178,7 @@ export const Input = ({
                             ref(e);
                             refTextArea.current = e;
                         }}
-                        onKeyDown={onKeyPress}
+                        onKeyDown={handleOnPress}
                         placeholder={placeholder}
                         defaultValue={defaultValue}
                         rows={1}

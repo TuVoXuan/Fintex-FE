@@ -5,20 +5,32 @@ import { IoClose } from 'react-icons/io5';
 import { useStore } from 'react-redux';
 import { Input } from '../..';
 import { RootState } from '../../../app/store';
+import { useAppDispatch } from '../../../hook/redux';
+import { createComments, editComments } from '../../../redux/actions/comment-action';
 import Avatar from '../../avatar/avatar';
 import ImageContainer from '../../image/image-container';
+
+export interface ISuccess {
+    id?: string;
+    parentId?: string;
+    postId?: string;
+}
 
 interface Props {
     postId: string;
     inputName: string;
     isHidden?: boolean;
     hasCancel?: boolean;
+    parentId?: string;
     commentId?: string;
+    avatar: string;
+    handleSuccess?: (data?: ISuccess) => void;
     handleCancel?: () => void;
 }
 
 export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
     const store = useStore();
+    const dispatch = useAppDispatch();
 
     const refEnter = useRef<HTMLButtonElement>(null);
     const refContainer = useRef<HTMLDivElement | null>(null);
@@ -40,15 +52,60 @@ export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) =
         },
     });
 
-    const handleNewComment = (values: any) => {
+    const handleNewComment = async (values: any) => {
         console.log('values: ', values);
         console.log('postId: ', props.postId);
         console.log('comment ', getValues(props.inputName));
         console.log('image ', image?.file);
+
+        if ('commentEdit' in values) {
+            const formdata = new FormData();
+            formdata.append('id', props.commentId || '');
+            formdata.append('content', values[props.inputName]);
+            if (image?.file) {
+                formdata.append('image', image?.file);
+            }
+            if (image?.url) {
+                formdata.append('oldImage', image?.url);
+            }
+
+            await dispatch(editComments(formdata));
+
+            if (props.handleSuccess) {
+                props.handleSuccess();
+            }
+            handleCancelWriteComment();
+        }
+
+        if ('commentReply' in values) {
+            const formData = new FormData();
+            formData.append('postId', props.postId);
+            formData.append('content', values[props.inputName]);
+
+            if (image?.file) {
+                formData.append('image', image.file);
+            }
+
+            if (props.parentId) {
+                console.log('props.parentId: ', props.parentId);
+                formData.append('parentId', props.parentId);
+            }
+
+            const response = (await dispatch(createComments(formData))).payload as ICreateCommentResponse;
+
+            if (props.handleSuccess) {
+                props.handleSuccess({ id: response.after, parentId: props.parentId, postId: props.postId });
+            }
+            if (props.isHidden) {
+                handleCancelWriteComment();
+            }
+            resetField(props.inputName);
+            setImage(undefined);
+        }
     };
 
-    const handleEnter = (values: any) => {
-        if (values.key === 'Enter' && refEnter.current) {
+    const handleEnter = () => {
+        if (refEnter.current) {
             refEnter.current.click();
         }
     };
@@ -69,6 +126,7 @@ export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) =
         }
         if (props.handleCancel) {
             props.handleCancel();
+            console.log('da chay');
         }
     };
 
@@ -88,7 +146,7 @@ export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) =
 
     return (
         <div ref={refContainer} className={`flex gap-x-3 ${props.isHidden && 'hidden'}`}>
-            <Avatar url="/images/avatar1.jpg" size="medium" />
+            <Avatar url={props.avatar} size="medium" />
             <div className="w-full space-y-3">
                 <form onSubmit={handleSubmit(handleNewComment)}>
                     <Input

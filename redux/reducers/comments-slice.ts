@@ -1,105 +1,33 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
+import { createComments, editComments, getComments } from '../actions/comment-action';
 
-const initialState: IComment[] = [
-    {
-        _id: '1234567890',
-        postId: '1234567890',
-        avatar: '/images/avatar2.jpg',
-        level: 1,
-        name: {
-            firstName: 'Nguyen',
-            lastName: 'Thang',
-        },
-        content: 'Oh, verfy beautiful. haha.',
-        image: 'https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg',
-        parentComment: null,
-        commentsChildren: 1,
-        reaction: [
-            {
-                title: 'like',
-                userId: '1234',
-            },
-            {
-                title: 'haha',
-                userId: '1234',
-            },
-            {
-                title: 'love',
-                userId: '1234',
-            },
-        ],
-        createAt: '2022-09-10T03:24:00',
-    },
-    {
-        _id: '1234567891',
-        postId: '1234567890',
-        avatar: '/images/avatar.jpg',
-        level: 1,
-        name: {
-            firstName: 'Kim',
-            lastName: 'Tuyen',
-        },
-        content: 'Oh, verfy beautiful. haha. Oh, verfy beautiful. haha. Oh, verfy beautiful. haha.',
-        image: '',
-        parentComment: null,
-        commentsChildren: 1,
-        reaction: [
-            {
-                title: 'like',
-                userId: '123456',
-            },
-        ],
-        createAt: '2022-09-10T03:24:00',
-    },
-    {
-        _id: '1234567892',
-        postId: '1234567890',
-        avatar: '/images/avatar.jpg',
-        level: 2,
-        name: {
-            firstName: 'Ha',
-            lastName: 'Tuyen',
-        },
-        content: 'Wow wow.',
-        image: '',
-        parentComment: '1234567890',
-        commentsChildren: 1,
-        reaction: [
-            {
-                title: 'like',
-                userId: '123456',
-            },
-        ],
-        createAt: '2022-09-10T03:24:00',
-    },
-    {
-        _id: '1234567893',
-        postId: '1234567890',
-        avatar: '/images/avatar.jpg',
-        level: 3,
-        name: {
-            firstName: 'Ha',
-            lastName: 'Tuyen',
-        },
-        content: 'haha haha.',
-        image: '',
-        parentComment: '1234567892',
-        commentsChildren: 0,
-        reaction: [
-            {
-                title: 'like',
-                userId: '123456',
-            },
-        ],
-        createAt: '2022-09-10T03:24:00',
-    },
-];
+const initialState: IComment[] = [];
 
 export const commentsSlice = createSlice({
     name: 'comments',
     initialState,
     reducers: {},
+    extraReducers(builder) {
+        builder.addCase(getComments.fulfilled, (state, action: PayloadAction<ICommentPagination>) => {
+            const comments = action.payload.comments;
+            state.push(...comments);
+        });
+        builder.addCase(editComments.fulfilled, (state, action: PayloadAction<ICommentResponse>) => {
+            const comment = action.payload;
+            const index = state.findIndex((item) => item._id === comment._id);
+
+            state[index] = { ...state[index], ...comment };
+        });
+        builder.addCase(createComments.fulfilled, (state, action: PayloadAction<ICreateCommentResponse>) => {
+            const data = action.payload;
+            state.unshift(data.comment);
+            const index = state.findIndex((item) => item._id === data.comment.parentId);
+            if (index !== -1) {
+                state[index].commentsChildren += 1;
+            }
+        });
+    },
 });
 
 export const selectComments = (state: RootState) => state.comments;

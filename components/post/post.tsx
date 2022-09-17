@@ -21,7 +21,7 @@ export default function Post({ post, hasFrame = true, isViewedDetail = true }: P
             />
             <p>{content}</p>
             {isViewedDetail && <ImageLayout images={images} />}
-            <FooterPost postId={'1234567890'} />
+            <FooterPost postId={'631e05da893ed64410078565'} />
         </div>
     );
 }
