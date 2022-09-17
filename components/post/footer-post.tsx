@@ -8,14 +8,18 @@ import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectComments } from '../../redux/reducers/comments-slice';
 import { ISuccess, NewComment } from '..';
 import { getComments } from '../../redux/actions/comment-action';
+import { selectUser } from '../../redux/reducers/user-slice';
 
 interface Props {
     postId: string;
+    numsComment: number;
 }
 
-export const FooterPost = ({ postId }: Props) => {
+export const FooterPost = ({ postId, numsComment }: Props) => {
     const sCommentsRef = useRef<IComment[]>([]);
     sCommentsRef.current = useAppSelector(selectComments);
+    const sUser = useAppSelector(selectUser);
+
     const refComment = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
 
@@ -46,7 +50,7 @@ export const FooterPost = ({ postId }: Props) => {
                 await dispatch(
                     getComments({
                         postId: postId,
-                        limit: 2,
+                        limit: +(process.env.LIMIT_CM as string),
                         after: after,
                     }),
                 )
@@ -74,6 +78,9 @@ export const FooterPost = ({ postId }: Props) => {
                 if (value) return value;
                 return data.id;
             });
+            if (!data.id) {
+                setEnded(true);
+            }
             setIsFirstTime(false);
         }
     };
@@ -89,16 +96,21 @@ export const FooterPost = ({ postId }: Props) => {
                         <p className="text-white">+2</p>
                     </div>
                 </div>
-                <button className="hover:underline" onClick={handdleShowComment}>
-                    3 comments
-                </button>
+                {numsComment !== 0 && (
+                    <button className="hover:underline" onClick={handdleShowComment}>
+                        {numsComment} comments
+                    </button>
+                )}
             </div>
             <div className="border-t-[1px] border-b-[1px] flex justify-around py-2">
                 <PostAction name="Like" icon={<RiHeart2Line size={24} />} />
                 <PostAction name="Comment" icon={<FiMessageSquare size={24} />} />
             </div>
             <NewComment
-                avatar="/images/avatar1.jpg"
+                avatar={
+                    sUser.data?.avatar ||
+                    'https://res.cloudinary.com/cake-shop/image/upload/v1663325246/Fintex/default-avatar_vpm7pw.jpg'
+                }
                 postId={postId}
                 inputName="commentReply"
                 handleSuccess={handleNewCommentSuccess}

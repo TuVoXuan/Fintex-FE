@@ -8,19 +8,20 @@ declare interface IDimension {
     width: number;
 }
 
-declare interface IFeeling {
-    name: string;
-    emoji: string;
-}
-
 declare interface IPost {
-    images: IImage[];
-    avatarUrl: string;
-    displayName: string;
-    timeAgo: string;
-    content: string;
-    visibleFor: 'public' | 'friends' | 'only me';
+    _id: string;
+    userId: string;
+    avatar: string;
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    content?: string;
     feeling?: IFeeling;
+    visibleFor: 'public' | 'friends' | 'only me';
+    images?: IImage[];
+    comments: number;
+    createdAt: string;
 }
 
 declare interface IReaction {
@@ -38,6 +39,7 @@ declare interface IComment {
     _id: string;
     postId: string;
     avatar: string;
+    userId: string;
     level: number;
     name: {
         firstName: string;
@@ -48,5 +50,5 @@ declare interface IComment {
     parentId: string | null | undefined;
     commentsChildren: number;
     reaction: IReaction[];
-    createAt: string;
+    createdAt: string;
 }

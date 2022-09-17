@@ -13,6 +13,7 @@ import { useStore } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { ISuccess, NewComment } from './new-comment';
 import { getComments } from '../../../redux/actions/comment-action';
+import { selectUser } from '../../../redux/reducers/user-slice';
 
 interface Props {
     id: string;
@@ -21,6 +22,7 @@ interface Props {
 export const Commnent = ({ id }: Props) => {
     const store = useStore();
     const dispatch = useAppDispatch();
+    const sUser = useAppSelector(selectUser);
 
     const refReply = useRef<HTMLDivElement>(null);
     const refReact = useRef<HTMLDivElement>(null);
@@ -91,7 +93,7 @@ export const Commnent = ({ id }: Props) => {
                     await dispatch(
                         getComments({
                             postId: comment?.postId || '',
-                            limit: 2,
+                            limit: +(process.env.LIMIT_CM as string),
                             after: after,
                             parentId: comment?._id || '',
                         }),
@@ -170,32 +172,36 @@ export const Commnent = ({ id }: Props) => {
                             <p className="font-medium">
                                 {comment.name.firstName} {comment.name.lastName}
                             </p>
-                            <div className="relative">
-                                <div ref={refButtonCommentSetting}>
-                                    <MdMoreHoriz
-                                        size={24}
-                                        onClick={handleShowCommentSetting}
-                                        className="rounded-full cursor-pointer hover:bg-white"
-                                    />
-                                </div>
-                                <div
-                                    ref={refCommentSetting}
-                                    className="absolute z-20 hidden w-48 translate-x-1/2 top-7 right-3 drop-shadow-2xl"
-                                >
-                                    <div className="self-center">
-                                        <div className="mx-auto triangle"></div>
+
+                            {/* check user */}
+                            {sUser.data?._id === comment.userId && (
+                                <div className="relative">
+                                    <div ref={refButtonCommentSetting}>
+                                        <MdMoreHoriz
+                                            size={24}
+                                            onClick={handleShowCommentSetting}
+                                            className="rounded-full cursor-pointer hover:bg-white"
+                                        />
                                     </div>
-                                    <div className="p-1 space-y-1 bg-white rounded-lg ">
-                                        <p className="p-2 rounded-md cursor-pointer hover:bg-slate-100">delete</p>
-                                        <p
-                                            onClick={handleShowCloseEditComment}
-                                            className="p-2 rounded-md cursor-pointer hover:bg-slate-100"
-                                        >
-                                            edit
-                                        </p>
+                                    <div
+                                        ref={refCommentSetting}
+                                        className="absolute z-20 hidden w-48 translate-x-1/2 top-7 right-3 drop-shadow-2xl"
+                                    >
+                                        <div className="self-center">
+                                            <div className="mx-auto triangle"></div>
+                                        </div>
+                                        <div className="p-1 space-y-1 bg-white rounded-lg ">
+                                            <p className="p-2 rounded-md cursor-pointer hover:bg-slate-100">delete</p>
+                                            <p
+                                                onClick={handleShowCloseEditComment}
+                                                className="p-2 rounded-md cursor-pointer hover:bg-slate-100"
+                                            >
+                                                edit
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                         <p>{comment.content}</p>
                         {comment.reaction.length !== 0 && (
@@ -273,7 +279,7 @@ export const Commnent = ({ id }: Props) => {
                                     Reply
                                 </button>
                             )}
-                            <TimeAgo datetime={comment.createAt} locale="vi" />
+                            <TimeAgo datetime={comment.createdAt} locale="vi" />
                         </div>
                     </div>
                     <NewComment
