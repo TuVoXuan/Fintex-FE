@@ -8,6 +8,7 @@ export function middleware(request: NextRequest) {
         pathname.startsWith('/_next') ||
         pathname.startsWith('/image') ||
         pathname.startsWith('/emoji-gif') ||
+        pathname.startsWith('/emoji') ||
         pathname.startsWith('/favicon.ico') ||
         pathname.startsWith('/logo.svg') ||
         pathname.startsWith('/logo-and-brand-name.svg')
