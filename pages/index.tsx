@@ -13,8 +13,9 @@ import { postLoadMore } from '../redux/actions/post-action';
 import { toastError } from '../util/toast';
 import LoadingPost from '../components/post/loading-post';
 import { selectUser } from '../redux/reducers/user-slice';
+import { NextPage } from 'next';
 
-export default function SignIn() {
+const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
@@ -177,4 +178,6 @@ export default function SignIn() {
             )}
         </MainLayout>
     );
-}
+};
+
+export default Home;
