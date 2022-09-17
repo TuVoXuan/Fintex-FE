@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function Post({ post, hasFrame = true, isViewedDetail = true }: Props) {
-    const { avatar, name, images, createdAt, visibleFor, content, feeling } = post;
+    const { avatar, name, images, createdAt, visibleFor, content, feeling, _id } = post;
     return (
         <div className={`p-[18px] bg-white  space-y-4 ${hasFrame && 'shadow-light rounded-[15px]'}`}>
             <HeaderPost
@@ -21,7 +21,7 @@ export default function Post({ post, hasFrame = true, isViewedDetail = true }: P
             />
             <p>{content}</p>
             {isViewedDetail && images && <ImageLayout images={images} />}
-            <FooterPost />
+            <FooterPost postId={_id} />
         </div>
     );
 }
