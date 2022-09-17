@@ -7,6 +7,7 @@ import { RiUserSmileLine } from 'react-icons/ri';
 import { useAppDispatch } from '../../../hook/redux';
 import ImageLayout from '../../../layouts/image-layout';
 import { postCreate } from '../../../redux/actions/post-action';
+import { translateVisibleFor } from '../../../util/handle-visible-for';
 import { toastError } from '../../../util/toast';
 import Avatar from '../../avatar/avatar';
 import Feeling from './feeling';
@@ -192,19 +193,19 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
     }, [watch, feeling, images]);
 
     return (
-        <div className="fixed overflow-hidden rounded-[15px] p-[18px] top-14 bg-white shadow-light  z-20 w-[calc(100%-728px)]">
+        <div className="fixed overflow-hidden rounded-[15px] p-[18px] top-14 bg-white shadow-light z-20 w-[600px]">
             <div ref={createPostRef} className="space-y-4 transition duration-300 ease-in-out">
                 <div className="flex justify-between">
                     <h3>Tạo bài đăng</h3>
                     <div>
                         <div className="flex items-center gap-4">
                             <label htmlFor="" className="text-secondary-40">
-                                Visible for
+                                Chế độ đăng
                             </label>
                             <select defaultValue="public" onChange={handleVisibleFor}>
-                                <option value="friends">Friends</option>
-                                <option value="public">Public</option>
-                                <option value="only me">Only me</option>
+                                <option value="friends">Bạn bè</option>
+                                <option value="public">Công khai</option>
+                                <option value="only me">Chỉ mình tôi</option>
                             </select>
                             <button onClick={onClose}>
                                 <AiOutlineCloseCircle size={24} />
@@ -220,7 +221,7 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
                             {name.lastName ? `${name.firstName} ${name.lastName}` : name.firstName}
                             {feeling && ` đang ${feeling.emoji} cảm thấy ${feeling.name}.`}
                         </h4>
-                        <h5 className="font-medium capitalize text-secondary-40">{visibleFor}</h5>
+                        <h5 className="font-medium capitalize text-secondary-40">{translateVisibleFor(visibleFor)}</h5>
                     </div>
                     <input
                         type="file"
@@ -255,7 +256,7 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
                     <div className="flex gap-7">
                         <button className="flex items-center gap-2">
                             <BsCameraVideo size={16} />
-                            Live video
+                            Trực tiếp
                         </button>
                         <button
                             onClick={handleUploadImages}
@@ -263,11 +264,11 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
                             className="flex items-center gap-2 disabled:cursor-not-allowed"
                         >
                             <BsImage size={16} />
-                            Photo/Video
+                            Ảnh/Video
                         </button>
                         <button className="flex items-center gap-2" onClick={handleOpenFeeling}>
                             <RiUserSmileLine size={16} />
-                            Feeling
+                            Cảm xúc
                         </button>
                     </div>
 
@@ -286,7 +287,7 @@ export default function CreatePost({ onClose, imageUrl, name }: Props) {
                             disabled={isAbleCreatePost()}
                             className=" rounded-[10px] bg-primary-80 text-white py-3 px-[30px] text-center disabled:bg-secondary-30 disabled:text-secondary-40 disabled:cursor-not-allowed"
                         >
-                            <h4>Post</h4>
+                            <h4>Đăng</h4>
                         </button>
                     )}
                 </div>

@@ -1,5 +1,9 @@
 import { MdMoreHoriz } from 'react-icons/md';
 import Avatar from '../avatar/avatar';
+import TimeAgo from 'timeago-react';
+import * as timeago from 'timeago.js';
+import vi from 'timeago.js/lib/lang/vi';
+import { translateVisibleFor } from '../../util/handle-visible-for';
 
 interface Props {
     avatarUrl: string;
@@ -10,6 +14,8 @@ interface Props {
 }
 
 export default function HeaderPost({ avatarUrl, displayName, timeAgo, visibleFor, feeling }: Props) {
+    timeago.register('vi', vi);
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -25,7 +31,7 @@ export default function HeaderPost({ avatarUrl, displayName, timeAgo, visibleFor
                         )}
                     </div>
                     <h5 className="font-medium capitalize text-secondary-40">
-                        {timeAgo}. {visibleFor}
+                        <TimeAgo datetime={timeAgo} locale="vi" />. {translateVisibleFor(visibleFor)}
                     </h5>
                 </div>
             </div>
