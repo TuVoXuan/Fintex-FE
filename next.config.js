@@ -11,6 +11,7 @@ const nextConfig = {
         FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
         FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
         FIREBASE_MEASURMENT_ID: process.env.FIREBASE_MEASURMENT_ID,
+        LIMIT: process.env.LIMIT,
     },
     swcMinify: true,
     images: {

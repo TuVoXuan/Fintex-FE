@@ -9,3 +9,12 @@ export const postCreate = createAsyncThunk('post/postCreate', async (body: FormD
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const postLoadMore = createAsyncThunk('post/postLoadMore', async (body: ILoadMorePost, thunkAPI) => {
+    try {
+        const response = await postApi.loadMorePost(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

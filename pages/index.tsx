@@ -4,11 +4,17 @@ import { useEffect, useRef, useState } from 'react';
 import Avatar from '../components/avatar/avatar';
 import { MainLayout } from '../layouts/main-layout';
 import CreatePost from '../components/post/creat-post/create-post';
-import { posts } from '../fake-data/fake-data';
 import Post from '../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useAppDispatch, useAppSelector } from '../hook/redux';
+import { selectPost } from '../redux/reducers/post-slice';
+import { postLoadMore } from '../redux/actions/post-action';
+import { toastError } from '../util/toast';
 
 export default function SignIn() {
+    const dispatch = useAppDispatch();
+    const sPost = useAppSelector(selectPost);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
     const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
 
@@ -38,6 +44,22 @@ export default function SignIn() {
             setShowScrollTop(false);
         }
     };
+
+    const fetchPost = async (limit: number, after?: string) => {
+        try {
+            await dispatch(postLoadMore({ limit, after })).unwrap();
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    useEffect(() => {
+        if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
+            const limit = +(process.env.LIMIT as string);
+
+            fetchPost(limit);
+        }
+    }, []);
 
     return (
         <MainLayout>
@@ -94,9 +116,29 @@ export default function SignIn() {
                                 onClose={handleColseModal}
                             />
                         )}
-                        {posts.map((post) => (
-                            <Post post={post} />
-                        ))}
+                        {sPost.posts.length > 0 ? (
+                            <InfiniteScroll
+                                next={() => {
+                                    if (!sPost.ended) {
+                                        const limit = +(process.env.LIMIT as string);
+                                        if (sPost.after) {
+                                            fetchPost(limit, sPost.after);
+                                        }
+                                    }
+                                }}
+                                hasMore={!sPost.ended}
+                                loader={<h3>loading more post</h3>}
+                                dataLength={sPost.posts.length}
+                                className="space-y-7"
+                            >
+                                {sPost.posts.map((post) => (
+                                    <Post key={post._id} post={post} />
+                                ))}
+                            </InfiniteScroll>
+                        ) : (
+                            <h2>loading</h2>
+                        )}
+
                         {showScrollTop && (
                             <div className="absolute w-10 h-10 bottom-3 right-3">
                                 <button

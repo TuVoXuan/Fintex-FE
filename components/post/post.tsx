@@ -9,18 +9,18 @@ interface Props {
 }
 
 export default function Post({ post, hasFrame = true, isViewedDetail = true }: Props) {
-    const { avatarUrl, displayName, images, timeAgo, visibleFor, content, feeling } = post;
+    const { avatar, name, images, createdAt, visibleFor, content, feeling } = post;
     return (
         <div className={`p-[18px] bg-white  space-y-4 ${hasFrame && 'shadow-light rounded-[15px]'}`}>
             <HeaderPost
-                avatarUrl={avatarUrl}
-                displayName={displayName}
-                timeAgo={timeAgo}
+                avatarUrl={avatar}
+                displayName={name.lastName ? `${name.firstName} ${name.lastName}` : name.firstName}
+                timeAgo={createdAt}
                 visibleFor={visibleFor}
                 feeling={feeling}
             />
             <p>{content}</p>
-            {isViewedDetail && <ImageLayout images={images} />}
+            {isViewedDetail && images && <ImageLayout images={images} />}
             <FooterPost />
         </div>
     );

@@ -1,14 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { feelingGetAll } from '../actions/feeling-action';
-import { postCreate } from '../actions/post-action';
+import { postCreate, postLoadMore } from '../actions/post-action';
 
 interface PostState {
-    data: IPost[];
+    after: string | null;
+    posts: IPost[];
+    ended: boolean;
 }
 
 const initialState: PostState = {
-    data: [],
+    after: null,
+    posts: [],
+    ended: false,
 };
 
 export const postSlice = createSlice({
@@ -17,11 +20,16 @@ export const postSlice = createSlice({
     reducers: {},
     extraReducers(builder) {
         builder.addCase(postCreate.fulfilled, (state, action: PayloadAction<IPost>) => {
-            state.data = [action.payload, ...state.data];
+            state.posts = [action.payload, ...state.posts];
+        });
+        builder.addCase(postLoadMore.fulfilled, (state, action: PayloadAction<ILoadMorePostResponse>) => {
+            state.after = action.payload.after;
+            state.ended = action.payload.ended;
+            state.posts = [...state.posts, ...action.payload.posts];
         });
     },
 });
 
-export const selectFeeling = (state: RootState) => state.feeling;
+export const selectPost = (state: RootState) => state.post;
 
 export default postSlice.reducer;

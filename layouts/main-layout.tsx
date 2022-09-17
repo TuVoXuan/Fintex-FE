@@ -140,8 +140,8 @@ export const MainLayout = ({ children }: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex w-full px-4">
-                    <div className="w-1/6 space-y-2.5 h-full">
+                <div className="grid grid-cols-6 px-4">
+                    <div className="space-y-2.5 ">
                         <div className="pl-1 pr-5">
                             <MenuItem
                                 icon={<HiOutlineViewGrid size={20} />}
@@ -189,7 +189,7 @@ export const MainLayout = ({ children }: Props) => {
                             <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
                         </div>
                     </div>
-                    <div className="w-5/6 overflow-y-auto">{children}</div>
+                    <div className="col-span-5">{children}</div>
                 </div>
             </section>
         </section>
