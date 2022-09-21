@@ -13,6 +13,7 @@ const nextConfig = {
         FIREBASE_MEASURMENT_ID: process.env.FIREBASE_MEASURMENT_ID,
         LIMIT: process.env.LIMIT,
         LIMIT_CM: process.env.LIMIT_CM,
+        DEFAULT_AVATAR: process.env.DEFAULT_AVATAR,
     },
     swcMinify: true,
     images: {

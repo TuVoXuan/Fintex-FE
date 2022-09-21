@@ -19,6 +19,7 @@ const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
+    const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
 
     const postsRef = useRef<HTMLDivElement>(null);
@@ -66,6 +67,9 @@ const Home: NextPage = () => {
             const limit = +(process.env.LIMIT as string);
 
             fetchPost(limit);
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
         }
     }, []);
 
@@ -137,16 +141,12 @@ const Home: NextPage = () => {
 
                         {isShowModal && (
                             <CreatePost
-                                imageUrl="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                                name={{ firstName: 'Võ', lastName: 'Xuân Tú' }}
+                                imageUrl={sUser.data?.avatar || (process.env.DEFAULT_AVATAR as string)}
+                                name={sUser.data?.name || { firstName: 'Võ', lastName: 'Xuân Tú' }}
                                 onClose={handleColseModal}
                             />
                         )}
-                        {sPost.posts.length > 0 ? (
-                            sPost.posts.map((post) => <Post key={post._id} post={post} />)
-                        ) : (
-                            <LoadingPost />
-                        )}
+                        {!loading ? sPost.posts.map((post) => <Post key={post._id} post={post} />) : <LoadingPost />}
 
                         <div className="absolute w-10 h-10 bottom-3 right-3">
                             <button

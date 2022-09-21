@@ -10,6 +10,8 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import APP_PATH from '../constants/app-path';
 import { useRouter } from 'next/router';
 import ImageContainer from '../components/image/image-container';
+import { useAppSelector } from '../hook/redux';
+import { selectUser } from '../redux/reducers/user-slice';
 
 interface Props {
     children?: React.ReactNode;
@@ -22,6 +24,7 @@ interface FormData {
 export const MainLayout = ({ children }: Props) => {
     const { register, watch, getValues } = useForm<FormData>();
     const ref = useRef<HTMLDivElement>(null);
+    const sUser = useAppSelector(selectUser);
     const router = useRouter();
     const path = router.asPath;
     const [loading, setLoading] = useState<boolean>(true);
@@ -130,10 +133,14 @@ export const MainLayout = ({ children }: Props) => {
                     </div>
                     <div className="col-span-2">
                         <div className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm">
-                            <p className="h-full p-3 bg-white rounded-l-md">nguyen van a</p>
+                            <p className="h-full p-3 bg-white rounded-l-md">
+                                {sUser.data?.name.lastName
+                                    ? `${sUser.data.name.firstName} ${sUser.data.name.lastName}`
+                                    : sUser.data?.name.firstName}
+                            </p>
                             <div className="w-12">
                                 <ImageContainer
-                                    url="https://res.cloudinary.com/cake-shop/image/upload/v1662601774/avatar1_hysxkd.jpg"
+                                    url={sUser.data?.avatar || (process.env.DEFAULT_AVATAR as string)}
                                     quantity="multiple"
                                 />
                             </div>
