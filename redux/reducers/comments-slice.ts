@@ -7,7 +7,11 @@ const initialState: IComment[] = [];
 export const commentsSlice = createSlice({
     name: 'comments',
     initialState,
-    reducers: {},
+    reducers: {
+        resetComments: (state) => {
+            state = [];
+        },
+    },
     extraReducers(builder) {
         builder.addCase(getComments.fulfilled, (state, action: PayloadAction<ICommentPagination>) => {
             const comments = action.payload.comments;
@@ -29,6 +33,8 @@ export const commentsSlice = createSlice({
         });
     },
 });
+
+export const { resetComments } = commentsSlice.actions;
 
 export const selectComments = (state: RootState) => state.comments;
 

@@ -5,15 +5,19 @@ interface Props {
     title: string;
     isActive: boolean;
     link: string;
+    onClick?: () => void;
 }
 
-export const MenuItem = ({ icon, title, isActive, link }: Props) => {
+export const MenuItem = ({ icon, title, isActive, link, onClick }: Props) => {
     const textColor = isActive ? 'text-white' : 'text-black';
     const bgGround = isActive ? 'bg-slate-500' : 'bg-white hover:bg-slate-300';
 
     const router = useRouter();
 
     const handleClick = () => {
+        if (onClick) {
+            onClick();
+        }
         router.push(link);
     };
 

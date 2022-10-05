@@ -48,6 +48,10 @@ export const userSlice = createSlice({
                 };
             }
         },
+        signOut: (state) => {
+            state.data = initialState.data;
+            state.isLogin = false;
+        },
     },
     extraReducers(builder) {
         builder.addCase(userSignUp.fulfilled, (state: UserState, action: PayloadAction<IAuthResponse>) => {
@@ -95,7 +99,7 @@ export const userSlice = createSlice({
     },
 });
 
-export const { addSimpleInfo, addPhone } = userSlice.actions;
+export const { addSimpleInfo, addPhone, signOut } = userSlice.actions;
 
 export const selectUser = (state: RootState) => state.user;
 

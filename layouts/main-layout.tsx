@@ -10,8 +10,13 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import APP_PATH from '../constants/app-path';
 import { useRouter } from 'next/router';
 import ImageContainer from '../components/image/image-container';
-import { useAppSelector } from '../hook/redux';
-import { selectUser } from '../redux/reducers/user-slice';
+import { useAppDispatch, useAppSelector } from '../hook/redux';
+import { selectUser, signOut } from '../redux/reducers/user-slice';
+import { resetPost } from '../redux/reducers/post-slice';
+import { resetComments } from '../redux/reducers/comments-slice';
+import { resetFeeling } from '../redux/reducers/feeling-slice';
+import { resetOtp } from '../redux/reducers/otp-slice';
+import { deleteCookie } from 'cookies-next';
 
 interface Props {
     children?: React.ReactNode;
@@ -25,11 +30,25 @@ export const MainLayout = ({ children }: Props) => {
     const { register, watch, getValues } = useForm<FormData>();
     const ref = useRef<HTMLDivElement>(null);
     const sUser = useAppSelector(selectUser);
+    const dispatch = useAppDispatch();
     const router = useRouter();
     const path = router.asPath;
     const [loading, setLoading] = useState<boolean>(true);
 
     console.log('render');
+
+    const handleSignOut = () => {
+        try {
+            dispatch(resetPost());
+            dispatch(resetComments());
+            dispatch(resetFeeling());
+            dispatch(resetOtp());
+            dispatch(signOut());
+            deleteCookie('Authorization');
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    };
 
     useEffect(() => {
         console.log('change');
@@ -194,7 +213,13 @@ export const MainLayout = ({ children }: Props) => {
                                 />
                             </div>
                             <div className="pl-1 pr-5">
-                                <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
+                                <MenuItem
+                                    icon={<FiLogOut size={20} />}
+                                    title={'Sign out'}
+                                    isActive={false}
+                                    link={'/sign-in'}
+                                    onClick={handleSignOut}
+                                />
                             </div>
                         </div>
                         <div className="w-full">{children}</div>

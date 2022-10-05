@@ -13,7 +13,11 @@ const initialState: FeelingState = {
 export const feelingSlice = createSlice({
     name: 'feeling',
     initialState,
-    reducers: {},
+    reducers: {
+        resetFeeling: (state) => {
+            state.data = [];
+        },
+    },
     extraReducers(builder) {
         builder.addCase(feelingGetAll.fulfilled, (state, action: PayloadAction<IFeeling[]>) => {
             state.data = action.payload;
@@ -23,6 +27,8 @@ export const feelingSlice = createSlice({
         });
     },
 });
+
+export const { resetFeeling } = feelingSlice.actions;
 
 export const selectFeeling = (state: RootState) => state.feeling;
 

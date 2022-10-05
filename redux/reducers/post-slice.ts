@@ -17,7 +17,13 @@ const initialState: PostState = {
 export const postSlice = createSlice({
     name: 'post',
     initialState,
-    reducers: {},
+    reducers: {
+        resetPost: (state) => {
+            state.after = initialState.after;
+            state.ended = initialState.ended;
+            state.posts = initialState.posts;
+        },
+    },
     extraReducers(builder) {
         builder.addCase(postCreate.fulfilled, (state, action: PayloadAction<IPost>) => {
             state.posts = [action.payload, ...state.posts];
@@ -29,6 +35,8 @@ export const postSlice = createSlice({
         });
     },
 });
+
+export const { resetPost } = postSlice.actions;
 
 export const selectPost = (state: RootState) => state.post;
 
