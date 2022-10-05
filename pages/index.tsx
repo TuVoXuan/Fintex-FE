@@ -75,13 +75,8 @@ const Home: NextPage = () => {
 
     return (
         <MainLayout>
-            <section className="grid grid-cols-3 ">
-                <div
-                    id="feetPosts"
-                    onScroll={handleShowScrollTop}
-                    ref={postsRef}
-                    className="h-[80vh] lg:h-[89vh] xl:h-[91vh] 2xl:h-[94vh] col-span-2 overflow-y-auto"
-                >
+            <section className="relative flex h-full">
+                <div id="feetPosts" onScroll={handleShowScrollTop} ref={postsRef} className="w-2/3 overflow-y-auto">
                     <InfiniteScroll
                         next={() => {
                             if (!sPost.ended) {
@@ -159,7 +154,7 @@ const Home: NextPage = () => {
                         </div>
                     </InfiniteScroll>
                 </div>
-                <div className="relative">
+                <div className="relative w-1/3">
                     <div className="bg-yellow-300">
                         <p>lskdfsd</p>
                         <p>lskdfsd</p>

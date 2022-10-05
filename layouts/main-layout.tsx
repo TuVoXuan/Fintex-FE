@@ -69,14 +69,14 @@ export const MainLayout = ({ children }: Props) => {
 
     return (
         <section
-            className="flex justify-center"
+            className="flex justify-center h-screen"
             onClick={() => {
                 if (ref.current) {
                     ref.current.classList.add('hidden');
                 }
             }}
         >
-            <section className="max-w-[1366px] w-full">
+            <section className="max-w-[1366px] w-full flex flex-col">
                 <div className="grid items-center grid-cols-6 p-4">
                     <div className="w-full">
                         <div className="w-2/3 h-full mx-auto cursor-pointer image-container">
@@ -147,56 +147,58 @@ export const MainLayout = ({ children }: Props) => {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-6 px-4">
-                    <div className="space-y-2.5 ">
-                        <div className="pl-1 pr-5">
-                            <MenuItem
-                                icon={<HiOutlineViewGrid size={20} />}
-                                title={'Feed'}
-                                isActive={path === APP_PATH.HOME}
-                                link={APP_PATH.HOME}
-                            />
+                <div className="relative flex-1">
+                    <div className="absolute top-0 bottom-0 left-0 right-0 flex px-4">
+                        <div className="gap-y-2.5 w-1/6">
+                            <div className="pl-1 pr-5">
+                                <MenuItem
+                                    icon={<HiOutlineViewGrid size={20} />}
+                                    title={'Feed'}
+                                    isActive={path === APP_PATH.HOME}
+                                    link={APP_PATH.HOME}
+                                />
+                            </div>
+                            <div className="pl-1 pr-5">
+                                <MenuItem
+                                    icon={<FiUsers size={20} />}
+                                    title={'My community'}
+                                    isActive={path === APP_PATH.MY_COMMUNITY}
+                                    link={APP_PATH.MY_COMMUNITY}
+                                />
+                            </div>
+                            <div className="pl-1 pr-5">
+                                <MenuItem
+                                    icon={<RiChatSmileLine size={20} />}
+                                    title={'Message'}
+                                    isActive={false}
+                                    link={'#'}
+                                />
+                            </div>
+                            <div className="pl-1 pr-5">
+                                <MenuItem
+                                    icon={<RiNotification3Line size={20} />}
+                                    title={'Notification'}
+                                    isActive={false}
+                                    link={'#'}
+                                />
+                            </div>
+                            <div className="pl-1 pr-5">
+                                <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} link={'#'} />
+                            </div>
+                            <div className="pl-1 pr-5">
+                                <MenuItem
+                                    icon={<IoSettingsOutline size={20} />}
+                                    title={'Setting'}
+                                    isActive={false}
+                                    link={'#'}
+                                />
+                            </div>
+                            <div className="pl-1 pr-5">
+                                <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
+                            </div>
                         </div>
-                        <div className="pl-1 pr-5">
-                            <MenuItem
-                                icon={<FiUsers size={20} />}
-                                title={'My community'}
-                                isActive={path === APP_PATH.MY_COMMUNITY}
-                                link={APP_PATH.MY_COMMUNITY}
-                            />
-                        </div>
-                        <div className="pl-1 pr-5">
-                            <MenuItem
-                                icon={<RiChatSmileLine size={20} />}
-                                title={'Message'}
-                                isActive={false}
-                                link={'#'}
-                            />
-                        </div>
-                        <div className="pl-1 pr-5">
-                            <MenuItem
-                                icon={<RiNotification3Line size={20} />}
-                                title={'Notification'}
-                                isActive={false}
-                                link={'#'}
-                            />
-                        </div>
-                        <div className="pl-1 pr-5">
-                            <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} link={'#'} />
-                        </div>
-                        <div className="pl-1 pr-5">
-                            <MenuItem
-                                icon={<IoSettingsOutline size={20} />}
-                                title={'Setting'}
-                                isActive={false}
-                                link={'#'}
-                            />
-                        </div>
-                        <div className="pl-1 pr-5">
-                            <MenuItem icon={<FiLogOut size={20} />} title={'Log out'} isActive={false} link={'#'} />
-                        </div>
+                        <div className="w-full">{children}</div>
                     </div>
-                    <div className="col-span-5">{children}</div>
                 </div>
             </section>
         </section>
