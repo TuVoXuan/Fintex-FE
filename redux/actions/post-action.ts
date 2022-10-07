@@ -18,3 +18,21 @@ export const postLoadMore = createAsyncThunk('post/postLoadMore', async (body: I
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const postReaction = createAsyncThunk('post/postReaction', async (body: IReactionPost, thunkAPI) => {
+    try {
+        const response = await postApi.reactionPost(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
+export const postDeleteReaction = createAsyncThunk('post/postDeleteReaction', async (postId: string, thunkAPI) => {
+    try {
+        const response = await postApi.deleteReactionPost(postId);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

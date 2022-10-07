@@ -16,6 +16,12 @@ const postApi = {
         }
         return axiosService.get<IResponseSuccess<ILoadMorePostResponse>>(`${URL}/pagination?limit=${body.limit}`);
     },
+    reactionPost: (body: IReactionPost) => {
+        return axiosService.post<IResponseSuccess<IReactionPostRes>>(`${URL}/reaction`, body);
+    },
+    deleteReactionPost: (postId: string) => {
+        return axiosService.delete<IResponseSuccess<IDeleteReactionPostRes>>(`${URL}/reaction/${postId}`);
+    },
 };
 
 export default postApi;

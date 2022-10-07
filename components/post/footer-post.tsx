@@ -3,24 +3,35 @@ import { RiHeart2Line } from 'react-icons/ri';
 import { FiMessageSquare } from 'react-icons/fi';
 import Avatar from '../avatar/avatar';
 import { Commnent } from './comment/comment';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectComments } from '../../redux/reducers/comments-slice';
 import { ISuccess, NewComment } from '..';
 import { getComments } from '../../redux/actions/comment-action';
 import { selectUser } from '../../redux/reducers/user-slice';
+import ImageContainer from '../image/image-container';
+import { AiOutlineLike } from 'react-icons/ai';
+import Wow from './reaction/wow';
+import Image from 'next/image';
+import { postDeleteReaction, postReaction } from '../../redux/actions/post-action';
+import { toastError } from '../../util/toast';
+import { selectPost } from '../../redux/reducers/post-slice';
 
 interface Props {
     postId: string;
     numsComment: number;
+    mineReaction?: string;
 }
 
-export const FooterPost = ({ postId, numsComment }: Props) => {
+export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     const sCommentsRef = useRef<IComment[]>([]);
     sCommentsRef.current = useAppSelector(selectComments);
     const sUser = useAppSelector(selectUser);
+    const post = useAppSelector(selectPost).posts.find((item) => item._id === postId);
 
     const refComment = useRef<HTMLDivElement>(null);
+    const refReact = useRef<HTMLDivElement>(null);
+
     const dispatch = useAppDispatch();
 
     const [comments, setComment] = useState<string[]>([]);
@@ -28,6 +39,9 @@ export const FooterPost = ({ postId, numsComment }: Props) => {
     const [ended, setEnded] = useState(false);
     const [isFirstTime, setIsFirstTime] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [isClose, setIsClose] = useState(false);
+    const [reactionType, setReactionType] = useState(mineReaction);
+    const [reactionList, setReactionList] = useState<ReactionTypeList | undefined>();
 
     const handdleShowComment = () => {
         if (refComment.current) {
@@ -85,27 +99,242 @@ export const FooterPost = ({ postId, numsComment }: Props) => {
         }
     };
 
+    const handleShowReaction = () => {
+        console.log('haha');
+        if (refReact.current) {
+            if (refReact.current.classList.contains('hidden')) {
+                refReact.current.classList.remove('hidden');
+                setIsClose(false);
+            }
+        }
+    };
+
+    const handleCloseReaction = () => {
+        console.log('leave out');
+        setIsClose(true);
+    };
+
+    const handleHoverReaction = () => {
+        setIsClose(false);
+    };
+
+    const handleLoadReaction = () => {
+        switch (reactionType) {
+            case 'like':
+                return <Image src={'/emoji/like.svg'} height={24} width={24} />;
+            case 'angry':
+                return <Image src={'/emoji/angry.svg'} height={24} width={24} />;
+            case 'haha':
+                return <Image src={'/emoji/haha.svg'} height={24} width={24} />;
+            case 'love':
+                return <Image src={'/emoji/love.svg'} height={24} width={24} />;
+            case 'sad':
+                return <Image src={'/emoji/sad.svg'} height={24} width={24} />;
+            case 'wow':
+                return <Image src={'/emoji/wow.svg'} height={24} width={24} />;
+            default:
+                return <AiOutlineLike size={24} />;
+        }
+    };
+
+    const handleCloseImmediatelyReaction = () => {
+        if (refReact.current && !refReact.current.classList.contains('hidden')) {
+            refReact.current.classList.add('hidden');
+        }
+    };
+
+    const handleDefaultReaction = async () => {
+        if (reactionType) {
+            try {
+                await dispatch(postDeleteReaction(postId));
+                setReactionType('');
+                handleCloseImmediatelyReaction();
+                return;
+            } catch (error) {
+                toastError((error as IResponseError).error);
+            }
+        }
+
+        try {
+            await dispatch(postReaction({ postId, type: 'like' }));
+            setReactionType('like');
+            handleCloseImmediatelyReaction();
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const handleReaction = (type: string) => async () => {
+        try {
+            await dispatch(postReaction({ postId, type }));
+            setReactionType(type);
+            handleCloseImmediatelyReaction();
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const handleReactionTypeList = () => {
+        const reactionTypeList: ReactionTypeList = {
+            angry: [],
+            haha: [],
+            like: [],
+            love: [],
+            sad: [],
+            wow: [],
+        };
+
+        if (post) {
+            for (let item of post.reactions) {
+                console.log('item: ', item);
+                switch (item.type) {
+                    case 'angry':
+                        reactionTypeList.angry.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
+                        break;
+                    case 'haha':
+                        reactionTypeList.haha.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
+                        break;
+                    case 'like':
+                        reactionTypeList.like.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
+                        break;
+                    case 'love':
+                        reactionTypeList.love.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
+                        break;
+                    case 'sad':
+                        reactionTypeList.sad.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
+                        break;
+                    case 'wow':
+                        reactionTypeList.wow.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        setReactionList(reactionTypeList);
+    };
+
+    useEffect(() => {
+        handleLoadReaction();
+        handleReactionTypeList();
+    }, [reactionType]);
+
+    useEffect(() => {
+        console.log('isClose: ', isClose);
+        const timer = setTimeout(() => {
+            if (refReact.current && !refReact.current.classList.contains('hidden')) {
+                refReact.current.classList.add('hidden');
+            }
+        }, 2000);
+
+        if (!isClose) clearTimeout(timer);
+
+        return () => clearTimeout(timer);
+    }, [isClose]);
+
     return (
         <section className="space-y-3">
-            <div className="flex justify-between">
-                <div className="flex -space-x-3">
-                    <Avatar url="/images/avatar1.jpg" size="tiny" className="border-2 border-white" />
-                    <Avatar url="/images/avatar1.jpg" size="tiny" className="border-2 border-white" />
-
-                    <div className="z-10 flex items-center justify-center w-8 h-8 overflow-hidden border-2 border-white rounded-full bg-slate-400">
-                        <p className="text-white">+2</p>
-                    </div>
+            <div className="flex">
+                <div className="flex w-1/2 -space-x-2">
+                    {reactionList && reactionList.like.length > 0 && (
+                        <div className="relative z-[6] border-2 border-white rounded-full w-7 h-7">
+                            <Image src={'/emoji/like.svg'} height={24} width={24} />
+                        </div>
+                    )}
+                    {reactionList && reactionList.love.length > 0 && (
+                        <div className="relative z-[5] border-2 border-white rounded-full w-7 h-7">
+                            <Image src={'/emoji/love.svg'} height={24} width={24} />
+                        </div>
+                    )}
+                    {reactionList && reactionList.haha.length > 0 && (
+                        <div className="relative z-[4] border-2 border-white rounded-full w-7 h-7">
+                            <Image src={'/emoji/haha.svg'} height={24} width={24} />
+                        </div>
+                    )}
+                    {reactionList && reactionList.wow.length > 0 && (
+                        <div className="relative z-[3] border-2 border-white rounded-full w-7 h-7">
+                            <Image src={'/emoji/wow.svg'} height={24} width={24} />
+                        </div>
+                    )}
+                    {reactionList && reactionList.angry.length > 0 && (
+                        <div className="relative z-[2] border-2 border-white rounded-full w-7 h-7">
+                            <Image src={'/emoji/angry.svg'} height={24} width={24} />
+                        </div>
+                    )}
+                    {reactionList && reactionList.sad.length > 0 && (
+                        <div className="relative z-[1] border-2 border-white rounded-full w-7 h-7">
+                            <Image src={'/emoji/sad.svg'} height={24} width={24} />
+                        </div>
+                    )}
                 </div>
                 {numsComment !== 0 && (
-                    <button className="hover:underline" onClick={handdleShowComment}>
-                        {numsComment} comments
-                    </button>
+                    <div className="flex justify-end w-1/2 pt-2">
+                        <button className="self-end hover:underline" onClick={handdleShowComment}>
+                            {numsComment} comments
+                        </button>
+                    </div>
                 )}
             </div>
-            <div className="border-t-[1px] border-b-[1px] flex justify-around py-2">
-                <PostAction name="Like" icon={<RiHeart2Line size={24} />} />
-                <PostAction name="Comment" icon={<FiMessageSquare size={24} />} />
+
+            <div className="relative z-10">
+                <div ref={refReact} className="hidden">
+                    <div
+                        onMouseLeave={handleCloseReaction}
+                        onMouseEnter={handleHoverReaction}
+                        className="absolute flex p-3 -translate-y-full bg-white -top-3 rounded-3xl gap-x-3 drop-shadow-md w-fit"
+                    >
+                        <button
+                            onClick={handleReaction('like')}
+                            className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                        >
+                            <ImageContainer url="/emoji-gif/like.gif" quantity="multiple" />
+                        </button>
+                        <button
+                            onClick={handleReaction('love')}
+                            className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                        >
+                            <ImageContainer url="/emoji-gif/love.gif" quantity="multiple" />
+                        </button>
+                        <button
+                            onClick={handleReaction('haha')}
+                            className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                        >
+                            <ImageContainer url="/emoji-gif/haha.gif" quantity="multiple" />
+                        </button>
+                        <button
+                            onClick={handleReaction('wow')}
+                            className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                        >
+                            <ImageContainer url="/emoji-gif/wow.gif" quantity="multiple" />
+                        </button>
+                        <button
+                            onClick={handleReaction('sad')}
+                            className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                        >
+                            <ImageContainer url="/emoji-gif/sad.gif" quantity="multiple" />
+                        </button>
+                        <button
+                            onClick={handleReaction('angry')}
+                            className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                        >
+                            <ImageContainer url="/emoji-gif/angry.gif" quantity="multiple" />
+                        </button>
+                    </div>
+                </div>
+                <div className="border-t-[1px] border-b-[1px] grid grid-cols-2 justify-items-center py-2">
+                    <PostAction
+                        name={reactionType || 'like'}
+                        icon={handleLoadReaction()}
+                        onMouseEnter={handleShowReaction}
+                        onMouseLeave={handleCloseReaction}
+                        mineReaction={reactionType}
+                        onClick={handleDefaultReaction}
+                    />
+                    <PostAction name="Comment" icon={<FiMessageSquare size={24} />} />
+                </div>
             </div>
+
             <NewComment
                 avatar={
                     sUser.data?.avatar ||

@@ -20,13 +20,17 @@ declare interface IPost {
     feeling?: IFeeling;
     visibleFor: 'public' | 'friends' | 'only me';
     images?: IImage[];
+    reactions: IReaction[];
     comments: number;
     createdAt: string;
 }
 
 declare interface IReaction {
-    title: string;
-    userId: string;
+    type: string;
+    user: {
+        _id: string;
+        name: INameUser;
+    };
 }
 
 interface IImageStore {
@@ -51,4 +55,13 @@ declare interface IComment {
     commentsChildren: number;
     reaction: IReaction[];
     createdAt: string;
+}
+
+declare interface ReactionTypeList {
+    angry: string[];
+    haha: string[];
+    like: string[];
+    love: string[];
+    sad: string[];
+    wow: string[];
 }

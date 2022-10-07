@@ -8,3 +8,24 @@ declare interface ILoadMorePostResponse {
     ended: boolean;
     posts: IPost[];
 }
+
+declare interface IReactionPost {
+    postId: string;
+    type: string;
+}
+
+declare interface IReactionPostRes {
+    postId: string;
+    reaction: {
+        type: string;
+        user: {
+            _id: string;
+            name: INameUser;
+        };
+    };
+}
+
+declare interface IDeleteReactionPostRes {
+    postId: string;
+    userId: string;
+}

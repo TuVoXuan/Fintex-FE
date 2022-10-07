@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { postCreate, postLoadMore } from '../actions/post-action';
+import { postCreate, postDeleteReaction, postLoadMore, postReaction } from '../actions/post-action';
 
 interface PostState {
     after: string | null;
@@ -32,6 +32,23 @@ export const postSlice = createSlice({
             state.after = action.payload.after;
             state.ended = action.payload.ended;
             state.posts = [...state.posts, ...action.payload.posts];
+        });
+        builder.addCase(postReaction.fulfilled, (state, action: PayloadAction<IReactionPostRes>) => {
+            const post = state.posts.find((item) => item._id === action.payload.postId);
+            if (post) {
+                const reaction = post.reactions.find((item) => item.user._id === action.payload.reaction.user._id);
+                if (reaction) {
+                    reaction.type = action.payload.reaction.type;
+                } else {
+                    post.reactions.push(action.payload.reaction);
+                }
+            }
+        });
+        builder.addCase(postDeleteReaction.fulfilled, (state, action: PayloadAction<IDeleteReactionPostRes>) => {
+            const post = state.posts.find((item) => item._id === action.payload.postId);
+            if (post) {
+                post.reactions = post.reactions.filter((item) => item.user._id !== action.payload.userId);
+            }
         });
     },
 });
