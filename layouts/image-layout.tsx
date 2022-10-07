@@ -10,7 +10,7 @@ export default function ImageLayout({ images, postId }: Props) {
     const router = useRouter();
 
     const handleSeeDetailPost = () => {
-        router.push(`/detail-post/${postId}`, undefined, { scroll: false });
+        router.push(`/detail-post/${postId}`);
     };
 
     if (images.length === 0) return <></>;

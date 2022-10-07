@@ -6,16 +6,19 @@ import Image from 'next/image';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { useRouter } from 'next/router';
-import { useAppSelector } from '../../hook/redux';
-import { selectPost } from '../../redux/reducers/post-slice';
+import { useAppDispatch, useAppSelector } from '../../hook/redux';
+import { resetPost, selectPost } from '../../redux/reducers/post-slice';
+import { useEffect } from 'react';
 
 export default function DetailPost() {
+    const dispatch = useAppDispatch();
     const router = useRouter();
     const { id } = router.query;
 
     const post = useAppSelector(selectPost).posts.find((item) => item._id === id);
 
     const handleBack = () => {
+        dispatch(resetPost());
         router.push('/');
     };
 

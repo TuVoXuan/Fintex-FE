@@ -39,12 +39,12 @@ export const MainLayout = ({ children }: Props) => {
 
     const handleSignOut = () => {
         try {
+            deleteCookie('Authorization');
+            dispatch(signOut());
             dispatch(resetPost());
             dispatch(resetComments());
             dispatch(resetFeeling());
             dispatch(resetOtp());
-            dispatch(signOut());
-            deleteCookie('Authorization');
         } catch (error) {
             console.log('error: ', error);
         }
