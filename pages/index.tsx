@@ -14,6 +14,13 @@ import { toastError } from '../util/toast';
 import LoadingPost from '../components/post/loading-post';
 import { selectUser } from '../redux/reducers/user-slice';
 import { NextPage } from 'next';
+import { IoClose } from 'react-icons/io5';
+import { Navigation } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import Image from 'next/image';
+import post from '../components/post/post';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
@@ -21,6 +28,8 @@ const Home: NextPage = () => {
     const sUser = useAppSelector(selectUser);
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
+    const [isShowPostDetail, setIsShowPostDetail] = useState<boolean>(false);
+    const [postDetail, setPostDetail] = useState<IPost | undefined>();
 
     const postsRef = useRef<HTMLDivElement>(null);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
@@ -70,6 +79,10 @@ const Home: NextPage = () => {
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
+        }
+
+        if (sPost.posts.length > 0) {
+            setLoading(false);
         }
     }, []);
 

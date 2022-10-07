@@ -1,23 +1,39 @@
+import { useRouter } from 'next/router';
 import ImageContainer from '../components/image/image-container';
 
 interface Props {
     images: IImage[];
+    postId?: string;
 }
 
-export default function ImageLayout({ images }: Props) {
+export default function ImageLayout({ images, postId }: Props) {
+    const router = useRouter();
+
+    const handleSeeDetailPost = () => {
+        router.push(`/detail-post/${postId}`, undefined, { scroll: false });
+    };
+
     if (images.length === 0) return <></>;
 
     const imagesLength = images.length;
 
     if (images[0].orientation === 'horizontal') {
         if (imagesLength === 1) {
-            return <ImageContainer quantity="multiple" className="aspect-video" url={images[0].url} />;
+            return (
+                <ImageContainer
+                    onClick={handleSeeDetailPost}
+                    quantity="multiple"
+                    className="aspect-video"
+                    url={images[0].url}
+                />
+            );
         } else if (imagesLength === 2) {
             if (images[1].orientation === 'horizontal') {
                 return (
                     <div className="space-y-2">
                         {images.map((image) => (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-video"
@@ -31,6 +47,7 @@ export default function ImageLayout({ images }: Props) {
                     <div className="grid grid-cols-2 gap-2">
                         {images.map((image) => (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-square"
@@ -51,11 +68,17 @@ export default function ImageLayout({ images }: Props) {
             };
             return (
                 <div className="space-y-2">
-                    <ImageContainer quantity="multiple" className="aspect-video" url={images[0].url} />
+                    <ImageContainer
+                        onClick={handleSeeDetailPost}
+                        quantity="multiple"
+                        className="aspect-video"
+                        url={images[0].url}
+                    />
 
                     <div className={`grid ${handleColumn()} gap-2`}>
                         {images.slice(1).map((image) => (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-square"
@@ -68,13 +91,21 @@ export default function ImageLayout({ images }: Props) {
         }
     } else {
         if (imagesLength === 1) {
-            return <ImageContainer quantity="multiple" className="aspect-9/16" url={images[0].url} />;
+            return (
+                <ImageContainer
+                    onClick={handleSeeDetailPost}
+                    quantity="multiple"
+                    className="aspect-9/16"
+                    url={images[0].url}
+                />
+            );
         } else if (imagesLength === 2) {
             if (images[1].orientation === 'vertical') {
                 return (
                     <div className="grid grid-cols-2 space-x-2">
                         {images.map((image) => (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-9/16"
@@ -88,6 +119,7 @@ export default function ImageLayout({ images }: Props) {
                     <div className="grid grid-cols-2 gap-2">
                         {images.map((image) => (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-square"
@@ -100,10 +132,11 @@ export default function ImageLayout({ images }: Props) {
         } else if (imagesLength === 3 || imagesLength === 4) {
             return (
                 <div className="grid grid-cols-2 gap-2">
-                    <ImageContainer url={images[0].url} quantity="multiple" />
+                    <ImageContainer onClick={handleSeeDetailPost} url={images[0].url} quantity="multiple" />
                     <div className="space-y-2">
                         {images.slice(1).map((image) => (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 url={image.url}
                                 quantity="multiple"
@@ -123,6 +156,7 @@ export default function ImageLayout({ images }: Props) {
                     {images.slice(0, 2).map((image) => {
                         return (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-square"
@@ -138,6 +172,7 @@ export default function ImageLayout({ images }: Props) {
                             return (
                                 <div className="relative">
                                     <ImageContainer
+                                        onClick={handleSeeDetailPost}
                                         key={image.url + Date.now().toString()}
                                         moreImage={imagesLength - 5}
                                         quantity="multiple"
@@ -149,6 +184,7 @@ export default function ImageLayout({ images }: Props) {
                         }
                         return (
                             <ImageContainer
+                                onClick={handleSeeDetailPost}
                                 key={image.url + Date.now().toString()}
                                 quantity="multiple"
                                 className="aspect-square"

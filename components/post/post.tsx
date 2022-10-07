@@ -25,7 +25,7 @@ export default function Post({ post, hasFrame = true, isViewedDetail = true }: P
                 feeling={feeling}
             />
             <p>{content}</p>
-            {isViewedDetail && images && <ImageLayout images={images} />}
+            {isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
             <FooterPost postId={_id} numsComment={comments} mineReaction={mineReaction?.type} />
         </div>
     );

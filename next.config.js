@@ -19,6 +19,9 @@ const nextConfig = {
     images: {
         domains: ['res.cloudinary.com', 'i.imgur.com'],
     },
+    experimental: {
+        scrollRestoration: true,
+    },
 };
 
 module.exports = nextConfig;

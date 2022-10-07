@@ -9,15 +9,25 @@ interface Props {
     background?: string;
     isBorder?: boolean;
     isCenter?: boolean;
+    onClick?: () => void;
 }
 
-export default function ImageContainer({ quantity, url, className, moreImage, background, isBorder = true }: Props) {
+export default function ImageContainer({
+    onClick,
+    quantity,
+    url,
+    className,
+    moreImage,
+    background,
+    isBorder = true,
+}: Props) {
     const [ratio, setRatio] = useState(1);
 
     if (quantity === 'single') {
         return (
             <div
-                className={`overflow-hidden ${isBorder && 'rounded-[15px]'} ${
+                onClick={onClick}
+                className={`cursor-pointer overflow-hidden ${isBorder && 'rounded-[15px]'} ${
                     background ? background : `bg-slate-200`
                 } ${className}`}
             >
@@ -40,7 +50,10 @@ export default function ImageContainer({ quantity, url, className, moreImage, ba
         );
     }
     return (
-        <div className={`w-full overflow-hidden image-container rounded-lg ${className}`}>
+        <div
+            onClick={onClick}
+            className={`cursor-pointer w-full overflow-hidden image-container rounded-lg ${className}`}
+        >
             <Image
                 src={url}
                 alt="image"
