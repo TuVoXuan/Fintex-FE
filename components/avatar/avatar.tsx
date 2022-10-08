@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 interface Props {
-    size: 'nano' | 'tiny' | 'small' | 'medium';
+    size: 'nano' | 'tiny' | 'small' | 'medium' | 'large';
     url: string;
     className?: string;
 }
@@ -17,6 +17,8 @@ export default function Avatar({ size, url, className }: Props) {
                 return 'w-10 h-10';
             case 'medium':
                 return 'w-12 h-12';
+            case 'large':
+                return 'w-36 h-36';
             default:
                 return 'w-12 h-12';
         }

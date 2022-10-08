@@ -76,6 +76,9 @@
     .shadow-light {
         box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     }
+    .shadow-right {
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 16px;
+    }
     .ripple-bg {
         background-position: center;
         transition: background 0.8s;

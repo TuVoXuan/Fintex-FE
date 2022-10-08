@@ -151,7 +151,10 @@ export const MainLayout = ({ children }: Props) => {
                         </div>
                     </div>
                     <div className="col-span-2">
-                        <div className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm">
+                        <div
+                            onClick={() => router.push(`/profile/${sUser.data?._id}`)}
+                            className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm"
+                        >
                             <p className="h-full p-3 bg-white rounded-l-md">
                                 {sUser.data?.name.lastName
                                     ? `${sUser.data.name.firstName} ${sUser.data.name.lastName}`
@@ -177,14 +180,14 @@ export const MainLayout = ({ children }: Props) => {
                                     link={APP_PATH.HOME}
                                 />
                             </div>
-                            <div className="pl-1 pr-5">
+                            {/* <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<FiUsers size={20} />}
                                     title={'My community'}
                                     isActive={path === APP_PATH.MY_COMMUNITY}
                                     link={APP_PATH.MY_COMMUNITY}
                                 />
-                            </div>
+                            </div> */}
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<RiChatSmileLine size={20} />}
@@ -201,9 +204,14 @@ export const MainLayout = ({ children }: Props) => {
                                     link={'#'}
                                 />
                             </div>
-                            <div className="pl-1 pr-5">
-                                <MenuItem icon={<FiUser size={20} />} title={'Profile'} isActive={false} link={'#'} />
-                            </div>
+                            {/* <div className="pl-1 pr-5">
+                                <MenuItem
+                                    icon={<FiUser size={20} />}
+                                    title={'Profile'}
+                                    isActive={path === APP_PATH.PROFILE}
+                                    link={APP_PATH.PROFILE}
+                                />
+                            </div> */}
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<IoSettingsOutline size={20} />}

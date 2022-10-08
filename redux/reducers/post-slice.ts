@@ -1,17 +1,41 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { postCreate, postDeleteReaction, postLoadMore, postReaction } from '../actions/post-action';
+import { postCreate, postDeleteReaction, postLoadMore, postMineLoadMore, postReaction } from '../actions/post-action';
 
 interface PostState {
-    after: string | null;
-    posts: IPost[];
-    ended: boolean;
+    all: {
+        after: string | null;
+        posts: IPost[];
+        ended: boolean;
+    };
+    mine: {
+        after: string | null;
+        posts: IPost[];
+        ended: boolean;
+    };
+    person: {
+        after: string | null;
+        posts: IPost[];
+        ended: boolean;
+    };
 }
 
 const initialState: PostState = {
-    after: null,
-    posts: [],
-    ended: false,
+    all: {
+        after: null,
+        posts: [],
+        ended: false,
+    },
+    mine: {
+        after: null,
+        posts: [],
+        ended: false,
+    },
+    person: {
+        after: null,
+        posts: [],
+        ended: false,
+    },
 };
 
 export const postSlice = createSlice({
@@ -19,22 +43,27 @@ export const postSlice = createSlice({
     initialState,
     reducers: {
         resetPost: (state) => {
-            state.after = initialState.after;
-            state.ended = initialState.ended;
-            state.posts = initialState.posts;
+            state.all.after = initialState.all.after;
+            state.all.ended = initialState.all.ended;
+            state.all.posts = initialState.all.posts;
         },
     },
     extraReducers(builder) {
         builder.addCase(postCreate.fulfilled, (state, action: PayloadAction<IPost>) => {
-            state.posts = [action.payload, ...state.posts];
+            state.all.posts = [action.payload, ...state.all.posts];
         });
         builder.addCase(postLoadMore.fulfilled, (state, action: PayloadAction<ILoadMorePostResponse>) => {
-            state.after = action.payload.after;
-            state.ended = action.payload.ended;
-            state.posts = [...state.posts, ...action.payload.posts];
+            state.all.after = action.payload.after;
+            state.all.ended = action.payload.ended;
+            state.all.posts = [...state.all.posts, ...action.payload.posts];
+        });
+        builder.addCase(postMineLoadMore.fulfilled, (state, action: PayloadAction<ILoadMorePostResponse>) => {
+            state.mine.after = action.payload.after;
+            state.mine.ended = action.payload.ended;
+            state.mine.posts = [...state.mine.posts, ...action.payload.posts];
         });
         builder.addCase(postReaction.fulfilled, (state, action: PayloadAction<IReactionPostRes>) => {
-            const post = state.posts.find((item) => item._id === action.payload.postId);
+            const post = state.all.posts.find((item) => item._id === action.payload.postId);
             if (post) {
                 const reaction = post.reactions.find((item) => item.user._id === action.payload.reaction.user._id);
                 if (reaction) {
@@ -45,7 +74,7 @@ export const postSlice = createSlice({
             }
         });
         builder.addCase(postDeleteReaction.fulfilled, (state, action: PayloadAction<IDeleteReactionPostRes>) => {
-            const post = state.posts.find((item) => item._id === action.payload.postId);
+            const post = state.all.posts.find((item) => item._id === action.payload.postId);
             if (post) {
                 post.reactions = post.reactions.filter((item) => item.user._id !== action.payload.userId);
             }

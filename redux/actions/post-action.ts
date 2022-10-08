@@ -36,3 +36,12 @@ export const postDeleteReaction = createAsyncThunk('post/postDeleteReaction', as
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const postMineLoadMore = createAsyncThunk('post/postMineLoadMore', async (body: ILoadMorePost, thunkAPI) => {
+    try {
+        const response = await postApi.loadMoreMinePost(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
