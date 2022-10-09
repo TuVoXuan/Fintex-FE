@@ -18,7 +18,7 @@ import { selectUser } from '../../redux/reducers/user-slice';
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
-    const sPost = useAppSelector(selectPost).mine;
+    const sPost = useAppSelector(selectPost);
     const dispatch = useAppDispatch();
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
@@ -31,6 +31,18 @@ export default function Profile() {
                 top: 0,
                 behavior: 'smooth',
             });
+        }
+    };
+
+    const handleShowScrollTop = (e: any) => {
+        if (e.target.scrollTop > 400) {
+            if (scrollTopRef.current) {
+                scrollTopRef.current.hidden = false;
+            }
+        } else {
+            if (scrollTopRef.current) {
+                scrollTopRef.current.hidden = true;
+            }
         }
     };
 
@@ -59,7 +71,12 @@ export default function Profile() {
 
     return (
         <MainLayout>
-            <section className="relative flex flex-col h-full overflow-y-auto" id="profile" ref={postsRef}>
+            <section
+                className="relative flex flex-col h-full overflow-y-auto"
+                id="profile"
+                ref={postsRef}
+                onScroll={handleShowScrollTop}
+            >
                 <section className="rounded-xl shadow-right">
                     <div className="relative">
                         <div className="w-full overflow-hidden cursor-pointer rounded-t-xl image-container h-80">
@@ -97,7 +114,7 @@ export default function Profile() {
                     </div>
                 </section>
 
-                <section className="py-[30px] px-20 rounded-[15px] bg-secondary-10 mt-7 flex gap-x-16">
+                <section className="py-[30px] px-20 rounded-[15px] bg-secondary-10 mt-7 flex">
                     <div className="sticky w-1/3 px-5 py-6 space-y-4 bg-white rounded-2xl h-fit top-3">
                         <h3>INTRO</h3>
                         <div className="flex items-center gap-3 ">
@@ -128,24 +145,23 @@ export default function Profile() {
                             loader={<LoadingPost />}
                             dataLength={sPost.posts.length}
                             scrollableTarget="profile"
-                            className="relative rounded-[15px] bg-secondary-10 space-y-5"
+                            className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10"
                         >
                             {!loading ? (
                                 sPost.posts.map((post) => <Post key={post._id} post={post} />)
                             ) : (
                                 <LoadingPost />
                             )}
-
-                            <div className="absolute w-10 h-10 bottom-3 right-3">
-                                <button
-                                    ref={scrollTopRef}
-                                    onClick={handleScrollToTop}
-                                    className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
-                                >
-                                    <IoIosArrowUp size={20} />
-                                </button>
-                            </div>
                         </InfiniteScroll>
+                        <div className="absolute w-10 h-10 bottom-3 right-3">
+                            <button
+                                ref={scrollTopRef}
+                                onClick={handleScrollToTop}
+                                className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
+                            >
+                                <IoIosArrowUp size={20} />
+                            </button>
+                        </div>
                     </div>
                 </section>
             </section>

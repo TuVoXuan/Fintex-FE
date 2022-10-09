@@ -50,6 +50,11 @@ export const MainLayout = ({ children }: Props) => {
         }
     };
 
+    const handleGoProfile = () => {
+        dispatch(resetPost());
+        router.push(`/profile/${sUser.data?._id}`);
+    };
+
     useEffect(() => {
         console.log('change');
         let delayDebounceFn: any;
@@ -152,7 +157,7 @@ export const MainLayout = ({ children }: Props) => {
                     </div>
                     <div className="col-span-2">
                         <div
-                            onClick={() => router.push(`/profile/${sUser.data?._id}`)}
+                            onClick={handleGoProfile}
                             className="flex items-center justify-end h-full rounded-md cursor-pointer overflow-hidde drop-shadow-sm"
                         >
                             <p className="h-full p-3 bg-white rounded-l-md">
@@ -178,6 +183,7 @@ export const MainLayout = ({ children }: Props) => {
                                     title={'Feed'}
                                     isActive={path === APP_PATH.HOME}
                                     link={APP_PATH.HOME}
+                                    onClick={() => dispatch(resetPost())}
                                 />
                             </div>
                             {/* <div className="pl-1 pr-5">
