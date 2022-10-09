@@ -3,10 +3,40 @@ import type { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import { store } from '../app/store';
 import { Toaster } from 'react-hot-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getCookie } from 'cookies-next';
 import { userGetCurrentUser } from '../redux/actions/user-action';
 import { toastError } from '../util/toast';
+import { useRouter } from 'next/router';
+import { CgSpinnerTwo } from 'react-icons/cg';
+
+function Loading() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const handleStart = (url: string) => url !== router.asPath && setLoading(true);
+        const handleComplete = (url: string) => url === router.asPath && setLoading(false);
+
+        router.events.on('routeChangeStart', handleStart);
+        router.events.on('routeChangeComplete', handleComplete);
+        router.events.on('routeChangeError', handleComplete);
+
+        return () => {
+            router.events.off('routeChangeStart', handleStart);
+            router.events.off('routeChangeComplete', handleComplete);
+            router.events.off('routeChangeError', handleComplete);
+        };
+    });
+
+    return loading ? (
+        <section className="z-[999] flex items-center justify-center w-full h-screen">
+            <CgSpinnerTwo className="animate-spin" size={50} />
+        </section>
+    ) : (
+        <></>
+    );
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
     useEffect(() => {
@@ -26,14 +56,17 @@ function MyApp({ Component, pageProps }: AppProps) {
     }, []);
 
     return (
-        <Provider store={store}>
-            <Component {...pageProps} />
-            <Toaster
-                toastOptions={{
-                    className: 'z-[500]',
-                }}
-            />
-        </Provider>
+        <>
+            <Loading />
+            <Provider store={store}>
+                <Component {...pageProps} />
+                <Toaster
+                    toastOptions={{
+                        className: 'z-[500]',
+                    }}
+                />
+            </Provider>
+        </>
     );
 }
 

@@ -27,7 +27,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     const sCommentsRef = useRef<IComment[]>([]);
     sCommentsRef.current = useAppSelector(selectComments);
     const sUser = useAppSelector(selectUser);
-    const post = useAppSelector(selectPost).all.posts.find((item) => item._id === postId);
+    const post = useAppSelector(selectPost).posts.find((item) => item._id === postId);
 
     const refComment = useRef<HTMLDivElement>(null);
     const refReact = useRef<HTMLDivElement>(null);

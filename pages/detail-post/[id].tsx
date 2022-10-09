@@ -19,7 +19,7 @@ export default function DetailPost() {
 
     const handleBack = () => {
         dispatch(resetPost());
-        router.push('/');
+        router.back();
     };
 
     return (

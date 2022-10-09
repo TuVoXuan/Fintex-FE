@@ -19,7 +19,7 @@ import 'swiper/css/navigation';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
-    const sPost = useAppSelector(selectPost).all;
+    const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
