@@ -121,17 +121,17 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     const handleLoadReaction = () => {
         switch (reactionType) {
             case 'like':
-                return <Image src={'/emoji/like.svg'} height={24} width={24} />;
+                return <Image src={'/emoji/like.svg'} height={24} width={24} alt="icon" />;
             case 'angry':
-                return <Image src={'/emoji/angry.svg'} height={24} width={24} />;
+                return <Image src={'/emoji/angry.svg'} height={24} width={24} alt="icon" />;
             case 'haha':
-                return <Image src={'/emoji/haha.svg'} height={24} width={24} />;
+                return <Image src={'/emoji/haha.svg'} height={24} width={24} alt="icon" />;
             case 'love':
-                return <Image src={'/emoji/love.svg'} height={24} width={24} />;
+                return <Image src={'/emoji/love.svg'} height={24} width={24} alt="icon" />;
             case 'sad':
-                return <Image src={'/emoji/sad.svg'} height={24} width={24} />;
+                return <Image src={'/emoji/sad.svg'} height={24} width={24} alt="icon" />;
             case 'wow':
-                return <Image src={'/emoji/wow.svg'} height={24} width={24} />;
+                return <Image src={'/emoji/wow.svg'} height={24} width={24} alt="icon" />;
             default:
                 return <AiOutlineLike size={24} />;
         }
@@ -239,32 +239,32 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
                 <div className="flex w-1/2 -space-x-2">
                     {reactionList && reactionList.like.length > 0 && (
                         <div className="relative z-[6] border-2 border-white rounded-full w-7 h-7">
-                            <Image src={'/emoji/like.svg'} height={24} width={24} />
+                            <Image src={'/emoji/like.svg'} height={24} width={24} alt="icon" />
                         </div>
                     )}
                     {reactionList && reactionList.love.length > 0 && (
                         <div className="relative z-[5] border-2 border-white rounded-full w-7 h-7">
-                            <Image src={'/emoji/love.svg'} height={24} width={24} />
+                            <Image src={'/emoji/love.svg'} height={24} width={24} alt="icon" />
                         </div>
                     )}
                     {reactionList && reactionList.haha.length > 0 && (
                         <div className="relative z-[4] border-2 border-white rounded-full w-7 h-7">
-                            <Image src={'/emoji/haha.svg'} height={24} width={24} />
+                            <Image src={'/emoji/haha.svg'} height={24} width={24} alt="icon" />
                         </div>
                     )}
                     {reactionList && reactionList.wow.length > 0 && (
                         <div className="relative z-[3] border-2 border-white rounded-full w-7 h-7">
-                            <Image src={'/emoji/wow.svg'} height={24} width={24} />
+                            <Image src={'/emoji/wow.svg'} height={24} width={24} alt="icon" />
                         </div>
                     )}
                     {reactionList && reactionList.angry.length > 0 && (
                         <div className="relative z-[2] border-2 border-white rounded-full w-7 h-7">
-                            <Image src={'/emoji/angry.svg'} height={24} width={24} />
+                            <Image src={'/emoji/angry.svg'} height={24} width={24} alt="icon" />
                         </div>
                     )}
                     {reactionList && reactionList.sad.length > 0 && (
                         <div className="relative z-[1] border-2 border-white rounded-full w-7 h-7">
-                            <Image src={'/emoji/sad.svg'} height={24} width={24} />
+                            <Image src={'/emoji/sad.svg'} height={24} width={24} alt="icon" />
                         </div>
                     )}
                 </div>

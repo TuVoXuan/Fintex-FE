@@ -27,3 +27,12 @@ export const createComments = createAsyncThunk('comments/create', async (body: F
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const deleteComments = createAsyncThunk('comments/delete', async (body: IDeleteComment, thunkAPI) => {
+    try {
+        const response = await commentApi.deleteComment(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

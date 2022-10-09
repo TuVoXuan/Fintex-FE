@@ -33,6 +33,9 @@ const commentApi = {
             },
         });
     },
+    deleteComment: (param: IDeleteComment) => {
+        return axiosService.delete<IResponseSuccess<string[]>>(`${URL}/${param.id}/${param.postId}`);
+    },
 };
 
 export default commentApi;

@@ -12,7 +12,7 @@ import vi from 'timeago.js/lib/lang/vi';
 import { useStore } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { ISuccess, NewComment } from './new-comment';
-import { getComments } from '../../../redux/actions/comment-action';
+import { deleteComments, getComments } from '../../../redux/actions/comment-action';
 import { selectUser } from '../../../redux/reducers/user-slice';
 
 interface Props {
@@ -130,6 +130,19 @@ export const Commnent = ({ id }: Props) => {
         }
     };
 
+    const handleDelete = (id: string, postId: string) => async () => {
+        try {
+            await dispatch(
+                deleteComments({
+                    id,
+                    postId,
+                }),
+            ).unwrap();
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    };
+
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
             console.log('da vo');
@@ -191,7 +204,12 @@ export const Commnent = ({ id }: Props) => {
                                             <div className="mx-auto triangle"></div>
                                         </div>
                                         <div className="p-1 space-y-1 bg-white rounded-lg ">
-                                            <p className="p-2 rounded-md cursor-pointer hover:bg-slate-100">delete</p>
+                                            <p
+                                                onClick={handleDelete(comment._id, comment.postId)}
+                                                className="p-2 rounded-md cursor-pointer hover:bg-slate-100"
+                                            >
+                                                delete
+                                            </p>
                                             <p
                                                 onClick={handleShowCloseEditComment}
                                                 className="p-2 rounded-md cursor-pointer hover:bg-slate-100"
