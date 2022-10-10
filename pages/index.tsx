@@ -3,7 +3,6 @@ import { RiUserSmileLine } from 'react-icons/ri';
 import { useEffect, useRef, useState } from 'react';
 import Avatar from '../components/avatar/avatar';
 import { MainLayout } from '../layouts/main-layout';
-import CreatePost from '../components/post/creat-post/create-post';
 import Post from '../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -16,6 +15,7 @@ import { selectUser } from '../redux/reducers/user-slice';
 import { NextPage } from 'next';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import { FormPost } from '../components/post/form-post/form-post';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
@@ -141,10 +141,11 @@ const Home: NextPage = () => {
                         </div>
 
                         {isShowModal && (
-                            <CreatePost
+                            <FormPost
                                 imageUrl={sUser.data?.avatar || (process.env.DEFAULT_AVATAR as string)}
                                 name={sUser.data?.name || { firstName: 'Võ', lastName: 'Xuân Tú' }}
                                 onClose={handleColseModal}
+                                type="create"
                             />
                         )}
                         {!loading ? sPost.posts.map((post) => <Post key={post._id} post={post} />) : <LoadingPost />}

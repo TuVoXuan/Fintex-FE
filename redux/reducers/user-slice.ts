@@ -24,6 +24,7 @@ export const userSlice = createSlice({
             const name = handleFullName(user.name);
             state.data = {
                 _id: '',
+                coverPhoto: '',
                 ...user,
                 name: name,
                 birthday: new Date().toISOString(),
@@ -37,6 +38,7 @@ export const userSlice = createSlice({
                 state.data = {
                     _id: '',
                     avatar: '',
+                    coverPhoto: '',
                     birthday: new Date().toISOString(),
                     email: '',
                     gender: 'male',

@@ -25,6 +25,16 @@ declare interface IReactionPostRes {
     };
 }
 
+declare interface IUpdatePostRes {
+    _id: string;
+    content?: string;
+    feeling?: IFeeling;
+    visibleFor: 'public' | 'friends' | 'only me';
+    images?: IImage[];
+    reactions: IReaction[];
+    comments: number;
+}
+
 declare interface IDeleteReactionPostRes {
     postId: string;
     userId: string;

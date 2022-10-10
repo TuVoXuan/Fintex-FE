@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { postCreate, postDeleteReaction, postLoadMore, postMineLoadMore, postReaction } from '../actions/post-action';
+import {
+    postCreate,
+    postDeleteReaction,
+    postLoadMore,
+    postMineLoadMore,
+    postReaction,
+    postUpdate,
+} from '../actions/post-action';
 
 interface PostState {
     after: string | null;
@@ -53,6 +60,17 @@ export const postSlice = createSlice({
             const post = state.posts.find((item) => item._id === action.payload.postId);
             if (post) {
                 post.reactions = post.reactions.filter((item) => item.user._id !== action.payload.userId);
+            }
+        });
+        builder.addCase(postUpdate.fulfilled, (state, action: PayloadAction<IUpdatePostRes>) => {
+            const post = state.posts.find((item) => item._id === action.payload._id);
+            if (post) {
+                post.content = action.payload.content;
+                post.feeling = action.payload.feeling;
+                post.visibleFor = action.payload.visibleFor;
+                post.images = action.payload.images;
+                post.reactions = action.payload.reactions;
+                post.comments = action.payload.comments;
             }
         });
     },

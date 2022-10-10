@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import { selectUser } from '../../redux/reducers/user-slice';
+import { FormPost } from '../../components/post/form-post/form-post';
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
@@ -22,8 +23,11 @@ export default function Profile() {
     const dispatch = useAppDispatch();
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
+    const formPostRef = useRef<HTMLDivElement>(null);
 
     const [loading, setLoading] = useState<boolean>(true);
+    const [isShowModal, setIsShowModal] = useState<boolean>(false);
+    const [postEdit, setPostEdit] = useState<IPost | undefined>();
 
     const handleScrollToTop = () => {
         if (postsRef.current) {
@@ -54,6 +58,25 @@ export default function Profile() {
         }
     };
 
+    const handleEditPost = (postId: string) => () => {
+        setPostEdit(sPost.posts.find((item) => item._id === postId));
+        setIsShowModal(true);
+    };
+
+    const handleColseModal = () => {
+        setIsShowModal(false);
+    };
+
+    const handleClickOutSideFormPost = (event: any) => {
+        const { target } = event;
+
+        if (formPostRef.current && target && 'nodeType' in target) {
+            if (!formPostRef.current.contains(target)) {
+                setIsShowModal(false);
+            }
+        }
+    };
+
     useEffect(() => {
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
@@ -81,7 +104,7 @@ export default function Profile() {
                     <div className="relative">
                         <div className="w-full overflow-hidden cursor-pointer rounded-t-xl image-container h-80">
                             <Image
-                                src="/images/cover-photo.jpg"
+                                src={sUser.data?.coverPhoto || ''}
                                 alt="image"
                                 width={100}
                                 height={100}
@@ -148,7 +171,7 @@ export default function Profile() {
                             className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10"
                         >
                             {!loading ? (
-                                sPost.posts.map((post) => <Post key={post._id} post={post} />)
+                                sPost.posts.map((post) => <Post key={post._id} post={post} editPost={handleEditPost} />)
                             ) : (
                                 <LoadingPost />
                             )}
@@ -165,6 +188,21 @@ export default function Profile() {
                     </div>
                 </section>
             </section>
+            {isShowModal && (
+                <div
+                    onClick={handleClickOutSideFormPost}
+                    className="fixed top-0 bottom-0 left-0 right-0 z-10 flex justify-center bg-secondary-80/60"
+                >
+                    <FormPost
+                        ref={formPostRef}
+                        imageUrl={sUser.data?.avatar || (process.env.DEFAULT_AVATAR as string)}
+                        name={sUser.data?.name || { firstName: 'Võ', lastName: 'Xuân Tú' }}
+                        onClose={handleColseModal}
+                        type="update"
+                        post={postEdit}
+                    />
+                </div>
+            )}
         </MainLayout>
     );
 }

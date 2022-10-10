@@ -8,11 +8,12 @@ interface Props {
     post: IPost;
     hasFrame?: boolean;
     isViewedDetail?: boolean;
+    editPost?: (postId: string) => () => void;
 }
 
-export default function Post({ post, hasFrame = true, isViewedDetail = true }: Props) {
+export default function Post({ post, hasFrame = true, isViewedDetail = true, editPost }: Props) {
     const sUser = useAppSelector(selectUser);
-    const { avatar, name, images, createdAt, visibleFor, content, feeling, _id, comments, reactions } = post;
+    const { avatar, name, images, createdAt, visibleFor, content, feeling, _id, comments, reactions, userId } = post;
     const mineReaction = reactions.find((item) => item.user._id === sUser.data?._id);
 
     return (
@@ -23,6 +24,9 @@ export default function Post({ post, hasFrame = true, isViewedDetail = true }: P
                 timeAgo={createdAt}
                 visibleFor={visibleFor}
                 feeling={feeling}
+                postId={_id}
+                editPost={editPost}
+                isMine={sUser.data?._id === userId}
             />
             <p>{content}</p>
             {isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
