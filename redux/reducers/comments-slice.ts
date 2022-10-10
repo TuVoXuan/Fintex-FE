@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { createComments, deleteComments, editComments, getComments, reactionComment } from '../actions/comment-action';
+import {
+    createComments,
+    deleteAllCommentsPost,
+    deleteComments,
+    editComments,
+    getComments,
+    reactionComment,
+} from '../actions/comment-action';
 
 const initialState: IComment[] = [];
 
@@ -51,6 +58,13 @@ export const commentsSlice = createSlice({
                     user: data.user,
                 });
             }
+        });
+        builder.addCase(deleteAllCommentsPost.fulfilled, (state, action: PayloadAction<string[]>) => {
+            const data = action.payload;
+            data.forEach((item) => {
+                const index = state.findIndex((comment) => comment._id === item);
+                state.splice(index, 1);
+            });
         });
     },
 });

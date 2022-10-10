@@ -45,3 +45,15 @@ export const reactionComment = createAsyncThunk('comments/reaction', async (body
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const deleteAllCommentsPost = createAsyncThunk(
+    'comments/deleteAllsCommentPost',
+    async (postId: string, thunkAPI) => {
+        try {
+            const response = await commentApi.deleteAllCommentsPost(postId);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);

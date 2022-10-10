@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
     postCreate,
+    postDelete,
     postDeleteReaction,
     postLoadMore,
     postMineLoadMore,
@@ -72,6 +73,9 @@ export const postSlice = createSlice({
                 post.reactions = action.payload.reactions;
                 post.comments = action.payload.comments;
             }
+        });
+        builder.addCase(postDelete.fulfilled, (state, action: PayloadAction<string>) => {
+            state.posts = state.posts.filter((item) => item._id !== action.payload);
         });
     },
 });

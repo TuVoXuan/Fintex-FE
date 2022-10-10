@@ -39,6 +39,9 @@ const commentApi = {
     reactionComment: (body: IReactionComment) => {
         return axiosService.post<IResponseSuccess<IReactionCommentResponse>>(`${URL}/reaction`, body);
     },
+    deleteAllCommentsPost: (postId: string) => {
+        return axiosService.delete<IResponseSuccess<string[]>>(`${URL}/all-comments-of-post/${postId}`);
+    },
 };
 
 export default commentApi;

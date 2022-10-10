@@ -42,7 +42,7 @@ export default function DetailPost() {
                 </Swiper>
             </div>
             <div className="h-screen overflow-y-auto">
-                {post && <Post post={post} isViewedDetail={false} hasFrame={false} />}
+                {post && <Post loadInPage="detail" post={post} isViewedDetail={false} hasFrame={false} />}
             </div>
         </section>
     );

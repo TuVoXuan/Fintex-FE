@@ -148,7 +148,11 @@ const Home: NextPage = () => {
                                 type="create"
                             />
                         )}
-                        {!loading ? sPost.posts.map((post) => <Post key={post._id} post={post} />) : <LoadingPost />}
+                        {!loading ? (
+                            sPost.posts.map((post) => <Post key={post._id} loadInPage="home" post={post} />)
+                        ) : (
+                            <LoadingPost />
+                        )}
 
                         <div className="absolute w-10 h-10 bottom-3 right-3">
                             <button

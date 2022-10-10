@@ -33,6 +33,9 @@ const postApi = {
     updatePost: (postId: string, body: FormData) => {
         return axiosService.put<IResponseSuccess<IUpdatePostRes>>(`${URL}/${postId}`, body);
     },
+    deletePost: (postId: string) => {
+        return axiosService.delete<IResponseSuccess<string>>(`${URL}/${postId}`);
+    },
 };
 
 export default postApi;

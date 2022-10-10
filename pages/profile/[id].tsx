@@ -9,13 +9,15 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectPost } from '../../redux/reducers/post-slice';
 import LoadingPost from '../../components/post/loading-post';
-import { postMineLoadMore } from '../../redux/actions/post-action';
-import { toastError } from '../../util/toast';
+import { postDelete, postMineLoadMore } from '../../redux/actions/post-action';
+import { toastError, toastSuccess } from '../../util/toast';
 import { useEffect, useRef, useState } from 'react';
 import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { FormPost } from '../../components/post/form-post/form-post';
+import DeleteModal from '../../components/modal/delete-modal';
+import { deleteAllCommentsPost } from '../../redux/actions/comment-action';
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
@@ -27,6 +29,10 @@ export default function Profile() {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
+    const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+    const [deletePostId, setDeletePostId] = useState<string>('');
+    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+
     const [postEdit, setPostEdit] = useState<IPost | undefined>();
 
     const handleScrollToTop = () => {
@@ -61,6 +67,28 @@ export default function Profile() {
     const handleEditPost = (postId: string) => () => {
         setPostEdit(sPost.posts.find((item) => item._id === postId));
         setIsShowModal(true);
+    };
+
+    const handleShowDeleteModal = (postId: string) => () => {
+        setDeletePostId(postId);
+        setIsShowDeleteModal(true);
+    };
+
+    const handleDeletePost = async () => {
+        try {
+            setLoadingDelete(true);
+            //delete comment
+            await dispatch(deleteAllCommentsPost(deletePostId)).unwrap();
+            //delete post
+            await dispatch(postDelete(deletePostId)).unwrap();
+
+            setIsShowDeleteModal(false);
+            setLoadingDelete(false);
+
+            toastSuccess('Xóa bài post thành công!');
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
     };
 
     const handleColseModal = () => {
@@ -171,7 +199,15 @@ export default function Profile() {
                             className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10"
                         >
                             {!loading ? (
-                                sPost.posts.map((post) => <Post key={post._id} post={post} editPost={handleEditPost} />)
+                                sPost.posts.map((post) => (
+                                    <Post
+                                        key={post._id}
+                                        post={post}
+                                        loadInPage="profile"
+                                        editPost={handleEditPost}
+                                        deletePost={handleShowDeleteModal}
+                                    />
+                                ))
                             ) : (
                                 <LoadingPost />
                             )}
@@ -202,6 +238,14 @@ export default function Profile() {
                         post={postEdit}
                     />
                 </div>
+            )}
+            {isShowsDeleteModal && (
+                <DeleteModal
+                    objectName="bài post"
+                    loading={loadingDelete}
+                    onDelete={handleDeletePost}
+                    onClose={() => setIsShowDeleteModal(false)}
+                />
             )}
         </MainLayout>
     );

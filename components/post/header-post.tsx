@@ -11,10 +11,11 @@ interface Props {
     displayName: string;
     timeAgo: string | number;
     visibleFor: 'public' | 'only me' | 'friends';
-    isMine: boolean;
+    loadInPage: 'home' | 'profile' | 'detail';
     postId: string;
     feeling?: IFeeling;
     editPost?: (postId: string) => () => void;
+    deletePost?: (postId: string) => () => void;
 }
 
 export default function HeaderPost({
@@ -25,7 +26,8 @@ export default function HeaderPost({
     postId,
     feeling,
     editPost,
-    isMine,
+    deletePost,
+    loadInPage,
 }: Props) {
     timeago.register('vi', vi);
     const refPostSetting = useRef<HTMLDivElement>(null);
@@ -44,6 +46,13 @@ export default function HeaderPost({
         handleShowCommentSetting();
         if (editPost) {
             editPost(postId)();
+        }
+    };
+
+    const handleDeletePost = () => {
+        handleShowCommentSetting();
+        if (deletePost) {
+            deletePost(postId)();
         }
     };
 
@@ -67,7 +76,7 @@ export default function HeaderPost({
                 </div>
             </div>
 
-            {isMine && (
+            {loadInPage === 'profile' && (
                 <div className="relative">
                     <button
                         onClick={handleShowCommentSetting}
@@ -83,7 +92,9 @@ export default function HeaderPost({
                             <div className="mx-auto triangle"></div>
                         </div>
                         <div className="p-1 space-y-1 bg-white rounded-lg ">
-                            <p className="p-2 rounded-md cursor-pointer hover:bg-slate-100">Xóa</p>
+                            <p onClick={handleDeletePost} className="p-2 rounded-md cursor-pointer hover:bg-slate-100">
+                                Xóa
+                            </p>
                             <p onClick={handleEditPost} className="p-2 rounded-md cursor-pointer hover:bg-slate-100">
                                 Sửa
                             </p>
