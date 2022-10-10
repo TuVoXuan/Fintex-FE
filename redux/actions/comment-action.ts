@@ -36,3 +36,12 @@ export const deleteComments = createAsyncThunk('comments/delete', async (body: I
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const reactionComment = createAsyncThunk('comments/reaction', async (body: IReactionComment, thunkAPI) => {
+    try {
+        const response = await commentApi.reactionComment(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

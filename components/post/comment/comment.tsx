@@ -1,7 +1,6 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { MdMoreHoriz } from 'react-icons/md';
-import { ReactionEnum } from '../../../constants/reaction';
 import { useAppDispatch, useAppSelector } from '../../../hook/redux';
 import { findReaction } from '../../../util/find-reactioin';
 import Avatar from '../../avatar/avatar';
@@ -12,8 +11,9 @@ import vi from 'timeago.js/lib/lang/vi';
 import { useStore } from 'react-redux';
 import { RootState } from '../../../app/store';
 import { ISuccess, NewComment } from './new-comment';
-import { deleteComments, getComments } from '../../../redux/actions/comment-action';
+import { deleteComments, getComments, reactionComment } from '../../../redux/actions/comment-action';
 import { selectUser } from '../../../redux/reducers/user-slice';
+import { ReactionEnum } from '../../../constants/reaction';
 
 interface Props {
     id: string;
@@ -143,6 +143,23 @@ export const Commnent = ({ id }: Props) => {
         }
     };
 
+    const reaction = (type: ReactionEnum) => async () => {
+        try {
+            await dispatch(
+                reactionComment({
+                    commentId: comment?._id || '',
+                    type: type,
+                }),
+            ).unwrap();
+
+            if (refReact.current) {
+                refReact.current.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    };
+
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
             console.log('da vo');
@@ -263,22 +280,40 @@ export const Commnent = ({ id }: Props) => {
                                 onMouseEnter={handleHoverReaction}
                                 className="absolute flex p-3 -translate-y-full bg-white -top-3 rounded-3xl gap-x-3 drop-shadow-md w-fit"
                             >
-                                <div className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 ">
+                                <div
+                                    onClick={reaction(ReactionEnum.LIKE)}
+                                    className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                                >
                                     <ImageContainer url="/emoji-gif/like.gif" quantity="multiple" />
                                 </div>
-                                <div className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 ">
+                                <div
+                                    onClick={reaction(ReactionEnum.LOVE)}
+                                    className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                                >
                                     <ImageContainer url="/emoji-gif/love.gif" quantity="multiple" />
                                 </div>
-                                <div className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 ">
+                                <div
+                                    onClick={reaction(ReactionEnum.HAHA)}
+                                    className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                                >
                                     <ImageContainer url="/emoji-gif/haha.gif" quantity="multiple" />
                                 </div>
-                                <div className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 ">
+                                <div
+                                    onClick={reaction(ReactionEnum.WOW)}
+                                    className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                                >
                                     <ImageContainer url="/emoji-gif/wow.gif" quantity="multiple" />
                                 </div>
-                                <div className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 ">
+                                <div
+                                    onClick={reaction(ReactionEnum.SAD)}
+                                    className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                                >
                                     <ImageContainer url="/emoji-gif/sad.gif" quantity="multiple" />
                                 </div>
-                                <div className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 ">
+                                <div
+                                    onClick={reaction(ReactionEnum.ANGRY)}
+                                    className="overflow-hidden transition duration-300 ease-in-out hover:cursor-pointer hover:scale-125 w-9 h-9 hover:-translate-y-2 "
+                                >
                                     <ImageContainer url="/emoji-gif/angry.gif" quantity="multiple" />
                                 </div>
                             </div>

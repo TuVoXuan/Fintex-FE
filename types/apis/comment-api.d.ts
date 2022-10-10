@@ -37,3 +37,17 @@ declare interface IDeleteComment {
     id: string;
     postId: string;
 }
+
+declare interface IReactionComment {
+    commentId: string;
+    type: ReactionEnum;
+}
+
+declare interface IReactionCommentResponse {
+    commentId: string;
+    type: ReactionEnum;
+    user: {
+        _id: string;
+        name: INameUser;
+    };
+}

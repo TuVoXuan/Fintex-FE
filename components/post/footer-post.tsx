@@ -1,7 +1,5 @@
 import { PostAction } from './post-action/post-action';
-import { RiHeart2Line } from 'react-icons/ri';
 import { FiMessageSquare } from 'react-icons/fi';
-import Avatar from '../avatar/avatar';
 import { Commnent } from './comment/comment';
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
@@ -11,7 +9,6 @@ import { getComments } from '../../redux/actions/comment-action';
 import { selectUser } from '../../redux/reducers/user-slice';
 import ImageContainer from '../image/image-container';
 import { AiOutlineLike } from 'react-icons/ai';
-import Wow from './reaction/wow';
 import Image from 'next/image';
 import { postDeleteReaction, postReaction } from '../../redux/actions/post-action';
 import { toastError } from '../../util/toast';
