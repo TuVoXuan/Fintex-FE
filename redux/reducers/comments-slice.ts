@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { createComments, editComments, getComments } from '../actions/comment-action';
+import { createComments, deleteComments, editComments, getComments, reactionComment } from '../actions/comment-action';
 
 const initialState: IComment[] = [];
 
@@ -29,6 +29,27 @@ export const commentsSlice = createSlice({
             const index = state.findIndex((item) => item._id === data.comment.parentId);
             if (index !== -1) {
                 state[index].commentsChildren += 1;
+            }
+        });
+        builder.addCase(deleteComments.fulfilled, (state, action: PayloadAction<string[]>) => {
+            const ids = action.payload;
+            for (const id of ids) {
+                const index = state.findIndex((item) => item._id === id);
+                state.splice(index, 1);
+            }
+        });
+        builder.addCase(reactionComment.fulfilled, (state, action: PayloadAction<IReactionCommentResponse>) => {
+            const data = action.payload;
+            const index = state.findIndex((item) => item._id === data.commentId);
+            const i = state[index].reaction.findIndex((item) => item.user._id === data.user._id);
+
+            if (i >= 0) {
+                state[index].reaction[i].type = data.type;
+            } else {
+                state[index].reaction.push({
+                    type: data.type,
+                    user: data.user,
+                });
             }
         });
     },

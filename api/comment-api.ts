@@ -33,6 +33,12 @@ const commentApi = {
             },
         });
     },
+    deleteComment: (param: IDeleteComment) => {
+        return axiosService.delete<IResponseSuccess<string[]>>(`${URL}/${param.id}/${param.postId}`);
+    },
+    reactionComment: (body: IReactionComment) => {
+        return axiosService.post<IResponseSuccess<IReactionCommentResponse>>(`${URL}/reaction`, body);
+    },
 };
 
 export default commentApi;

@@ -23,12 +23,31 @@ declare interface ICommentResponse {
 }
 
 declare interface ICommentPagination {
-    comments: ICommentResponse[];
+    comments: IComment[];
     after: string;
     ended: boolean;
 }
 
 declare interface ICreateCommentResponse {
-    comment: ICommentResponse;
+    comment: IComment;
     after: string;
+}
+
+declare interface IDeleteComment {
+    id: string;
+    postId: string;
+}
+
+declare interface IReactionComment {
+    commentId: string;
+    type: ReactionEnum;
+}
+
+declare interface IReactionCommentResponse {
+    commentId: string;
+    type: ReactionEnum;
+    user: {
+        _id: string;
+        name: INameUser;
+    };
 }
