@@ -9,6 +9,7 @@ import { userGetCurrentUser } from '../redux/actions/user-action';
 import { toastError } from '../util/toast';
 import { useRouter } from 'next/router';
 import { CgSpinnerTwo } from 'react-icons/cg';
+import { MainLayoutProvider } from '../context/main-layout-contex';
 
 function Loading() {
     const router = useRouter();
@@ -59,7 +60,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <>
             <Loading />
             <Provider store={store}>
-                <Component {...pageProps} />
+                <MainLayoutProvider>
+                    <Component {...pageProps} />
+                </MainLayoutProvider>
                 <Toaster
                     toastOptions={{
                         className: 'z-[500]',
