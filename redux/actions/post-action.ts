@@ -45,3 +45,15 @@ export const postMineLoadMore = createAsyncThunk('post/postMineLoadMore', async 
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const postUpdate = createAsyncThunk(
+    'post/postUpdate',
+    async (data: { body: FormData; postId: string }, thunkAPI) => {
+        try {
+            const response = await postApi.updatePost(data.postId, data.body);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);

@@ -25,6 +25,7 @@ declare interface IAuthUserResponse {
     phone: string;
     birthday: Date;
     avatar: string;
+    coverPhoto: string;
     address: string;
     gender: 'male' | 'female' | 'other';
 }

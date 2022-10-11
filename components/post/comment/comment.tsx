@@ -242,22 +242,22 @@ export const Commnent = ({ id }: Props) => {
                         {comment.reaction.length !== 0 && (
                             <div className="absolute bottom-0 right-0  flex p-1 z-10 -space-x-2 translate-y-[60%] bg-white rounded-full drop-shadow-md w-fit ">
                                 {findReaction(comment.reaction, ReactionEnum.LIKE) !== -1 && (
-                                    <Avatar url="/emoji/like.png" size="nano" className="border-2 border-white" />
+                                    <Avatar url="/emoji/like.svg" size="nano" className="border-2 border-white" />
                                 )}
                                 {findReaction(comment.reaction, ReactionEnum.HAHA) !== -1 && (
-                                    <Avatar url="/emoji/haha.png" size="nano" className="border-2 border-white" />
+                                    <Avatar url="/emoji/haha.svg" size="nano" className="border-2 border-white" />
                                 )}
                                 {findReaction(comment.reaction, ReactionEnum.LOVE) !== -1 && (
-                                    <Avatar url="/emoji/love.png" size="nano" className="border-2 border-white" />
+                                    <Avatar url="/emoji/love.svg" size="nano" className="border-2 border-white" />
                                 )}
                                 {findReaction(comment.reaction, ReactionEnum.WOW) !== -1 && (
-                                    <Avatar url="/emoji/wow.png" size="nano" className="border-2 border-white" />
+                                    <Avatar url="/emoji/wow.svg" size="nano" className="border-2 border-white" />
                                 )}
                                 {findReaction(comment.reaction, ReactionEnum.SAD) !== -1 && (
-                                    <Avatar url="/emoji/sad.png" size="nano" className="border-2 border-white" />
+                                    <Avatar url="/emoji/sad.svg" size="nano" className="border-2 border-white" />
                                 )}
                                 {findReaction(comment.reaction, ReactionEnum.ANGRY) !== -1 && (
-                                    <Avatar url="/emoji/angry.png" size="nano" className="border-2 border-white" />
+                                    <Avatar url="/emoji/angry.svg" size="nano" className="border-2 border-white" />
                                 )}
                                 {comment.reaction.length > 1 && (
                                     <p className="z-10 self-center pl-3 pr-1">{comment.reaction.length}</p>

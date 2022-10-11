@@ -8,6 +8,7 @@ declare interface IUser {
     gender: 'male' | 'female' | 'other';
     phone: string;
     avatar: string;
+    coverPhoto: string;
     email: string;
     address?: string;
 }
