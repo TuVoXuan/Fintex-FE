@@ -7,5 +7,6 @@ const APP_PATH = {
     MY_COMMUNITY: '/my-community',
     TEMP_PAGE: '/temp-page',
     PROFILE: '/profile',
+    FIND_FRIENDS: '/find-friends',
 };
 export default APP_PATH;

@@ -1,6 +1,7 @@
 import { async } from '@firebase/util';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import authApi from '../../api/auth-api';
+import userApi from '../../api/user-api';
 
 export const userVerify = createAsyncThunk('user/userLoginWithGoogle', async (body: IVerifyUser, thunkAPI) => {
     try {
@@ -53,6 +54,15 @@ export const userLoginPhone = createAsyncThunk('user/loginPhone', async (body: I
 export const userGetCurrentUser = createAsyncThunk('user/getCurrentUser', async (_body, thunkAPI) => {
     try {
         const response = await authApi.getCurrentUser();
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
+export const userGetStranger = createAsyncThunk('user/getStrangers', async (param: IGetStragers, thunkAPI) => {
+    try {
+        const response = await userApi.getStranger(param);
         return response.data.data;
     } catch (error) {
         return thunkAPI.rejectWithValue(error);

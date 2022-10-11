@@ -104,15 +104,6 @@ export const Input = ({
                 file: file,
             });
         }
-
-        // dispatch(resetStoreImages());
-        // dispatch(
-        //     addImage({
-        //         id: commentId ?? '',
-        //         url: url,
-        //         file: file,
-        //     }),
-        // );
     };
 
     const handleOnPress = (values: any) => {
@@ -124,7 +115,6 @@ export const Input = ({
 
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
-            console.log('da vo');
             const { target } = event;
 
             if (refPickerEmoji.current && refIconEmoji.current && target && 'nodeType' in target) {
@@ -165,6 +155,7 @@ export const Input = ({
                             ref(e);
                             refInput.current = e;
                         }}
+                        onKeyDown={handleOnPress}
                         defaultValue={defaultValue}
                         placeholder={placeholder}
                         className={`w-full items-center focus:outline-none py-4 bg-transparent ${
