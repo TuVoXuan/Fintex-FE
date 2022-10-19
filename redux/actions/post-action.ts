@@ -67,8 +67,8 @@ export const postDelete = createAsyncThunk('post/postDelete', async (postId: str
     }
 });
 
-export const postCreateAvatarCover = createAsyncThunk(
-    'post/postCreateAvatarCover',
+export const postUpdateAvatarCover = createAsyncThunk(
+    'post/postUpdateAvatarCover',
     async (data: IUpdateAvatarCover, thunkAPI) => {
         try {
             const response = await postApi.createAvatarCoverPost(data);

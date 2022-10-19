@@ -41,6 +41,6 @@ declare interface IDeleteReactionPostRes {
 }
 
 declare interface IUpdateAvatarCover {
-    content: string;
+    content?: string;
     typeUpdate: string;
 }

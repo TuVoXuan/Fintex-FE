@@ -68,3 +68,12 @@ export const userUpdateAvatar = createAsyncThunk('user/updateAvatar', async (for
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const userUpdateCover = createAsyncThunk('user/updateCover', async (formData: FormData, thunkAPI) => {
+    try {
+        const response = await userApi.uploadAvatarCover(formData);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

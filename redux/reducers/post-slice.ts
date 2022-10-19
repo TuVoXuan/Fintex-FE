@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
     postCreate,
-    postCreateAvatarCover,
+    postUpdateAvatarCover,
     postDelete,
     postDeleteReaction,
     postLoadMore,
@@ -81,7 +81,7 @@ export const postSlice = createSlice({
         builder.addCase(postDelete.fulfilled, (state, action: PayloadAction<string>) => {
             state.posts = state.posts.filter((item) => item._id !== action.payload);
         });
-        builder.addCase(postCreateAvatarCover.fulfilled, (state, action: PayloadAction<IPost>) => {
+        builder.addCase(postUpdateAvatarCover.fulfilled, (state, action: PayloadAction<IPost>) => {
             state.posts = [action.payload, ...state.posts];
         });
     },

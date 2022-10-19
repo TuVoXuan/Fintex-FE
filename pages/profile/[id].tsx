@@ -9,7 +9,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectPost } from '../../redux/reducers/post-slice';
 import LoadingPost from '../../components/post/loading-post';
-import { postDelete, postMineLoadMore } from '../../redux/actions/post-action';
+import { postDelete, postMineLoadMore, postUpdateAvatarCover } from '../../redux/actions/post-action';
 import { toastError, toastSuccess } from '../../util/toast';
 import { useEffect, useRef, useState } from 'react';
 import Post from '../../components/post/post';
@@ -19,6 +19,9 @@ import { FormPost } from '../../components/post/form-post/form-post';
 import DeleteModal from '../../components/modal/delete-modal';
 import { deleteAllCommentsPost } from '../../redux/actions/comment-action';
 import UploadAvatarModal from '../../components/modal/upload-avatar-modal';
+import { UploadImage } from '../../types/enums';
+import { userUpdateCover } from '../../redux/actions/user-action';
+import { VscLoading } from 'react-icons/vsc';
 
 const postTemp: IPost = {
     _id: '123',
@@ -52,16 +55,18 @@ export default function Profile() {
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
     const formPostRef = useRef<HTMLDivElement>(null);
+    const coverRef = useRef<HTMLInputElement>(null);
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
     const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
     const [isShowsUpdateAvatarModal, setIsShowUpdateAvatarModal] = useState<boolean>(false);
-
     const [deletePostId, setDeletePostId] = useState<string>('');
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-
     const [postEdit, setPostEdit] = useState<IPost | undefined>();
+    const [tempCoverImg, setTempCoverImg] = useState('');
+    const [imageFile, setImageFile] = useState<File>();
+    const [isUpdatingCover, setIsUpdatingCover] = useState(false);
 
     const handleScrollToTop = () => {
         if (postsRef.current) {
@@ -141,6 +146,43 @@ export default function Profile() {
         setIsShowUpdateAvatarModal(false);
     };
 
+    const handleClickCoverImage = () => {
+        if (coverRef.current) {
+            coverRef.current.click();
+        }
+    };
+
+    const handleInputFile = (e: any) => {
+        const file: File = e.target.files[0];
+        const url = URL.createObjectURL(file);
+        setTempCoverImg(url);
+        setImageFile(file);
+    };
+
+    const handleCancleUpdateCover = () => {
+        setTempCoverImg('');
+    };
+
+    const handleUpdateCover = async () => {
+        try {
+            setIsUpdatingCover(true);
+            // const formData = new FormData();
+            // formData.append('image', imageFile as File);
+            // formData.append('typeUpdate', UploadImage.Cover);
+
+            // await dispatch(userUpdateCover(formData));
+            // await dispatch(postUpdateAvatarCover({ typeUpdate: UploadImage.Cover }));
+
+            setTimeout(() => {
+                setTempCoverImg('');
+                setImageFile(undefined);
+                setIsUpdatingCover(true);
+            }, 2000);
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
     useEffect(() => {
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
@@ -168,7 +210,7 @@ export default function Profile() {
                     <div className="relative">
                         <div className="w-full overflow-hidden rounded-t-xl image-container h-80">
                             <Image
-                                src={sUser.data?.coverPhoto || ''}
+                                src={tempCoverImg || sUser.data?.coverPhoto || ''}
                                 alt="image"
                                 width={100}
                                 height={100}
@@ -178,10 +220,47 @@ export default function Profile() {
                             />
                         </div>
 
-                        <button className="absolute flex items-center px-2 py-1 bg-white rounded-md bottom-3 right-3 gap-x-2">
-                            <RiUploadCloud2Line size={24} />
-                            Upload Cover Photo
-                        </button>
+                        <input
+                            ref={coverRef}
+                            onChange={handleInputFile}
+                            className="hidden"
+                            type="file"
+                            name="coverImage"
+                            id="coverImage"
+                        />
+
+                        {tempCoverImg ? (
+                            <div className="absolute flex items-center gap-x-4 bottom-4 right-4">
+                                <button
+                                    disabled={isUpdatingCover}
+                                    onClick={handleCancleUpdateCover}
+                                    className="px-10 py-3 font-semibold text-blue-600 transition-colors duration-300 ease-linear bg-white rounded-lg disabled:cursor-not-allowed hover:bg-gray-100"
+                                >
+                                    Hủy
+                                </button>
+
+                                {isUpdatingCover ? (
+                                    <button className="py-3 font-semibold text-white transition-colors duration-300 ease-linear bg-blue-600 rounded-lg cursor-not-allowed px-14 hover:bg-blue-700 disabled:bg-secondary-20 disabled:text-white disabled:cursor-not-allowed">
+                                        <VscLoading className="animate-spin" size={18} />
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={handleUpdateCover}
+                                        className="px-10 py-3 font-semibold text-white transition-colors duration-300 ease-linear bg-blue-600 rounded-lg hover:bg-blue-700"
+                                    >
+                                        Lưu thay đổi
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleClickCoverImage}
+                                className="absolute flex items-center px-2 py-1 bg-white rounded-md bottom-3 right-3 gap-x-2"
+                            >
+                                <RiUploadCloud2Line size={24} />
+                                Cập nhập ảnh bìa
+                            </button>
+                        )}
 
                         <div className="absolute bottom-0 left-7 translate-y-[20%]">
                             <div className="relative">

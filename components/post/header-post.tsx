@@ -71,8 +71,8 @@ export default function HeaderPost({
                                 đang <span className="text-xl">{feeling.emoji}</span> cảm thấy {feeling.name}.
                             </>
                         )}
-                        {postType === 'avatar' && 'đã cập nhập ảnh đại diện'}
-                        {postType === 'cover' && 'đã cập nhập ảnh ảnh bìa'}
+                        {postType === 'avatar' && ' đã cập nhập ảnh đại diện'}
+                        {postType === 'cover' && ' đã cập nhập ảnh ảnh bìa'}
                     </div>
                     <h5 className="font-medium capitalize text-secondary-40">
                         <TimeAgo datetime={timeAgo} locale="vi" />. {translateVisibleFor(visibleFor)}

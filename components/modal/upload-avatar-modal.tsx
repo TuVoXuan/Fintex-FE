@@ -8,7 +8,7 @@ import { useAppDispatch } from '../../hook/redux';
 import { userUpdateAvatar } from '../../redux/actions/user-action';
 import { VscLoading } from 'react-icons/vsc';
 import { updateAvatarAllPosts } from '../../redux/reducers/post-slice';
-import { postCreateAvatarCover } from '../../redux/actions/post-action';
+import { postUpdateAvatarCover } from '../../redux/actions/post-action';
 
 interface Props {
     onClose: () => void;
@@ -49,7 +49,7 @@ export default function UploadAvatarModal({ onClose }: Props) {
 
                 const resonse = await dispatch(userUpdateAvatar(formDataAvatar)).unwrap();
 
-                await dispatch(postCreateAvatarCover({ content, typeUpdate: UploadImage.Avatar }));
+                await dispatch(postUpdateAvatarCover({ content, typeUpdate: UploadImage.Avatar }));
                 // console.log('resonse: ', resonse);
                 dispatch(updateAvatarAllPosts(resonse));
                 onClose();

@@ -7,6 +7,7 @@ import {
     userLoginPhone,
     userGetCurrentUser,
     userUpdateAvatar,
+    userUpdateCover,
 } from '../actions/user-action';
 import { setCookie, deleteCookie } from 'cookies-next';
 
@@ -107,6 +108,11 @@ export const userSlice = createSlice({
         builder.addCase(userUpdateAvatar.fulfilled, (state, action: PayloadAction<string>) => {
             if (state.data) {
                 state.data.avatar = action.payload;
+            }
+        });
+        builder.addCase(userUpdateCover.fulfilled, (state, action: PayloadAction<string>) => {
+            if (state.data) {
+                state.data.coverPhoto = action.payload;
             }
         });
     },

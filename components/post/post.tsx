@@ -41,8 +41,8 @@ export default function Post({
                 loadInPage={loadInPage}
             />
             <p>{content}</p>
-            {postType === 'normal' && isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
-            {postType !== 'normal' && isViewedDetail && <AvatarCover images={images || []} postId={_id} />}
+            {postType !== 'avatar' && isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
+            {postType === 'avatar' && isViewedDetail && <AvatarCover images={images || []} postId={_id} />}
             <FooterPost postId={_id} numsComment={comments} mineReaction={mineReaction?.type} />
         </div>
     );
