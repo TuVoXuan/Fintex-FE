@@ -18,6 +18,32 @@ import { selectUser } from '../../redux/reducers/user-slice';
 import { FormPost } from '../../components/post/form-post/form-post';
 import DeleteModal from '../../components/modal/delete-modal';
 import { deleteAllCommentsPost } from '../../redux/actions/comment-action';
+import UploadAvatarModal from '../../components/modal/upload-avatar-modal';
+
+const postTemp: IPost = {
+    _id: '123',
+    avatar: 'https://res.cloudinary.com/cake-shop/image/upload/v1666171462/avatar/cvnjyfjhgxdwz2zzth4n.jpg',
+    createdAt: '2020-10-19',
+    images: [
+        {
+            url: 'https://res.cloudinary.com/cake-shop/image/upload/v1666171462/avatar/cvnjyfjhgxdwz2zzth4n.jpg',
+            orientation: 'vertical',
+        },
+        {
+            url: 'https://res.cloudinary.com/cake-shop/image/upload/v1665307479/cover/default-cover_jyhbec.jpg',
+            orientation: 'horizontal',
+        },
+    ],
+    name: {
+        firstName: 'Vo Xuan',
+        lastName: 'Tu',
+    },
+    reactions: [],
+    comments: 0,
+    visibleFor: 'public',
+    userId: '123',
+    postType: 'avatar',
+};
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
@@ -30,6 +56,8 @@ export default function Profile() {
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
     const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+    const [isShowsUpdateAvatarModal, setIsShowUpdateAvatarModal] = useState<boolean>(false);
+
     const [deletePostId, setDeletePostId] = useState<string>('');
     const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
 
@@ -105,6 +133,14 @@ export default function Profile() {
         }
     };
 
+    const handleShowUpdateAvatarModal = () => {
+        setIsShowUpdateAvatarModal(true);
+    };
+
+    const handleCloseUpdateAvatarModal = () => {
+        setIsShowUpdateAvatarModal(false);
+    };
+
     useEffect(() => {
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
@@ -130,7 +166,7 @@ export default function Profile() {
             >
                 <section className="rounded-xl shadow-right">
                     <div className="relative">
-                        <div className="w-full overflow-hidden cursor-pointer rounded-t-xl image-container h-80">
+                        <div className="w-full overflow-hidden rounded-t-xl image-container h-80">
                             <Image
                                 src={sUser.data?.coverPhoto || ''}
                                 alt="image"
@@ -150,7 +186,10 @@ export default function Profile() {
                         <div className="absolute bottom-0 left-7 translate-y-[20%]">
                             <div className="relative">
                                 <Avatar url={sUser.data?.avatar || ''} size="large" className="border-2 border-white" />
-                                <button className="absolute p-1 bg-white rounded-full bottom-[20%] right-0 translate-y-[50%]">
+                                <button
+                                    onClick={handleShowUpdateAvatarModal}
+                                    className="absolute p-1 bg-white rounded-full bottom-[20%] right-0 translate-y-[50%]"
+                                >
                                     <RiUploadCloud2Line size={20} />
                                 </button>
                             </div>
@@ -212,6 +251,9 @@ export default function Profile() {
                                 <LoadingPost />
                             )}
                         </InfiniteScroll>
+                        {/* <div className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10">
+                            <Post key={postTemp._id} post={postTemp} loadInPage="profile" />
+                        </div> */}
                         <div className="absolute w-10 h-10 bottom-3 right-3">
                             <button
                                 ref={scrollTopRef}
@@ -247,6 +289,7 @@ export default function Profile() {
                     onClose={() => setIsShowDeleteModal(false)}
                 />
             )}
+            {isShowsUpdateAvatarModal && <UploadAvatarModal onClose={handleCloseUpdateAvatarModal} />}
         </MainLayout>
     );
 }

@@ -8,7 +8,6 @@ import 'swiper/css/navigation';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { resetPost, selectPost } from '../../redux/reducers/post-slice';
-import { useEffect } from 'react';
 
 export default function DetailPost() {
     const dispatch = useAppDispatch();
@@ -31,15 +30,26 @@ export default function DetailPost() {
                 >
                     <IoClose size={24} />
                 </button>
-                <Swiper navigation={true} modules={[Navigation]} className="w-full h-full">
-                    {post &&
-                        post.images &&
-                        post.images.map((image) => (
+                {post && post.postType === 'avatar' && (
+                    <Swiper navigation={true} modules={[Navigation]} className="w-full h-full">
+                        {post && post.images && (
                             <SwiperSlide>
-                                <Image src={image.url} layout="fill" objectFit="contain" />
+                                <Image src={post.images[0].url} layout="fill" objectFit="contain" />
                             </SwiperSlide>
-                        ))}
-                </Swiper>
+                        )}
+                    </Swiper>
+                )}
+                {post && post.postType !== 'avatar' && (
+                    <Swiper navigation={true} modules={[Navigation]} className="w-full h-full">
+                        {post &&
+                            post.images &&
+                            post.images.map((image) => (
+                                <SwiperSlide>
+                                    <Image src={image.url} layout="fill" objectFit="contain" />
+                                </SwiperSlide>
+                            ))}
+                    </Swiper>
+                )}
             </div>
             <div className="h-screen overflow-y-auto">
                 {post && <Post loadInPage="detail" post={post} isViewedDetail={false} hasFrame={false} />}

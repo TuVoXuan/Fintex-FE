@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
     postCreate,
+    postCreateAvatarCover,
     postDelete,
     postDeleteReaction,
     postLoadMore,
@@ -26,6 +27,9 @@ export const postSlice = createSlice({
     name: 'post',
     initialState,
     reducers: {
+        updateAvatarAllPosts: (state, action: PayloadAction<string>) => {
+            state.posts.forEach((post) => (post.avatar = action.payload));
+        },
         resetPost: (state) => {
             state.after = initialState.after;
             state.ended = initialState.ended;
@@ -77,10 +81,13 @@ export const postSlice = createSlice({
         builder.addCase(postDelete.fulfilled, (state, action: PayloadAction<string>) => {
             state.posts = state.posts.filter((item) => item._id !== action.payload);
         });
+        builder.addCase(postCreateAvatarCover.fulfilled, (state, action: PayloadAction<IPost>) => {
+            state.posts = [action.payload, ...state.posts];
+        });
     },
 });
 
-export const { resetPost } = postSlice.actions;
+export const { resetPost, updateAvatarAllPosts } = postSlice.actions;
 
 export const selectPost = (state: RootState) => state.post;
 

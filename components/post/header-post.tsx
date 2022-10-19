@@ -14,6 +14,7 @@ interface Props {
     loadInPage: 'home' | 'profile' | 'detail';
     postId: string;
     feeling?: IFeeling;
+    postType: 'avatar' | 'cover' | 'normal';
     editPost?: (postId: string) => () => void;
     deletePost?: (postId: string) => () => void;
 }
@@ -25,6 +26,7 @@ export default function HeaderPost({
     visibleFor,
     postId,
     feeling,
+    postType,
     editPost,
     deletePost,
     loadInPage,
@@ -63,12 +65,14 @@ export default function HeaderPost({
                 <div>
                     <div className=" text-secondary-80">
                         <span className="font-semibold hover:underline hover:cursor-pointer">{displayName}</span>
-                        {feeling && (
+                        {postType === 'normal' && feeling && (
                             <>
                                 {' '}
                                 đang <span className="text-xl">{feeling.emoji}</span> cảm thấy {feeling.name}.
                             </>
                         )}
+                        {postType === 'avatar' && 'đã cập nhập ảnh đại diện'}
+                        {postType === 'cover' && 'đã cập nhập ảnh ảnh bìa'}
                     </div>
                     <h5 className="font-medium capitalize text-secondary-40">
                         <TimeAgo datetime={timeAgo} locale="vi" />. {translateVisibleFor(visibleFor)}
@@ -76,7 +80,7 @@ export default function HeaderPost({
                 </div>
             </div>
 
-            {loadInPage === 'profile' && (
+            {postType === 'normal' && loadInPage === 'profile' && (
                 <div className="relative">
                     <button
                         onClick={handleShowCommentSetting}

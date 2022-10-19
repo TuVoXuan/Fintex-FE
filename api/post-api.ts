@@ -36,6 +36,9 @@ const postApi = {
     deletePost: (postId: string) => {
         return axiosService.delete<IResponseSuccess<string>>(`${URL}/${postId}`);
     },
+    createAvatarCoverPost: (body: IUpdateAvatarCover) => {
+        return axiosService.post<IResponseSuccess<IPost>>(`${URL}/avatar-cover`, body);
+    },
 };
 
 export default postApi;

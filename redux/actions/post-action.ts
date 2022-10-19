@@ -66,3 +66,15 @@ export const postDelete = createAsyncThunk('post/postDelete', async (postId: str
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const postCreateAvatarCover = createAsyncThunk(
+    'post/postCreateAvatarCover',
+    async (data: IUpdateAvatarCover, thunkAPI) => {
+        try {
+            const response = await postApi.createAvatarCoverPost(data);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);

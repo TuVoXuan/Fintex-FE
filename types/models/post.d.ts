@@ -20,6 +20,7 @@ declare interface IPost {
     feeling?: IFeeling;
     visibleFor: 'public' | 'friends' | 'only me';
     images?: IImage[];
+    postType: 'normal' | 'avatar' | 'cover';
     reactions: IReaction[];
     comments: number;
     createdAt: string;

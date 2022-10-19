@@ -1,6 +1,7 @@
 import { useAppSelector } from '../../hook/redux';
 import ImageLayout from '../../layouts/image-layout';
 import { selectUser } from '../../redux/reducers/user-slice';
+import AvatarCover from './avatar-cover/AvatarCover';
 import { FooterPost } from './footer-post';
 import HeaderPost from './header-post';
 
@@ -22,7 +23,7 @@ export default function Post({
     loadInPage,
 }: Props) {
     const sUser = useAppSelector(selectUser);
-    const { avatar, name, images, createdAt, visibleFor, content, feeling, _id, comments, reactions, userId } = post;
+    const { avatar, name, images, createdAt, visibleFor, content, feeling, _id, comments, reactions, postType } = post;
     const mineReaction = reactions.find((item) => item.user._id === sUser.data?._id);
 
     return (
@@ -33,13 +34,15 @@ export default function Post({
                 timeAgo={createdAt}
                 visibleFor={visibleFor}
                 feeling={feeling}
+                postType={postType}
                 postId={_id}
                 editPost={editPost}
                 deletePost={deletePost}
                 loadInPage={loadInPage}
             />
             <p>{content}</p>
-            {isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
+            {postType === 'normal' && isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
+            {postType !== 'normal' && isViewedDetail && <AvatarCover images={images || []} postId={_id} />}
             <FooterPost postId={_id} numsComment={comments} mineReaction={mineReaction?.type} />
         </div>
     );
