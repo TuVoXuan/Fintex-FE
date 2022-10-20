@@ -17,6 +17,9 @@ import { resetComments } from '../redux/reducers/comments-slice';
 import { resetFeeling } from '../redux/reducers/feeling-slice';
 import { resetOtp } from '../redux/reducers/otp-slice';
 import { deleteCookie } from 'cookies-next';
+import { userGetStranger } from '../redux/actions/user-action';
+import Stranger from '../components/stranger/stranger';
+import { useMainLayout } from '../context/main-layout-contex';
 
 interface Props {
     children?: React.ReactNode;
@@ -33,9 +36,11 @@ export const MainLayout = ({ children }: Props) => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = router.asPath;
-    const [loading, setLoading] = useState<boolean>(true);
 
-    console.log('render');
+    const { setName } = useMainLayout();
+
+    const [loading, setLoading] = useState<boolean>(true);
+    const [strangers, setStrangers] = useState<Stranger[]>([]);
 
     const handleSignOut = () => {
         try {
@@ -52,11 +57,25 @@ export const MainLayout = ({ children }: Props) => {
 
     const handleGoProfile = () => {
         dispatch(resetPost());
-        router.push(`/profile/${sUser.data?._id}`);
+        router.push(`${APP_PATH.PROFILE}/${sUser.data?._id}`);
+    };
+
+    const handleGoEditInfo = () => {
+        router.push(APP_PATH.EDIT_PROFILE);
+    };
+
+    const handleEnter = () => {
+        console.log('router.basePath: ', router.pathname);
+        if (router.pathname === APP_PATH.FIND_FRIENDS) {
+            setName(getValues('search'));
+        } else {
+            router.push({
+                pathname: APP_PATH.FIND_FRIENDS,
+            });
+        }
     };
 
     useEffect(() => {
-        console.log('change');
         let delayDebounceFn: any;
         let isFirst = true;
         const subscription = watch((value, { name, type }) => {
@@ -67,19 +86,30 @@ export const MainLayout = ({ children }: Props) => {
             }
             clearTimeout(delayDebounceFn);
 
-            delayDebounceFn = setTimeout(() => {
-                console.log(getValues('search'));
-                setLoading(false);
+            delayDebounceFn = setTimeout(async () => {
                 isFirst = true;
-                // Send Axios request here
-            }, 3000);
+                try {
+                    if (value.search) {
+                        const { data } = await dispatch(
+                            userGetStranger({
+                                name: value.search || '',
+                                limit: 10,
+                                after: '',
+                            }),
+                        ).unwrap();
+                        setStrangers(data);
+                    }
+                } catch (error) {
+                    console.log('error: ', error);
+                }
+                setLoading(false);
+            }, 1000);
 
             if (value.search?.length !== 0) {
                 if (ref.current) {
                     ref.current.classList.remove('hidden');
                 }
             } else {
-                console.log('vo 2');
                 if (ref.current) {
                     ref.current.classList.add('hidden');
                 }
@@ -111,6 +141,7 @@ export const MainLayout = ({ children }: Props) => {
                         <Input
                             name="search"
                             border={true}
+                            onKeyPress={handleEnter}
                             placeholder="Tìm kiếm tại đây..."
                             icon={<FiSearch size={24} />}
                             type="text"
@@ -121,26 +152,9 @@ export const MainLayout = ({ children }: Props) => {
                             className="absolute z-10 hidden w-full p-4 space-y-1 bg-white rounded-md drop-shadow-lg top-14"
                         >
                             {!loading ? (
-                                <>
-                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
-                                        <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
-                                            <Image src={'/images/avatar4.jpg'} alt="avatar" layout="fill" />
-                                        </div>
-                                        <p>Nguyen Van Thang</p>
-                                    </section>
-                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
-                                        <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
-                                            <Image src={'/images/avatar4.jpg'} alt="avatar" layout="fill" />
-                                        </div>
-                                        <p>Nguyen Van Thang</p>
-                                    </section>
-                                    <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer ripple-bg-white">
-                                        <div className="h-12 overflow-hidden rounded-full image-container aspect-square">
-                                            <Image src={'/images/avatar4.jpg'} alt="avatar" layout="fill" />
-                                        </div>
-                                        <p>Nguyen Van Thang</p>
-                                    </section>
-                                </>
+                                strangers.map((item) => (
+                                    <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
+                                ))
                             ) : (
                                 <>
                                     <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">
@@ -176,7 +190,7 @@ export const MainLayout = ({ children }: Props) => {
                 </div>
                 <div className="relative flex-1">
                     <div className="absolute top-0 bottom-0 left-0 right-0 flex px-4">
-                        <div className="gap-y-2.5 w-1/6">
+                        <div className="gap-y-2.5 w-1/5">
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<HiOutlineViewGrid size={20} />}
@@ -222,8 +236,8 @@ export const MainLayout = ({ children }: Props) => {
                                 <MenuItem
                                     icon={<IoSettingsOutline size={20} />}
                                     title={'Setting'}
-                                    isActive={false}
-                                    link={'#'}
+                                    isActive={path.includes('/setting')}
+                                    link={APP_PATH.EDIT_PROFILE}
                                 />
                             </div>
                             <div className="pl-1 pr-5">

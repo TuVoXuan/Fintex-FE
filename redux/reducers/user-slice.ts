@@ -8,6 +8,7 @@ import {
     userGetCurrentUser,
     userUpdateAvatar,
     userUpdateCover,
+    userEdit,
 } from '../actions/user-action';
 import { setCookie, deleteCookie } from 'cookies-next';
 
@@ -113,6 +114,17 @@ export const userSlice = createSlice({
         builder.addCase(userUpdateCover.fulfilled, (state, action: PayloadAction<string>) => {
             if (state.data) {
                 state.data.coverPhoto = action.payload;
+            }
+        });
+        builder.addCase(userEdit.fulfilled, (state, action: PayloadAction<IUser>) => {
+            if (state.data) {
+                state.data.address = action.payload.address;
+                state.data.name = action.payload.name;
+                state.data.birthday = action.payload.birthday;
+                state.data.education = action.payload.education;
+                state.data.email = action.payload.email;
+                state.data.phone = action.payload.phone;
+                state.data.gender = action.payload.gender;
             }
         });
     },

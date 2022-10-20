@@ -60,6 +60,24 @@ export const userGetCurrentUser = createAsyncThunk('user/getCurrentUser', async 
     }
 });
 
+export const userGetStranger = createAsyncThunk('user/getStrangers', async (param: IGetStragers, thunkAPI) => {
+    try {
+        const response = await userApi.getStranger(param);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
+export const userEdit = createAsyncThunk('user/edit-info', async (body: IEditUser, thunkAPI) => {
+    try {
+        const response = await userApi.edituser(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
 export const userUpdateAvatar = createAsyncThunk('user/updateAvatar', async (formData: FormData, thunkAPI) => {
     try {
         const response = await userApi.uploadAvatarCover(formData);

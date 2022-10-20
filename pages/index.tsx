@@ -16,11 +16,13 @@ import { NextPage } from 'next';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { FormPost } from '../components/post/form-post/form-post';
+import OnlineCard from '../components/online-card/online-card';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
+
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
 
@@ -82,7 +84,7 @@ const Home: NextPage = () => {
     return (
         <MainLayout>
             <section className="relative flex h-full">
-                <div id="feetPosts" onScroll={handleShowScrollTop} ref={postsRef} className="w-2/3 overflow-y-auto">
+                <div id="feetPosts" onScroll={handleShowScrollTop} ref={postsRef} className="w-3/4 overflow-y-auto">
                     <InfiniteScroll
                         next={() => {
                             if (!sPost.ended) {
@@ -96,7 +98,7 @@ const Home: NextPage = () => {
                         loader={<LoadingPost />}
                         dataLength={sPost.posts.length}
                         scrollableTarget="feetPosts"
-                        className="relative py-[30px] px-20 rounded-[15px] bg-secondary-10 space-y-5"
+                        className="relative py-[30px] px-40 rounded-[15px] bg-secondary-10 space-y-5"
                     >
                         <div className="rounded-[15px] p-[18px] bg-white shadow-light space-y-4">
                             <div className="flex gap-3">
@@ -165,16 +167,79 @@ const Home: NextPage = () => {
                         </div>
                     </InfiniteScroll>
                 </div>
-                <div className="relative w-1/3">
-                    <div className="bg-yellow-300">
-                        <p>lskdfsd</p>
-                        <p>lskdfsd</p>
-                        <p>lskdfsd</p>
-                        <p>lskdfsd</p>
-                        <p>lskdfsd</p>
-                        <p>lskdfsd</p>
-                    </div>
-                </div>
+                <aside className="w-1/4 h-full overflow-y-auto">
+                    <p className="ml-5 text-xl font-semibold">Friends</p>
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />{' '}
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />{' '}
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                    <OnlineCard
+                        id="123123"
+                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
+                        name="Nguyen Van A"
+                    />
+                </aside>
             </section>
             {isShowModal && (
                 <div

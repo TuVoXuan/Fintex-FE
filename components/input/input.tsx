@@ -23,6 +23,7 @@ interface Props {
     isHasEmojiIcon?: boolean;
     isHasPhotoIcon?: boolean;
     commentId?: string;
+    disabled?: boolean;
     onKeyPress?: () => void;
     onChangeImage?: (data: IImageStore) => void;
 }
@@ -42,6 +43,7 @@ export const Input = ({
     isHasEmojiIcon,
     isHasPhotoIcon,
     commentId,
+    disabled,
     onKeyPress,
     onChangeImage,
 }: Props) => {
@@ -104,15 +106,6 @@ export const Input = ({
                 file: file,
             });
         }
-
-        // dispatch(resetStoreImages());
-        // dispatch(
-        //     addImage({
-        //         id: commentId ?? '',
-        //         url: url,
-        //         file: file,
-        //     }),
-        // );
     };
 
     const handleOnPress = (values: any) => {
@@ -124,7 +117,6 @@ export const Input = ({
 
     useEffect(() => {
         const handleClickOutsideBox = (event: MouseEvent) => {
-            console.log('da vo');
             const { target } = event;
 
             if (refPickerEmoji.current && refIconEmoji.current && target && 'nodeType' in target) {
@@ -165,9 +157,11 @@ export const Input = ({
                             ref(e);
                             refInput.current = e;
                         }}
+                        disabled={disabled}
+                        onKeyDown={handleOnPress}
                         defaultValue={defaultValue}
                         placeholder={placeholder}
-                        className={`w-full items-center focus:outline-none py-4 bg-transparent ${
+                        className={`w-full items-center focus:outline-none py-4 bg-transparent disabled:cursor-not-allowed ${
                             type === 'password' && 'font-extrabold tracking-widest'
                         }`}
                     />

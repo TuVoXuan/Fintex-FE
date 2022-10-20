@@ -14,6 +14,7 @@ const nextConfig = {
         LIMIT: process.env.LIMIT,
         LIMIT_CM: process.env.LIMIT_CM,
         DEFAULT_AVATAR: process.env.DEFAULT_AVATAR,
+        API_ADMINISTRATIVE_UNIT_URL: process.env.API_ADMINISTRATIVE_UNIT_URL,
     },
     swcMinify: true,
     images: {
