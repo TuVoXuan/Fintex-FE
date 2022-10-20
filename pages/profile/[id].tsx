@@ -11,7 +11,7 @@ import { selectPost } from '../../redux/reducers/post-slice';
 import LoadingPost from '../../components/post/loading-post';
 import { postDelete, postMineLoadMore, postUpdateAvatarCover } from '../../redux/actions/post-action';
 import { toastError, toastSuccess } from '../../util/toast';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import { selectUser } from '../../redux/reducers/user-slice';
@@ -22,6 +22,8 @@ import UploadAvatarModal from '../../components/modal/upload-avatar-modal';
 import { UploadImage } from '../../types/enums';
 import { userUpdateCover } from '../../redux/actions/user-action';
 import { VscLoading } from 'react-icons/vsc';
+import Cropper, { Area } from 'react-easy-crop';
+import { getCroppedImg } from '../../util/crop-image';
 
 const postTemp: IPost = {
     _id: '123',
@@ -67,6 +69,13 @@ export default function Profile() {
     const [tempCoverImg, setTempCoverImg] = useState('');
     const [imageFile, setImageFile] = useState<File>();
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
+
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(0.8);
+    const [aspect, setAspect] = useState(16 / 9);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>();
+    const [tempCropImgUrl, setTempCropImgUrl] = useState('');
+    const [croppedFile, setCroppedFile] = useState<Blob>();
 
     const handleScrollToTop = () => {
         if (postsRef.current) {
@@ -161,27 +170,54 @@ export default function Profile() {
 
     const handleCancleUpdateCover = () => {
         setTempCoverImg('');
+        setTempCropImgUrl('');
+        setCroppedAreaPixels(undefined);
     };
 
     const handleUpdateCover = async () => {
         try {
             setIsUpdatingCover(true);
-            // const formData = new FormData();
-            // formData.append('image', imageFile as File);
-            // formData.append('typeUpdate', UploadImage.Cover);
+            const formData = new FormData();
+            formData.append('image', croppedFile as Blob);
+            formData.append('typeUpdate', UploadImage.Cover);
 
-            // await dispatch(userUpdateCover(formData));
-            // await dispatch(postUpdateAvatarCover({ typeUpdate: UploadImage.Cover }));
+            await dispatch(userUpdateCover(formData));
+            await dispatch(postUpdateAvatarCover({ typeUpdate: UploadImage.Cover }));
 
-            setTimeout(() => {
-                setTempCoverImg('');
-                setImageFile(undefined);
-                setIsUpdatingCover(true);
-            }, 2000);
+            // console.log('croppedFile: ', croppedFile);
+            // setTimeout(() => {
+            //     setTempCoverImg('');
+            //     setImageFile(undefined);
+            //     setIsUpdatingCover(true);
+            // }, 2000);
+            setTempCoverImg('');
+            setImageFile(undefined);
+            setCroppedFile(undefined);
+            setTempCropImgUrl('');
+            setCroppedAreaPixels(undefined);
+            setIsUpdatingCover(false);
         } catch (error) {
             toastError((error as IResponseError).error);
         }
     };
+
+    const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
+        console.log(croppedArea, croppedAreaPixels);
+        setCroppedAreaPixels(croppedAreaPixels);
+        //  setDisable(false);
+    }, []);
+
+    useEffect(() => {
+        const getCroppedTempImgUrl = async () => {
+            if (tempCoverImg && croppedAreaPixels) {
+                const croppedImage = await getCroppedImg(tempCoverImg, croppedAreaPixels);
+                const url = URL.createObjectURL(croppedImage as Blob);
+                setTempCropImgUrl(url);
+                setCroppedFile(croppedImage as Blob);
+            }
+        };
+        getCroppedTempImgUrl();
+    }, [tempCoverImg, croppedAreaPixels]);
 
     useEffect(() => {
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
@@ -206,17 +242,37 @@ export default function Profile() {
                 ref={postsRef}
                 onScroll={handleShowScrollTop}
             >
+                {tempCoverImg && (
+                    <section className="relative">
+                        <div className="w-full image-container h-80">
+                            <div className="h-80">
+                                <Cropper
+                                    image={tempCoverImg}
+                                    crop={crop}
+                                    zoom={zoom}
+                                    aspect={aspect}
+                                    cropShape="rect"
+                                    showGrid={false}
+                                    cropSize={{ width: 400, height: 225 }}
+                                    onCropChange={setCrop}
+                                    onCropComplete={onCropComplete}
+                                    onZoomChange={setZoom}
+                                />
+                            </div>
+                        </div>
+                    </section>
+                )}
                 <section className="rounded-xl shadow-right">
                     <div className="relative">
-                        <div className="w-full overflow-hidden rounded-t-xl image-container h-80">
+                        <div className="w-full overflow-hidden rounded-t-xl image-container h-96">
                             <Image
-                                src={tempCoverImg || sUser.data?.coverPhoto || ''}
+                                src={tempCropImgUrl || sUser.data?.coverPhoto || ''}
                                 alt="image"
                                 width={100}
                                 height={100}
-                                layout="responsive"
+                                layout="fill"
                                 objectFit="cover"
-                                objectPosition="center"
+                                objectPosition="top"
                             />
                         </div>
 
