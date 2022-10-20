@@ -13,6 +13,9 @@ const userApi = {
 
         return axiosService.get<IResponseSuccess<StrangerPagination>>(newUrl);
     },
+    edituser: (body: IEditUser) => {
+        return axiosService.put<IResponseSuccess<IUser>>(`${URL}/edit-info`, body);
+    },
 };
 
 export default userApi;

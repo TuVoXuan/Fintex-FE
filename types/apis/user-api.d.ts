@@ -16,3 +16,16 @@ declare interface StrangerPagination {
     data: Stranger[];
     after: string;
 }
+
+declare interface IEditUser {
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    birthday: string;
+    gender: 'male' | 'female' | 'other';
+    email: string;
+    address: string;
+    phone: string;
+    education: string;
+}

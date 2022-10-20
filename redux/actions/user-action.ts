@@ -68,3 +68,12 @@ export const userGetStranger = createAsyncThunk('user/getStrangers', async (para
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const userEdit = createAsyncThunk('user/edit-info', async (body: IEditUser, thunkAPI) => {
+    try {
+        const response = await userApi.edituser(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
