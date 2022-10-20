@@ -60,6 +60,10 @@ export const MainLayout = ({ children }: Props) => {
         router.push(`${APP_PATH.PROFILE}/${sUser.data?._id}`);
     };
 
+    const handleGoEditInfo = () => {
+        router.push(APP_PATH.EDIT_PROFILE);
+    };
+
     const handleEnter = () => {
         console.log('router.basePath: ', router.pathname);
         if (router.pathname === APP_PATH.FIND_FRIENDS) {
@@ -232,8 +236,8 @@ export const MainLayout = ({ children }: Props) => {
                                 <MenuItem
                                     icon={<IoSettingsOutline size={20} />}
                                     title={'Setting'}
-                                    isActive={false}
-                                    link={'#'}
+                                    isActive={path.includes('/setting')}
+                                    link={APP_PATH.EDIT_PROFILE}
                                 />
                             </div>
                             <div className="pl-1 pr-5">

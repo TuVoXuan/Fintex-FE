@@ -16,11 +16,14 @@ import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { FormPost } from '../../components/post/form-post/form-post';
+import { useRouter } from 'next/router';
+import APP_PATH from '../../constants/app-path';
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
     const sPost = useAppSelector(selectPost);
     const dispatch = useAppDispatch();
+    const router = useRouter();
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
     const formPostRef = useRef<HTMLDivElement>(null);
@@ -75,6 +78,10 @@ export default function Profile() {
                 setIsShowModal(false);
             }
         }
+    };
+
+    const handleGoToEditInfo = () => {
+        router.push(APP_PATH.EDIT_PROFILE);
     };
 
     useEffect(() => {
@@ -133,7 +140,9 @@ export default function Profile() {
                         <h2 className="text-secondary-80">
                             {sUser.data && `${sUser.data.name.firstName} ${sUser.data.name.lastName}`}
                         </h2>
-                        <button className="px-4 py-1 rounded bg-secondary-20">Edit info</button>
+                        <button className="px-4 py-1 rounded bg-secondary-20" onClick={handleGoToEditInfo}>
+                            Edit info
+                        </button>
                     </div>
                 </section>
 
