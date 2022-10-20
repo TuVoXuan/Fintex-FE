@@ -8,5 +8,7 @@ const APP_PATH = {
     TEMP_PAGE: '/temp-page',
     PROFILE: '/profile',
     FIND_FRIENDS: '/find-friends',
+    EDIT_PROFILE: '/setting/edit-profile',
+    CHANGE_PASS: '/setting/change-pass',
 };
 export default APP_PATH;

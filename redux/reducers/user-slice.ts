@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { handleFullName } from '../../util/handle-name';
-import { userSignUp, userLoginGoogle, userLoginPhone, userGetCurrentUser } from '../actions/user-action';
+import { userSignUp, userLoginGoogle, userLoginPhone, userGetCurrentUser, userEdit } from '../actions/user-action';
 import { setCookie, deleteCookie } from 'cookies-next';
 
 interface UserState {
@@ -97,6 +97,17 @@ export const userSlice = createSlice({
             state.data = null;
             state.isLogin = false;
             deleteCookie('Authorization');
+        });
+        builder.addCase(userEdit.fulfilled, (state, action: PayloadAction<IUser>) => {
+            if (state.data) {
+                state.data.address = action.payload.address;
+                state.data.name = action.payload.name;
+                state.data.birthday = action.payload.birthday;
+                state.data.education = action.payload.education;
+                state.data.email = action.payload.email;
+                state.data.phone = action.payload.phone;
+                state.data.gender = action.payload.gender;
+            }
         });
     },
 });

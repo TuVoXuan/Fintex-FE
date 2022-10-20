@@ -11,4 +11,5 @@ declare interface IUser {
     coverPhoto: string;
     email: string;
     address?: string;
+    education?: string;
 }
