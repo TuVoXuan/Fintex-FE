@@ -19,6 +19,14 @@ const userApi = {
     uploadAvatarCover: (body: FormData) => {
         return axiosService.post<IResponseSuccess<string>>(`${URL}/avatar-cover`, body);
     },
+    getMyAlbum: async (param: IPaginate) => {
+        let newUrl = `${URL}/album?limit=${param.limit}`;
+        if (param.after) {
+            newUrl += `&after=${param.after}`;
+        }
+
+        return (await axiosService.get<IResponseSuccess<IAlbumPaginate>>(newUrl)).data.data;
+    },
 };
 
 export default userApi;

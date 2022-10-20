@@ -26,6 +26,7 @@ import { userUpdateCover } from '../../redux/actions/user-action';
 import { VscLoading } from 'react-icons/vsc';
 import Cropper, { Area } from 'react-easy-crop';
 import { getCroppedImg } from '../../util/crop-image';
+import userApi from '../../api/user-api';
 
 const postTemp: IPost = {
     _id: '123',
@@ -72,6 +73,7 @@ export default function Profile() {
     const [tempCoverImg, setTempCoverImg] = useState('');
     const [imageFile, setImageFile] = useState<File>();
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
+    const [album, setAlbum] = useState<IAlbum[]>([]);
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.8);
@@ -239,6 +241,8 @@ export default function Profile() {
         if (sPost.posts.length > 0) {
             setLoading(false);
         }
+
+        userApi.getMyAlbum({ limit: 9 }).then((data) => setAlbum(data.album));
     }, []);
 
     return (

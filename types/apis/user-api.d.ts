@@ -29,3 +29,18 @@ declare interface IEditUser {
     phone: string;
     education: string;
 }
+
+declare interface IPaginate {
+    limit: number;
+    after?: string;
+}
+
+declare interface IAlbum {
+    publicId: string;
+    url: string;
+}
+
+declare interface IAlbumPaginate {
+    album: IAlbum[];
+    after: string;
+}
