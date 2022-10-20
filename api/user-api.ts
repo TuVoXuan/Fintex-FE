@@ -19,6 +19,9 @@ const userApi = {
     uploadAvatarCover: (body: FormData) => {
         return axiosService.post<IResponseSuccess<string>>(`${URL}/avatar-cover`, body);
     },
+    getProfile: (userId: string) => {
+        return axiosService.get<IResponseSuccess<IUserProfileRes>>(`${URL}/profile/${userId}`);
+    },
 };
 
 export default userApi;

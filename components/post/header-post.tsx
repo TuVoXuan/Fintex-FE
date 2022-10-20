@@ -11,10 +11,10 @@ interface Props {
     displayName: string;
     timeAgo: string | number;
     visibleFor: 'public' | 'only me' | 'friends';
-    loadInPage: 'home' | 'profile' | 'detail';
     postId: string;
     feeling?: IFeeling;
     postType: 'avatar' | 'cover' | 'normal';
+    showActionPost: boolean;
     editPost?: (postId: string) => () => void;
     deletePost?: (postId: string) => () => void;
 }
@@ -29,7 +29,7 @@ export default function HeaderPost({
     postType,
     editPost,
     deletePost,
-    loadInPage,
+    showActionPost,
 }: Props) {
     timeago.register('vi', vi);
     const refPostSetting = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ export default function HeaderPost({
                 </div>
             </div>
 
-            {postType === 'normal' && loadInPage === 'profile' && (
+            {showActionPost && (
                 <div className="relative">
                     <button
                         onClick={handleShowCommentSetting}

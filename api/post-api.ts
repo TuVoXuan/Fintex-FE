@@ -39,6 +39,16 @@ const postApi = {
     createAvatarCoverPost: (body: IUpdateAvatarCover) => {
         return axiosService.post<IResponseSuccess<IPost>>(`${URL}/avatar-cover`, body);
     },
+    loadMorePersonPost: (personId: string, body: ILoadMorePost) => {
+        if (body.after) {
+            return axiosService.get<IResponseSuccess<ILoadMorePostResponse>>(
+                `${URL}/${personId}/pagination?limit=${body.limit}&after=${body.after}`,
+            );
+        }
+        return axiosService.get<IResponseSuccess<ILoadMorePostResponse>>(
+            `${URL}/${personId}/pagination?limit=${body.limit}`,
+        );
+    },
 };
 
 export default postApi;

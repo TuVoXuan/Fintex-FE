@@ -52,7 +52,7 @@ export default function DetailPost() {
                 )}
             </div>
             <div className="h-screen overflow-y-auto">
-                {post && <Post loadInPage="detail" post={post} isViewedDetail={false} hasFrame={false} />}
+                {post && <Post post={post} isViewedDetail={false} hasFrame={false} />}
             </div>
         </section>
     );

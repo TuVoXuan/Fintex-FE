@@ -57,7 +57,7 @@ export const MainLayout = ({ children }: Props) => {
 
     const handleGoProfile = () => {
         dispatch(resetPost());
-        router.push(`${APP_PATH.PROFILE}/${sUser.data?._id}`);
+        router.push(`${APP_PATH.PROFILE}`);
     };
 
     const handleGoEditInfo = () => {
