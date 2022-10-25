@@ -1,13 +1,18 @@
+import { useRouter } from 'next/router';
+import APP_PATH from '../../constants/app-path';
 import Avatar from '../avatar/avatar';
 
 interface Props {
+    id: string;
     name: string;
     avatar: string;
 }
 
-export default function Stranger({ name, avatar }: Props) {
+export default function Stranger({ id, name, avatar }: Props) {
+    const router = useRouter();
+
     const handleClick = () => {
-        alert('helo');
+        router.push(`${APP_PATH.PROFILE}/${id}`);
     };
 
     return (

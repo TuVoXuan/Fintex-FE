@@ -149,7 +149,7 @@ export const MainLayout = ({ children }: Props) => {
                         >
                             {!loading ? (
                                 strangers.map((item) => (
-                                    <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
+                                    <Stranger id={item._id} key={item._id} name={item.fullName} avatar={item.avatar} />
                                 ))
                             ) : (
                                 <>
