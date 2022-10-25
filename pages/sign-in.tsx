@@ -48,7 +48,7 @@ const SignIn: NextPage = () => {
 
     return (
         <AuthLayout title={'Đăng nhập'} subTitle={'💕Chào mừng trở lại, chúng tôi nhớ bạn💕'}>
-            <div className="flex gap-5">
+            <div className="flex justify-center gap-5">
                 <Button
                     icon={<AiOutlineGoogle size={24} />}
                     title="Đăng nhập bằng Google"

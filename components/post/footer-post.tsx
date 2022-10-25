@@ -97,7 +97,6 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     };
 
     const handleShowReaction = () => {
-        console.log('haha');
         if (refReact.current) {
             if (refReact.current.classList.contains('hidden')) {
                 refReact.current.classList.remove('hidden');
@@ -107,7 +106,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     };
 
     const handleCloseReaction = () => {
-        console.log('leave out');
+        // console.log('leave out');
         setIsClose(true);
     };
 
@@ -183,7 +182,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
 
         if (post) {
             for (let item of post.reactions) {
-                console.log('item: ', item);
+                // console.log('item: ', item);
                 switch (item.type) {
                     case 'angry':
                         reactionTypeList.angry.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
@@ -218,7 +217,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     }, [reactionType]);
 
     useEffect(() => {
-        console.log('isClose: ', isClose);
+        // console.log('isClose: ', isClose);
         const timer = setTimeout(() => {
             if (refReact.current && !refReact.current.classList.contains('hidden')) {
                 refReact.current.classList.add('hidden');

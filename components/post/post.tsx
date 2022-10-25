@@ -23,7 +23,20 @@ export default function Post({
     showActionPost = false,
 }: Props) {
     const sUser = useAppSelector(selectUser);
-    const { avatar, name, images, createdAt, visibleFor, content, feeling, _id, comments, reactions, postType } = post;
+    const {
+        avatar,
+        name,
+        images,
+        createdAt,
+        visibleFor,
+        content,
+        feeling,
+        _id,
+        comments,
+        reactions,
+        postType,
+        userId,
+    } = post;
     const mineReaction = reactions.find((item) => item.user._id === sUser.data?._id);
 
     return (
@@ -31,6 +44,7 @@ export default function Post({
             <HeaderPost
                 avatarUrl={avatar}
                 displayName={name.lastName ? `${name.firstName} ${name.lastName}` : name.firstName}
+                userId={userId}
                 timeAgo={createdAt}
                 visibleFor={visibleFor}
                 feeling={feeling}

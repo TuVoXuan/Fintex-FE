@@ -5,10 +5,15 @@ import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import { translateVisibleFor } from '../../util/handle-visible-for';
 import { useRef } from 'react';
+import { useAppSelector } from '../../hook/redux';
+import { selectUser } from '../../redux/reducers/user-slice';
+import { useRouter } from 'next/router';
+import APP_PATH from '../../constants/app-path';
 
 interface Props {
     avatarUrl: string;
     displayName: string;
+    userId: string;
     timeAgo: string | number;
     visibleFor: 'public' | 'only me' | 'friends';
     postId: string;
@@ -22,6 +27,7 @@ interface Props {
 export default function HeaderPost({
     avatarUrl,
     displayName,
+    userId,
     timeAgo,
     visibleFor,
     postId,
@@ -33,6 +39,8 @@ export default function HeaderPost({
 }: Props) {
     timeago.register('vi', vi);
     const refPostSetting = useRef<HTMLDivElement>(null);
+    const mine = useAppSelector(selectUser).data;
+    const router = useRouter();
 
     const handleShowCommentSetting = () => {
         if (refPostSetting.current) {
@@ -58,13 +66,25 @@ export default function HeaderPost({
         }
     };
 
+    const handleSeeProfile = () => {
+        if (mine) {
+            if (mine._id === userId) {
+                router.push(APP_PATH.PROFILE);
+            } else {
+                router.push(`${APP_PATH.PROFILE}/${userId}`);
+            }
+        }
+    };
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
                 <Avatar size="medium" url={avatarUrl} />
                 <div>
                     <div className=" text-secondary-80">
-                        <span className="font-semibold hover:underline hover:cursor-pointer">{displayName}</span>
+                        <span onClick={handleSeeProfile} className="font-semibold hover:underline hover:cursor-pointer">
+                            {displayName}
+                        </span>
                         {postType === 'normal' && feeling && (
                             <>
                                 {' '}

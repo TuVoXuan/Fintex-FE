@@ -6,7 +6,7 @@ import { HiOutlineAcademicCap, HiOutlineCake } from 'react-icons/hi';
 import { GrLocation } from 'react-icons/gr';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import LoadingPost from '../../components/post/loading-post';
-import { toastError } from '../../util/toast';
+import { toastError, toastSuccess } from '../../util/toast';
 import { useEffect, useRef, useState } from 'react';
 import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
@@ -16,6 +16,10 @@ import postApi from '../../api/post-api';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectPost } from '../../redux/reducers/post-slice';
 import { postPersonLoadMore } from '../../redux/actions/post-action';
+import friendReqApi from '../../api/friend-req-api';
+import { Button } from '../../components';
+import { friendReqCreate } from '../../redux/actions/friend-req-action';
+import { VscLoading } from 'react-icons/vsc';
 
 interface Props {
     personId: string;
@@ -30,6 +34,8 @@ export default function Profile({ personId }: Props) {
 
     const [user, setUser] = useState<IUserProfileRes>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [relationship, setRelationship] = useState<Relationship>();
+    const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
 
     // const id = router.query.id as string;
     // console.log('id: ', id);
@@ -73,8 +79,32 @@ export default function Profile({ personId }: Props) {
         }
     };
 
+    const getRelationship = async (personId: string) => {
+        try {
+            const response = await friendReqApi.getRelationship(personId);
+            setRelationship(response.data.data);
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const handleMakeFriendReq = async () => {
+        try {
+            setLoadingMakeFriendReq(true);
+            await dispatch(friendReqCreate(personId));
+            // setRelationship('requesting');
+            toastSuccess('Gửi lời mời kết bạn thành công');
+            setLoadingMakeFriendReq(false);
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
     useEffect(() => {
         getUserProfile(personId);
+        getRelationship(personId);
         const limit = +(process.env.LIMIT as string);
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             fetchPost(personId, limit);
@@ -117,8 +147,42 @@ export default function Profile({ personId }: Props) {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between py-8 px-7">
-                        <h2 className="text-secondary-80">{user && `${user.name.firstName} ${user.name.lastName}`}</h2>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between py-8 px-7">
+                            <h2 className="text-secondary-80">
+                                {user && `${user.name.firstName} ${user.name.lastName}`}
+                            </h2>
+                        </div>
+
+                        <div className="pr-4">
+                            {relationship === 'notFriend' && (
+                                <>
+                                    {loadingMakeFriendReq ? (
+                                        <button disabled className="px-14 btn btn-primary">
+                                            <VscLoading className="animate-spin" size={18} />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleMakeFriendReq}
+                                            className="btn btn-primary ripple-bg-primary-80"
+                                        >
+                                            Kết bạn
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                            {relationship === 'requesting' && (
+                                <button
+                                    disabled
+                                    className="btn bg-secondary-20 ripple-bg-secondary-20 text-secondary-80"
+                                >
+                                    Đã gửi kết bạn
+                                </button>
+                            )}
+                            {relationship === 'isFriend' && (
+                                <button className="btn btn-primary ripple-bg-primary-80">Nhắn tin</button>
+                            )}
+                        </div>
                     </div>
                 </section>
 

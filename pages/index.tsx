@@ -17,11 +17,13 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { FormPost } from '../components/post/form-post/form-post';
 import OnlineCard from '../components/online-card/online-card';
+import { selectFriend } from '../redux/reducers/friend-slice';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
+    const onlineFriends = useAppSelector(selectFriend).onlineFriends;
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
@@ -165,76 +167,18 @@ const Home: NextPage = () => {
                 </div>
                 <aside className="w-1/4 h-full overflow-y-auto">
                     <p className="ml-5 text-xl font-semibold">Friends</p>
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />{' '}
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />{' '}
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
-                    <OnlineCard
-                        id="123123"
-                        url="https://res.cloudinary.com/cake-shop/image/upload/v1662819438/image18_xwgv8v.jpg"
-                        name="Nguyen Van A"
-                    />
+                    {onlineFriends.map((friend) => (
+                        <OnlineCard
+                            key={friend._id}
+                            id={friend._id}
+                            url={friend.avatar}
+                            name={
+                                friend.name.lastName
+                                    ? `${friend.name.firstName} ${friend.name.lastName}`
+                                    : friend.name.firstName
+                            }
+                        />
+                    ))}
                 </aside>
             </section>
             {isShowModal && (

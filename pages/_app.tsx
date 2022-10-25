@@ -10,6 +10,8 @@ import { toastError } from '../util/toast';
 import { useRouter } from 'next/router';
 import { CgSpinnerTwo } from 'react-icons/cg';
 import { MainLayoutProvider } from '../context/main-layout-contex';
+import SocketRoute from '../route/socket-route';
+import { SocketProvider } from '../context/socket-context';
 
 function Loading() {
     const router = useRouter();
@@ -61,7 +63,11 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Loading />
             <Provider store={store}>
                 <MainLayoutProvider>
-                    <Component {...pageProps} />
+                    <SocketProvider>
+                        <SocketRoute>
+                            <Component {...pageProps} />
+                        </SocketRoute>
+                    </SocketProvider>
                 </MainLayoutProvider>
                 <Toaster
                     toastOptions={{

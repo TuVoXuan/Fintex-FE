@@ -13,3 +13,12 @@ declare interface IUser {
     address?: string;
     education?: string;
 }
+
+declare interface IUserSimple {
+    _id: string;
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    avatar: string;
+}

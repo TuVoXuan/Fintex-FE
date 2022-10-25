@@ -20,6 +20,7 @@ import { deleteCookie } from 'cookies-next';
 import { userGetStranger } from '../redux/actions/user-action';
 import Stranger from '../components/stranger/stranger';
 import { useMainLayout } from '../context/main-layout-contex';
+import { useSocket } from '../context/socket-context';
 
 interface Props {
     children?: React.ReactNode;
@@ -36,6 +37,7 @@ export const MainLayout = ({ children }: Props) => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = router.asPath;
+    const socket = useSocket();
 
     const { setName } = useMainLayout();
 
@@ -44,6 +46,7 @@ export const MainLayout = ({ children }: Props) => {
 
     const handleSignOut = () => {
         try {
+            socket?.disconnect();
             deleteCookie('Authorization');
             dispatch(signOut());
             dispatch(resetPost());
