@@ -11,7 +11,7 @@ interface Props {
     isViewedDetail?: boolean;
     editPost?: (postId: string) => () => void;
     deletePost?: (postId: string) => () => void;
-    loadInPage: 'home' | 'profile' | 'detail';
+    showActionPost?: boolean;
 }
 
 export default function Post({
@@ -20,7 +20,7 @@ export default function Post({
     isViewedDetail = true,
     editPost,
     deletePost,
-    loadInPage,
+    showActionPost = false,
 }: Props) {
     const sUser = useAppSelector(selectUser);
     const { avatar, name, images, createdAt, visibleFor, content, feeling, _id, comments, reactions, postType } = post;
@@ -38,7 +38,7 @@ export default function Post({
                 postId={_id}
                 editPost={editPost}
                 deletePost={deletePost}
-                loadInPage={loadInPage}
+                showActionPost={showActionPost}
             />
             <p>{content}</p>
             {postType !== 'avatar' && isViewedDetail && images && <ImageLayout images={images} postId={_id} />}

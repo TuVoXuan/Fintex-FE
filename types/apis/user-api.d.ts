@@ -30,9 +30,27 @@ declare interface IEditUser {
     education: string;
 }
 
+declare interface IUserProfileRes {
+    _id: string;
+    name: {
+        firstName: string;
+        lastName: string;
+    };
+    avatar: string;
+    coverPhoto: string;
+    birthday: string;
+    gender: 'male' | 'female' | 'other';
+    address: string;
+    education: {
+        _id: string;
+        name: string;
+    };
+}
+
 declare interface IPaginate {
     limit: number;
     after?: string;
+    id?: string;
 }
 
 declare interface IAlbum {

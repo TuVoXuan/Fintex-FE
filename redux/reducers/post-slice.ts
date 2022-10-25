@@ -9,6 +9,7 @@ import {
     postMineLoadMore,
     postReaction,
     postUpdate,
+    postPersonLoadMore,
 } from '../actions/post-action';
 
 interface PostState {
@@ -46,6 +47,11 @@ export const postSlice = createSlice({
             state.posts = [...state.posts, ...action.payload.posts];
         });
         builder.addCase(postMineLoadMore.fulfilled, (state, action: PayloadAction<ILoadMorePostResponse>) => {
+            state.after = action.payload.after;
+            state.ended = action.payload.ended;
+            state.posts = [...state.posts, ...action.payload.posts];
+        });
+        builder.addCase(postPersonLoadMore.fulfilled, (state, action: PayloadAction<ILoadMorePostResponse>) => {
             state.after = action.payload.after;
             state.ended = action.payload.ended;
             state.posts = [...state.posts, ...action.payload.posts];

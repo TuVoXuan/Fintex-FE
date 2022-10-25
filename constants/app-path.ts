@@ -10,5 +10,6 @@ const APP_PATH = {
     FIND_FRIENDS: '/find-friends',
     EDIT_PROFILE: '/setting/edit-profile',
     CHANGE_PASS: '/setting/change-pass',
+    ALBUM: '/profile/album',
 };
 export default APP_PATH;

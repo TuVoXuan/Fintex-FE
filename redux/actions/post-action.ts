@@ -78,3 +78,15 @@ export const postUpdateAvatarCover = createAsyncThunk(
         }
     },
 );
+
+export const postPersonLoadMore = createAsyncThunk(
+    'post/postPersonLoadMore',
+    async (body: { loadMore: ILoadMorePost; personId: string }, thunkAPI) => {
+        try {
+            const response = await postApi.loadMorePersonPost(body.personId, body.loadMore);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);
