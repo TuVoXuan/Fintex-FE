@@ -22,6 +22,22 @@ const userApi = {
     getProfile: (userId: string) => {
         return axiosService.get<IResponseSuccess<IUserProfileRes>>(`${URL}/profile/${userId}`);
     },
+    getMyAlbum: async (param: IPaginate) => {
+        let newUrl = `${URL}/album?limit=${param.limit}`;
+        if (param.after) {
+            newUrl += `&after=${param.after}`;
+        }
+
+        return (await axiosService.get<IResponseSuccess<IAlbumPaginate>>(newUrl)).data.data;
+    },
+    getAlbum: async (param: IPaginate) => {
+        let newUrl = `${URL}/album/${param.id}?limit=${param.limit}`;
+        if (param.after) {
+            newUrl += `&after=${param.after}`;
+        }
+
+        return (await axiosService.get<IResponseSuccess<IAlbumPaginate>>(newUrl)).data.data;
+    },
 };
 
 export default userApi;

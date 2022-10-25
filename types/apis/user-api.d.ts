@@ -46,3 +46,19 @@ declare interface IUserProfileRes {
         name: string;
     };
 }
+
+declare interface IPaginate {
+    limit: number;
+    after?: string;
+    id?: string;
+}
+
+declare interface IAlbum {
+    publicId: string;
+    url: string;
+}
+
+declare interface IAlbumPaginate {
+    album: IAlbum[];
+    after: string;
+}

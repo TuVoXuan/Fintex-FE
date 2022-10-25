@@ -34,7 +34,7 @@ export default function DetailPost() {
                     <Swiper navigation={true} modules={[Navigation]} className="w-full h-full">
                         {post && post.images && (
                             <SwiperSlide>
-                                <Image src={post.images[0].url} layout="fill" objectFit="contain" />
+                                <Image src={post.images[0].url} layout="fill" alt="post image" objectFit="contain" />
                             </SwiperSlide>
                         )}
                     </Swiper>
@@ -44,8 +44,8 @@ export default function DetailPost() {
                         {post &&
                             post.images &&
                             post.images.map((image) => (
-                                <SwiperSlide>
-                                    <Image src={image.url} layout="fill" objectFit="contain" />
+                                <SwiperSlide key={image.url}>
+                                    <Image src={image.url} layout="fill" alt="post image" objectFit="contain" />
                                 </SwiperSlide>
                             ))}
                     </Swiper>

@@ -3,7 +3,7 @@ import { MainLayout } from '../../layouts/main-layout';
 import Image from 'next/image';
 import Avatar from '../../components/avatar/avatar';
 import { BsGenderAmbiguous } from 'react-icons/bs';
-import { HiOutlineCake } from 'react-icons/hi';
+import { HiOutlineAcademicCap, HiOutlineCake } from 'react-icons/hi';
 import { GrLocation } from 'react-icons/gr';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
@@ -26,6 +26,15 @@ import { userUpdateCover } from '../../redux/actions/user-action';
 import { VscLoading } from 'react-icons/vsc';
 import Cropper, { Area } from 'react-easy-crop';
 import { getCroppedImg } from '../../util/crop-image';
+import userApi from '../../api/user-api';
+import educationApi from '../../api/education-api';
+import { getImageClasses } from '../../util/render-list-image';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { IoClose } from 'react-icons/io5';
+import SwiperCore from 'swiper';
 
 const postTemp: IPost = {
     _id: '123',
@@ -61,6 +70,7 @@ export default function Profile() {
     const postsRef = useRef<HTMLDivElement>(null);
     const formPostRef = useRef<HTMLDivElement>(null);
     const coverRef = useRef<HTMLInputElement>(null);
+    const swiperRef = useRef<HTMLDivElement>(null);
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
@@ -71,7 +81,10 @@ export default function Profile() {
     const [postEdit, setPostEdit] = useState<IPost | undefined>();
     const [tempCoverImg, setTempCoverImg] = useState('');
     const [imageFile, setImageFile] = useState<File>();
+    const [educations, setEducations] = useState<IEducation[]>([]);
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
+    const [album, setAlbum] = useState<IAlbum[]>([]);
+    const [swiper, setSwiper] = useState<SwiperCore>();
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.8);
@@ -209,10 +222,15 @@ export default function Profile() {
     };
 
     const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
-        console.log(croppedArea, croppedAreaPixels);
         setCroppedAreaPixels(croppedAreaPixels);
         //  setDisable(false);
     }, []);
+
+    const slideTo = (index: number) => {
+        if (swiper) {
+            swiper.slideTo(index);
+        }
+    };
 
     useEffect(() => {
         const getCroppedTempImgUrl = async () => {
@@ -239,6 +257,16 @@ export default function Profile() {
         if (sPost.posts.length > 0) {
             setLoading(false);
         }
+
+        educationApi
+            .getEducations()
+            .then((data) => setEducations(data))
+            .catch((error) => toastError(error));
+
+        userApi
+            .getMyAlbum({ limit: 9 })
+            .then((data) => setAlbum(data.album))
+            .catch((error) => toastError(error));
     }, []);
 
     return (
@@ -348,20 +376,81 @@ export default function Profile() {
                     </div>
                 </section>
 
-                <section className="py-[30px] px-20 rounded-[15px] bg-secondary-10 mt-7 flex">
-                    <div className="sticky w-1/3 px-5 py-6 space-y-4 bg-white rounded-2xl h-fit top-3">
-                        <h3>INTRO</h3>
-                        <div className="flex items-center gap-3 ">
-                            <BsGenderAmbiguous size={20} />
-                            {sUser.data?.gender}
+                <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
+                    <div className="sticky w-1/3 space-y-4 -top-36 h-fit">
+                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                            <h3>Giới thiệu</h3>
+                            <div className="flex items-center gap-3 ">
+                                <BsGenderAmbiguous size={20} />
+                                {sUser.data?.gender === 'male' && 'Nam'}
+                                {sUser.data?.gender === 'female' && 'Nữ'}
+                                {sUser.data?.gender === 'other' && 'Khác'}
+                            </div>
+                            <div className="flex items-center gap-3 ">
+                                <HiOutlineCake size={20} />
+                                {new Date(sUser.data?.birthday || '').toLocaleDateString('vi', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: '2-digit',
+                                })}
+                            </div>
+                            {sUser.data?.address && (
+                                <div className="flex items-center gap-3 ">
+                                    <GrLocation size={20} />
+                                    {sUser.data.address}
+                                </div>
+                            )}
+                            {sUser.data?.education && (
+                                <div className="flex items-center gap-3 ">
+                                    <HiOutlineAcademicCap size={20} />
+                                    {educations.find((item) => item._id === sUser.data?.education)?.name}
+                                </div>
+                            )}
                         </div>
-                        <div className="flex items-center gap-3 ">
-                            <HiOutlineCake size={20} />
-                            {new Date(sUser.data?.birthday || '').toDateString()}
-                        </div>
-                        <div className="flex items-center gap-3 ">
-                            <GrLocation size={20} />
-                            {sUser.data?.address}
+                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                            <div className="flex items-end justify-between">
+                                <h3>Ảnh</h3>
+                                <p
+                                    onClick={() => {
+                                        router.push(`${APP_PATH.ALBUM}/${sUser.data?._id}`);
+                                    }}
+                                    className="cursor-pointer hover:text-blue-500"
+                                >
+                                    Xem tất cả ảnh
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-lg">
+                                {album.map((image, index, array) => {
+                                    return (
+                                        <div
+                                            onClick={() => {
+                                                if (swiperRef.current) {
+                                                    swiperRef.current.hidden = false;
+                                                    slideTo(index);
+                                                }
+                                            }}
+                                            key={image.publicId}
+                                            className={`${getImageClasses(
+                                                index,
+                                                array.length,
+                                                3,
+                                            )} relative after:absolute after:content-[""] after:top-0 after:bottom-0 after:left-0 after:right-0 hover:after:bg-gray-500 hover:after:opacity-40 cursor-pointer`}
+                                        >
+                                            <Image
+                                                src={image.url}
+                                                key={image.publicId}
+                                                alt="image"
+                                                width={100}
+                                                height={100}
+                                                layout="responsive"
+                                                objectFit="cover"
+                                                objectPosition="center"
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
 
@@ -434,6 +523,31 @@ export default function Profile() {
                 />
             )}
             {isShowsUpdateAvatarModal && <UploadAvatarModal onClose={handleCloseUpdateAvatarModal} />}
+            <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
+                <IoClose
+                    onClick={() => {
+                        if (swiperRef.current) {
+                            swiperRef.current.hidden = true;
+                        }
+                    }}
+                    size={48}
+                    className="fixed z-40 p-2 bg-white rounded-full cursor-pointer drop-shadow-md right-6 top-6"
+                />
+                <Swiper
+                    onSwiper={(e) => {
+                        setSwiper(e);
+                    }}
+                    navigation={true}
+                    modules={[Navigation]}
+                    className="w-full h-full"
+                >
+                    {album.map((item) => (
+                        <SwiperSlide key={item.publicId}>
+                            <Image src={item.url} layout="fill" alt="post image" objectFit="contain" />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </div>
         </MainLayout>
     );
 }

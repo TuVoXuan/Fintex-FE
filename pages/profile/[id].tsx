@@ -12,10 +12,17 @@ import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import userApi from '../../api/user-api';
-import postApi from '../../api/post-api';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectPost } from '../../redux/reducers/post-slice';
 import { postPersonLoadMore } from '../../redux/actions/post-action';
+import { getImageClasses } from '../../util/render-list-image';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { IoClose } from 'react-icons/io5';
+import SwiperCore from 'swiper';
+import APP_PATH from '../../constants/app-path';
 import friendReqApi from '../../api/friend-req-api';
 import { Button } from '../../components';
 import { friendReqCreate } from '../../redux/actions/friend-req-action';
@@ -31,9 +38,22 @@ export default function Profile({ personId }: Props) {
     const sPost = useAppSelector(selectPost);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<HTMLDivElement>(null);
 
     const [user, setUser] = useState<IUserProfileRes>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [album, setAlbum] = useState<IAlbum[]>([]);
+    const [swiper, setSwiper] = useState<SwiperCore>();
+
+    const [isShowModal, setIsShowModal] = useState<boolean>(false);
+    const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
+    const [isShowsUpdateAvatarModal, setIsShowUpdateAvatarModal] = useState<boolean>(false);
+    const [deletePostId, setDeletePostId] = useState<string>('');
+    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+    const [postEdit, setPostEdit] = useState<IPost | undefined>();
+    const [tempCoverImg, setTempCoverImg] = useState('');
+    const [imageFile, setImageFile] = useState<File>();
+    const [isUpdatingCover, setIsUpdatingCover] = useState(false);
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
 
@@ -102,6 +122,12 @@ export default function Profile({ personId }: Props) {
         }
     };
 
+    const slideTo = (index: number) => {
+        if (swiper) {
+            swiper.slideTo(index);
+        }
+    };
+
     useEffect(() => {
         getUserProfile(personId);
         getRelationship(personId);
@@ -116,6 +142,11 @@ export default function Profile({ personId }: Props) {
         if (sPost.posts.length > 0) {
             setLoading(false);
         }
+
+        userApi
+            .getAlbum({ limit: 9, after: '', id: personId })
+            .then((data) => setAlbum(data.album))
+            .catch((error) => toastError(error));
     }, []);
 
     return (
@@ -187,35 +218,81 @@ export default function Profile({ personId }: Props) {
                 </section>
 
                 <section className="py-[30px] px-20 rounded-[15px] bg-secondary-10 mt-7 flex">
-                    <div className="sticky w-1/3 px-5 py-6 space-y-4 bg-white rounded-2xl h-fit top-3">
-                        <h3>Giới thiệu</h3>
-                        <div className="flex items-center gap-3 ">
-                            <BsGenderAmbiguous size={20} />
-                            {user?.gender === 'male' && 'Nam'}
-                            {user?.gender === 'female' && 'Nữ'}
-                            {user?.gender === 'other' && 'Khác'}
-                        </div>
-                        <div className="flex items-center gap-3 ">
-                            <HiOutlineCake size={20} />
-                            {new Date(user?.birthday || '').toLocaleDateString('vi', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: '2-digit',
-                            })}
-                        </div>
-                        {user?.address && (
+                    <div className="sticky w-1/3 space-y-4 top-3">
+                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl h-fit">
+                            <h3>Giới thiệu</h3>
                             <div className="flex items-center gap-3 ">
-                                <GrLocation size={20} />
-                                {user.address}
+                                <BsGenderAmbiguous size={20} />
+                                {user?.gender === 'male' && 'Nam'}
+                                {user?.gender === 'female' && 'Nữ'}
+                                {user?.gender === 'other' && 'Khác'}
                             </div>
-                        )}
-                        {user?.education && (
                             <div className="flex items-center gap-3 ">
-                                <HiOutlineAcademicCap size={20} />
-                                {user.education.name}
+                                <HiOutlineCake size={20} />
+                                {new Date(user?.birthday || '').toLocaleDateString('vi', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: '2-digit',
+                                })}
                             </div>
-                        )}
+                            {user?.address && (
+                                <div className="flex items-center gap-3 ">
+                                    <GrLocation size={20} />
+                                    {user.address}
+                                </div>
+                            )}
+                            {user?.education && (
+                                <div className="flex items-center gap-3 ">
+                                    <HiOutlineAcademicCap size={20} />
+                                    {user.education.name}
+                                </div>
+                            )}
+                        </div>
+                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                            <div className="flex items-end justify-between">
+                                <h3>Ảnh</h3>
+                                <p
+                                    onClick={() => {
+                                        router.push(`${APP_PATH.ALBUM}/${user?._id}`);
+                                    }}
+                                    className="cursor-pointer hover:text-blue-500"
+                                >
+                                    Xem tất cả ảnh
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-lg">
+                                {album.map((image, index, array) => {
+                                    return (
+                                        <div
+                                            onClick={() => {
+                                                if (swiperRef.current) {
+                                                    swiperRef.current.hidden = false;
+                                                    slideTo(index);
+                                                }
+                                            }}
+                                            key={image.publicId}
+                                            className={`${getImageClasses(
+                                                index,
+                                                array.length,
+                                                3,
+                                            )} relative after:absolute after:content-[""] after:top-0 after:bottom-0 after:left-0 after:right-0 hover:after:bg-gray-500 hover:after:opacity-40 cursor-pointer`}
+                                        >
+                                            <Image
+                                                src={image.url}
+                                                key={image.publicId}
+                                                alt="image"
+                                                width={100}
+                                                height={100}
+                                                layout="responsive"
+                                                objectFit="cover"
+                                                objectPosition="center"
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="w-2/3">
@@ -252,6 +329,31 @@ export default function Profile({ personId }: Props) {
                     </div>
                 </section>
             </section>
+            <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
+                <IoClose
+                    onClick={() => {
+                        if (swiperRef.current) {
+                            swiperRef.current.hidden = true;
+                        }
+                    }}
+                    size={48}
+                    className="fixed z-40 p-2 bg-white rounded-full cursor-pointer drop-shadow-md right-6 top-6"
+                />
+                <Swiper
+                    onSwiper={(e) => {
+                        setSwiper(e);
+                    }}
+                    navigation={true}
+                    modules={[Navigation]}
+                    className="w-full h-full"
+                >
+                    {album.map((item) => (
+                        <SwiperSlide key={item.publicId}>
+                            <Image src={item.url} layout="fill" alt="post image" objectFit="contain" />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </div>
         </MainLayout>
     );
 }
