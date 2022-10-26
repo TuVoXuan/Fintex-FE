@@ -28,7 +28,6 @@ import Cropper, { Area } from 'react-easy-crop';
 import { getCroppedImg } from '../../util/crop-image';
 import userApi from '../../api/user-api';
 import educationApi from '../../api/education-api';
-import { getImageClasses } from '../../util/render-list-image';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper';
@@ -232,6 +231,39 @@ export default function Profile() {
         }
     };
 
+    const getImageClasses = (index: number, arrayLength: number, col: number): string => {
+        let className = 'overflow-hidden image-container';
+        const row = Math.floor(arrayLength / col);
+
+        if (index === 0) {
+            className += ' rounded-tl-lg';
+            if (arrayLength <= col) {
+                className += ' rounded-bl-lg';
+            }
+        }
+        if (index === col - 1) {
+            className += ' rounded-tr-lg';
+        }
+        if (index === arrayLength - 1) {
+            className += ' rounded-br-lg';
+            if (row === 0) {
+                className += ' rounded-tr-lg';
+            }
+        }
+        if (index === row * col) {
+            className += ' rounded-bl-lg';
+        }
+        if (arrayLength - 1 >= row * col && arrayLength < row * col + col && index === row * col - 1) {
+            className += ' rounded-br-lg';
+        }
+
+        if (index === 1) {
+            console.log(className);
+        }
+
+        return className;
+    };
+
     useEffect(() => {
         const getCroppedTempImgUrl = async () => {
             if (tempCoverImg && croppedAreaPixels) {
@@ -431,11 +463,7 @@ export default function Profile() {
                                                 }
                                             }}
                                             key={image.publicId}
-                                            className={`${getImageClasses(
-                                                index,
-                                                array.length,
-                                                3,
-                                            )} relative after:absolute after:content-[""] after:top-0 after:bottom-0 after:left-0 after:right-0 hover:after:bg-gray-500 hover:after:opacity-40 cursor-pointer`}
+                                            className={getImageClasses(index, array.length, 3)}
                                         >
                                             <Image
                                                 src={image.url}
