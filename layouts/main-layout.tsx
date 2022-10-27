@@ -216,7 +216,7 @@ export const MainLayout = ({ children }: Props) => {
                                     icon={<RiChatSmileLine size={20} />}
                                     title={'Message'}
                                     isActive={false}
-                                    link={'#'}
+                                    link={APP_PATH.CHAT}
                                 />
                             </div>
                             <div className="pl-1 pr-5">

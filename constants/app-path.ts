@@ -5,6 +5,7 @@ const APP_PATH = {
     SEND_OTP: '/send-otp',
     VERIFY_OTP: '/verify-otp',
     MY_COMMUNITY: '/my-community',
+    CHAT: '/chat',
     TEMP_PAGE: '/temp-page',
     PROFILE: '/profile',
     FIND_FRIENDS: '/find-friends',

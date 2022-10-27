@@ -16,7 +16,7 @@ import { NextPage } from 'next';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { FormPost } from '../components/post/form-post/form-post';
-import OnlineCard from '../components/online-card/online-card';
+import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
 
 const Home: NextPage = () => {
