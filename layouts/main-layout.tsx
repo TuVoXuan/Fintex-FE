@@ -47,6 +47,7 @@ export const MainLayout = ({ children }: Props) => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [strangers, setStrangers] = useState<Stranger[]>([]);
+    const [after, setAfter] = useState<string>();
 
     const handleSignOut = () => {
         try {
@@ -71,7 +72,7 @@ export const MainLayout = ({ children }: Props) => {
         router.push(APP_PATH.EDIT_PROFILE);
     };
 
-    const handleEnter = () => {
+    const handleSearch = () => {
         console.log('router.basePath: ', router.pathname);
         if (router.pathname === APP_PATH.FIND_FRIENDS) {
             setName(getValues('search'));
@@ -113,14 +114,17 @@ export const MainLayout = ({ children }: Props) => {
                 isFirst = true;
                 try {
                     if (value.search) {
-                        const { data } = await dispatch(
+                        setName(getValues('search'));
+
+                        const { data, after } = await dispatch(
                             userGetStranger({
                                 name: value.search || '',
-                                limit: 10,
+                                limit: 5,
                                 after: '',
                             }),
                         ).unwrap();
                         setStrangers(data);
+                        setAfter(after);
                     }
                 } catch (error) {
                     console.log('error: ', error);
@@ -164,7 +168,7 @@ export const MainLayout = ({ children }: Props) => {
                         <Input
                             name="search"
                             border={true}
-                            onKeyPress={handleEnter}
+                            onKeyPress={handleSearch}
                             placeholder="Tìm kiếm tại đây..."
                             icon={<FiSearch size={24} />}
                             type="text"
@@ -175,9 +179,21 @@ export const MainLayout = ({ children }: Props) => {
                             className="absolute z-10 hidden w-full p-4 space-y-1 bg-white rounded-md drop-shadow-lg top-14"
                         >
                             {!loading ? (
-                                strangers.map((item) => (
-                                    <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
-                                ))
+                                <>
+                                    {strangers.map((item) => (
+                                        <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
+                                    ))}
+                                    {after ? (
+                                        <div
+                                            onClick={handleSearch}
+                                            className="p-2 rounded-md cursor-pointer hover:bg-secondary-20"
+                                        >
+                                            <p className="text-center text-primary-80">
+                                                Xem thêm kết quả tìm kiếm tại đây
+                                            </p>
+                                        </div>
+                                    ) : null}
+                                </>
                             ) : (
                                 <>
                                     <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">

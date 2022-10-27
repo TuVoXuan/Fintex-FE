@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Button } from '../components';
 import Avatar from '../components/avatar/avatar';
+import LoadingFindFriend from '../components/loading/loading-find-friend';
 import StrangerCard from '../components/stranger/stranger-card';
 import { useMainLayout } from '../context/main-layout-contex';
 import { useAppDispatch } from '../hook/redux';
@@ -16,6 +17,7 @@ const FindFrends: NextPage = () => {
 
     const [strangers, setStrangers] = useState<Stranger[]>([]);
     const [after, setAfter] = useState('');
+    const [ended, setEnded] = useState<boolean>(false);
 
     useEffect(() => {
         if (name) {
@@ -37,24 +39,36 @@ const FindFrends: NextPage = () => {
 
     return (
         <MainLayout>
-            <section className="relative h-full overflow-y-auto bg-secondary-10">
+            <section id="findFriendDiv" className="relative h-full overflow-y-auto rounded-2xl bg-secondary-10">
                 <InfiniteScroll
                     next={function () {
-                        throw new Error('Function not implemented.');
+                        if (after) {
+                            dispatch(
+                                userGetStranger({
+                                    name: name,
+                                    limit: 10,
+                                    after,
+                                }),
+                            )
+                                .unwrap()
+                                .then((data) => {
+                                    if (!data.after) {
+                                        setEnded(true);
+                                    }
+                                    setStrangers((value) => [...value, ...data.data]);
+                                    setAfter(data.after);
+                                })
+                                .catch((error) => console.log('error', error));
+                        }
                     }}
-                    hasMore={false}
-                    loader={undefined}
-                    dataLength={0}
+                    hasMore={!ended}
+                    loader={<LoadingFindFriend />}
+                    dataLength={strangers.length}
+                    scrollableTarget="findFriendDiv"
                     className="px-56 py-5 space-y-3"
                 >
                     {strangers.map((item) => (
-                        <StrangerCard
-                            key={item._id}
-                            avatar={item.avatar}
-                            fullName={item.fullName}
-                            isFriend={item.isFriend}
-                            address={item.address}
-                        />
+                        <StrangerCard key={item._id} stranger={item} />
                     ))}
                 </InfiniteScroll>
             </section>
