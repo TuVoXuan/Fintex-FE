@@ -16,6 +16,8 @@ const nextConfig = {
         DEFAULT_AVATAR: process.env.DEFAULT_AVATAR,
         API_ADMINISTRATIVE_UNIT_URL: process.env.API_ADMINISTRATIVE_UNIT_URL,
         API_HOST: process.env.API_HOST,
+        LIMIT_FQ: process.env.LIMIT_FQ,
+        LIMIT_NOTIFY: process.env.LIMIT_NOTIFY,
     },
     swcMinify: true,
     images: {

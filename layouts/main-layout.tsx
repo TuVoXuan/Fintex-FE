@@ -21,6 +21,9 @@ import { userGetStranger } from '../redux/actions/user-action';
 import Stranger from '../components/stranger/stranger';
 import { useMainLayout } from '../context/main-layout-contex';
 import { useSocket } from '../context/socket-context';
+import { selectNotification } from '../redux/reducers/notification-slice';
+import { notifyHandleSee } from '../redux/actions/notify-action';
+import { toastError } from '../util/toast';
 
 interface Props {
     children?: React.ReactNode;
@@ -34,6 +37,7 @@ export const MainLayout = ({ children }: Props) => {
     const { register, watch, getValues } = useForm<FormData>();
     const ref = useRef<HTMLDivElement>(null);
     const sUser = useAppSelector(selectUser);
+    const sNofitication = useAppSelector(selectNotification).notify;
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = router.asPath;
@@ -75,6 +79,22 @@ export const MainLayout = ({ children }: Props) => {
             router.push({
                 pathname: APP_PATH.FIND_FRIENDS,
             });
+        }
+    };
+
+    const handleSeeNotify = async () => {
+        try {
+            const arrId: { id: string }[] = [];
+            sNofitication.data.forEach((notify) => {
+                if (!notify.isSeen) {
+                    arrId.push({ id: notify._id });
+                }
+            });
+            if (arrId.length > 0) {
+                await dispatch(notifyHandleSee(arrId));
+            }
+        } catch (error) {
+            toastError((error as IResponseError).error);
         }
     };
 
@@ -223,8 +243,10 @@ export const MainLayout = ({ children }: Props) => {
                                 <MenuItem
                                     icon={<RiNotification3Line size={20} />}
                                     title={'Notification'}
-                                    isActive={false}
-                                    link={'#'}
+                                    isActive={path === APP_PATH.NOTIFICATION}
+                                    link={APP_PATH.NOTIFICATION}
+                                    notSeenNum={sNofitication.notSeen}
+                                    onClick={handleSeeNotify}
                                 />
                             </div>
                             {/* <div className="pl-1 pr-5">

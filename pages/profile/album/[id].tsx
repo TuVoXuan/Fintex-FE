@@ -16,7 +16,7 @@ import { Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { IoClose } from 'react-icons/io5';
 import SwiperCore from 'swiper';
-import LoadingImage from '../../../components/loading-image/loading-image';
+import LoadingImage from '../../../components/loading/loading-image';
 
 interface Props {
     personId: string;

@@ -5,10 +5,12 @@ import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import { translateVisibleFor } from '../../util/handle-visible-for';
 import { useRef } from 'react';
-import { useAppSelector } from '../../hook/redux';
+import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { useRouter } from 'next/router';
 import APP_PATH from '../../constants/app-path';
+import { resetPost } from '../../redux/reducers/post-slice';
+import { resetComments } from '../../redux/reducers/comments-slice';
 
 interface Props {
     avatarUrl: string;
@@ -37,6 +39,7 @@ export default function HeaderPost({
     deletePost,
     showActionPost,
 }: Props) {
+    const dispatch = useAppDispatch();
     timeago.register('vi', vi);
     const refPostSetting = useRef<HTMLDivElement>(null);
     const mine = useAppSelector(selectUser).data;
@@ -67,6 +70,8 @@ export default function HeaderPost({
     };
 
     const handleSeeProfile = () => {
+        dispatch(resetPost());
+        dispatch(resetComments());
         if (mine) {
             if (mine._id === userId) {
                 router.push(APP_PATH.PROFILE);

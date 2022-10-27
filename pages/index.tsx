@@ -16,14 +16,17 @@ import { NextPage } from 'next';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { FormPost } from '../components/post/form-post/form-post';
-import OnlineCard from '../components/online-card/online-card';
+import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
+import { notifyGetPagination } from '../redux/actions/notify-action';
+import { selectNotification } from '../redux/reducers/notification-slice';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
     const onlineFriends = useAppSelector(selectFriend).onlineFriends;
+    const sNotify = useAppSelector(selectNotification).notify;
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
@@ -68,6 +71,14 @@ const Home: NextPage = () => {
         }
     };
 
+    const fetchNotify = async (limit: number, after?: string) => {
+        try {
+            await dispatch(notifyGetPagination({ limit, after })).unwrap();
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
     useEffect(() => {
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
@@ -76,6 +87,11 @@ const Home: NextPage = () => {
             setTimeout(() => {
                 setLoading(false);
             }, 1000);
+        }
+
+        if (sNotify.data.length === 0 && !sNotify.after && !sNotify.ended) {
+            const limit = +(process.env.LIMIT_NOTIFY as string);
+            fetchNotify(limit);
         }
 
         if (sPost.posts.length > 0) {

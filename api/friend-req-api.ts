@@ -11,6 +11,22 @@ const friendReqApi = {
     createFriendReq: (toId: string) => {
         return axiosService.post<IResponseSuccess<IFriendReq>>(`${URL}`, { toId });
     },
+    getFriendReqPagination: (pagination: IPagination) => {
+        if (pagination.after) {
+            return axiosService.get<IResponseSuccess<IFriendReqPaginationRes>>(
+                `${URL}/receive-friend-req-pagination?limit=${pagination.limit}&after=${pagination.after}`,
+            );
+        }
+        return axiosService.get<IResponseSuccess<IFriendReqPaginationRes>>(
+            `${URL}/receive-friend-req-pagination?limit=${pagination.limit}`,
+        );
+    },
+    acceptFriendReq: (friendReqId: string) => {
+        return axiosService.delete<IResponseSuccess<string>>(`${URL}/accept/${friendReqId}`);
+    },
+    deleteFriendReq: (friendReqId: string) => {
+        return axiosService.delete<IResponseSuccess<string>>(`${URL}/${friendReqId}`);
+    },
 };
 
 export default friendReqApi;

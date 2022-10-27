@@ -25,7 +25,7 @@ import SwiperCore from 'swiper';
 import APP_PATH from '../../constants/app-path';
 import friendReqApi from '../../api/friend-req-api';
 import { Button } from '../../components';
-import { friendReqCreate } from '../../redux/actions/friend-req-action';
+import { friendReqCreate } from '../../redux/actions/notify-action';
 import { VscLoading } from 'react-icons/vsc';
 
 interface Props {
