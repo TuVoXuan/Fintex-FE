@@ -22,7 +22,7 @@ import Stranger from '../components/stranger/stranger';
 import { useMainLayout } from '../context/main-layout-contex';
 import { useSocket } from '../context/socket-context';
 import { selectNotification } from '../redux/reducers/notification-slice';
-import { notifyHandleSee } from '../redux/actions/notify-action';
+import { notifyGetPagination, notifyHandleSee } from '../redux/actions/notify-action';
 import { toastError } from '../util/toast';
 
 interface Props {
@@ -37,7 +37,7 @@ export const MainLayout = ({ children }: Props) => {
     const { register, watch, getValues } = useForm<FormData>();
     const ref = useRef<HTMLDivElement>(null);
     const sUser = useAppSelector(selectUser);
-    const sNofitication = useAppSelector(selectNotification).notify;
+    const sNotify = useAppSelector(selectNotification).notify;
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = router.asPath;
@@ -86,7 +86,7 @@ export const MainLayout = ({ children }: Props) => {
     const handleSeeNotify = async () => {
         try {
             const arrId: { id: string }[] = [];
-            sNofitication.data.forEach((notify) => {
+            sNotify.data.forEach((notify) => {
                 if (!notify.isSeen) {
                     arrId.push({ id: notify._id });
                 }
@@ -95,6 +95,14 @@ export const MainLayout = ({ children }: Props) => {
                 await dispatch(notifyHandleSee(arrId));
             }
             dispatch(resetComments());
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const fetchNotify = async (limit: number, after?: string) => {
+        try {
+            await dispatch(notifyGetPagination({ limit, after })).unwrap();
         } catch (error) {
             toastError((error as IResponseError).error);
         }
@@ -148,6 +156,13 @@ export const MainLayout = ({ children }: Props) => {
             subscription.unsubscribe();
         };
     }, [watch]);
+
+    useEffect(() => {
+        if (sNotify.data.length === 0 && !sNotify.after && !sNotify.ended) {
+            const limit = +(process.env.LIMIT_NOTIFY as string);
+            fetchNotify(limit);
+        }
+    }, []);
 
     return (
         <section
@@ -262,7 +277,7 @@ export const MainLayout = ({ children }: Props) => {
                                     title={'Notification'}
                                     isActive={path === APP_PATH.NOTIFICATION}
                                     link={APP_PATH.NOTIFICATION}
-                                    notSeenNum={sNofitication.notSeen}
+                                    notSeenNum={sNotify.notSeen}
                                     onClick={handleSeeNotify}
                                 />
                             </div>
