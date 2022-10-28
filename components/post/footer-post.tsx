@@ -16,15 +16,16 @@ import { selectPost } from '../../redux/reducers/post-slice';
 
 interface Props {
     postId: string;
+    postPersonId: string;
     numsComment: number;
+    reactions: IReaction[];
     mineReaction?: string;
 }
 
-export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
+export const FooterPost = ({ postId, numsComment, mineReaction, reactions, postPersonId }: Props) => {
     const sCommentsRef = useRef<IComment[]>([]);
     sCommentsRef.current = useAppSelector(selectComments);
     const sUser = useAppSelector(selectUser);
-    const post = useAppSelector(selectPost).posts.find((item) => item._id === postId);
 
     const refComment = useRef<HTMLDivElement>(null);
     const refReact = useRef<HTMLDivElement>(null);
@@ -39,6 +40,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
     const [isClose, setIsClose] = useState(false);
     const [reactionType, setReactionType] = useState(mineReaction);
     const [reactionList, setReactionList] = useState<ReactionTypeList | undefined>();
+    console.log('reactionList: ', reactionList);
 
     const handdleShowComment = () => {
         if (refComment.current) {
@@ -152,7 +154,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
         }
 
         try {
-            await dispatch(postReaction({ postId, type: 'like' }));
+            await dispatch(postReaction({ postId, type: 'like', postPersonId }));
             setReactionType('like');
             handleCloseImmediatelyReaction();
         } catch (error) {
@@ -162,7 +164,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
 
     const handleReaction = (type: string) => async () => {
         try {
-            await dispatch(postReaction({ postId, type }));
+            await dispatch(postReaction({ postId, type, postPersonId }));
             setReactionType(type);
             handleCloseImmediatelyReaction();
         } catch (error) {
@@ -180,31 +182,29 @@ export const FooterPost = ({ postId, numsComment, mineReaction }: Props) => {
             wow: [],
         };
 
-        if (post) {
-            for (let item of post.reactions) {
-                // console.log('item: ', item);
-                switch (item.type) {
-                    case 'angry':
-                        reactionTypeList.angry.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
-                        break;
-                    case 'haha':
-                        reactionTypeList.haha.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
-                        break;
-                    case 'like':
-                        reactionTypeList.like.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
-                        break;
-                    case 'love':
-                        reactionTypeList.love.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
-                        break;
-                    case 'sad':
-                        reactionTypeList.sad.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
-                        break;
-                    case 'wow':
-                        reactionTypeList.wow.push(`${item.user.name.firstName} ${item.user.name.lastName}`);
-                        break;
-                    default:
-                        break;
-                }
+        for (let item of reactions) {
+            // console.log('item: ', item);
+            switch (item.type) {
+                case 'angry':
+                    reactionTypeList.angry.push(item.user.name.fullName);
+                    break;
+                case 'haha':
+                    reactionTypeList.haha.push(item.user.name.fullName);
+                    break;
+                case 'like':
+                    reactionTypeList.like.push(item.user.name.fullName);
+                    break;
+                case 'love':
+                    reactionTypeList.love.push(item.user.name.fullName);
+                    break;
+                case 'sad':
+                    reactionTypeList.sad.push(item.user.name.fullName);
+                    break;
+                case 'wow':
+                    reactionTypeList.wow.push(item.user.name.fullName);
+                    break;
+                default:
+                    break;
             }
         }
 

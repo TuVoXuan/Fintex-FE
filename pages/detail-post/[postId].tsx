@@ -8,18 +8,42 @@ import 'swiper/css/navigation';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { resetPost, selectPost } from '../../redux/reducers/post-slice';
+import { toastError } from '../../util/toast';
+import postApi from '../../api/post-api';
+import { useEffect, useState } from 'react';
 
 export default function DetailPost() {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const { id } = router.query;
+    const postId = router.query.postId as string;
+    const postPersonId = router.query.postPersonId as string;
+    const tempPost = useAppSelector(selectPost).posts.find((item) => item._id === postId);
 
-    const post = useAppSelector(selectPost).posts.find((item) => item._id === id);
+    const [post, setPost] = useState<IPost>();
 
     const handleBack = () => {
         dispatch(resetPost());
         router.back();
     };
+
+    const handleGetDetailPost = async () => {
+        try {
+            const response = await postApi.getDetailPost({ postId, postPersonId });
+            setPost(response.data.data);
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    useEffect(() => {
+        if (postPersonId) {
+            handleGetDetailPost();
+        } else {
+            if (tempPost) {
+                setPost(tempPost);
+            }
+        }
+    }, []);
 
     return (
         <section className="grid h-full grid-cols-3">

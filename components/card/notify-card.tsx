@@ -35,7 +35,7 @@ export default function NotifyCard({ notify }: Props) {
 
     const handleClick = () => {
         if (notify.postId) {
-            router.push(`${APP_PATH}/${notify.postId}`);
+            router.push(`${APP_PATH.DETAIL_POST}/${notify.postId}?postPersonId=${notify.postPersonId}`);
         }
     };
 

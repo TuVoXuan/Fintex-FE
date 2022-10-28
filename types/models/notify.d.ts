@@ -4,6 +4,7 @@ declare interface INotify {
     content: string;
     from: IUserSimple;
     postId?: string;
+    postPersonId?: string;
     isSeen: boolean;
     createdAt: string;
 }

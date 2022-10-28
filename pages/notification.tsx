@@ -43,6 +43,11 @@ export default function Notification() {
             }, 1000);
         }
 
+        if (sNotify.data.length === 0 && !sNotify.after && !sNotify.ended) {
+            const limit = +(process.env.LIMIT_NOTIFY as string);
+            fetchNotify(limit);
+        }
+
         if (sFriendReq.data.length > 0) {
             setLoading(false);
         }

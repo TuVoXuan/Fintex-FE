@@ -49,6 +49,11 @@ const postApi = {
             `${URL}/${personId}/pagination?limit=${body.limit}`,
         );
     },
+    getDetailPost: (body: IGetDetailPost) => {
+        return axiosService.get<IResponseSuccess<IPost>>(
+            `${URL}/detail-post?postId=${body.postId}&postPersonId=${body.postPersonId}`,
+        );
+    },
 };
 
 export default postApi;
