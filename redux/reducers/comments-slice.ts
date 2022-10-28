@@ -16,13 +16,18 @@ export const commentsSlice = createSlice({
     initialState,
     reducers: {
         resetComments: (state) => {
-            state = [];
+            state.splice(0, state.length);
         },
     },
     extraReducers(builder) {
         builder.addCase(getComments.fulfilled, (state, action: PayloadAction<ICommentPagination>) => {
             const comments = action.payload.comments;
-            state.push(...comments);
+            for (const comment of comments) {
+                const index = state.findIndex((item) => item._id === comment._id);
+                if (index === -1) {
+                    state.push(comment);
+                }
+            }
         });
         builder.addCase(editComments.fulfilled, (state, action: PayloadAction<ICommentResponse>) => {
             const comment = action.payload;

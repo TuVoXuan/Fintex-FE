@@ -5,8 +5,9 @@ import { IoClose } from 'react-icons/io5';
 import { useStore } from 'react-redux';
 import { Input } from '../..';
 import { RootState } from '../../../app/store';
-import { useAppDispatch } from '../../../hook/redux';
+import { useAppDispatch, useAppSelector } from '../../../hook/redux';
 import { createComments, editComments } from '../../../redux/actions/comment-action';
+import { selectUser } from '../../../redux/reducers/user-slice';
 import Avatar from '../../avatar/avatar';
 import ImageContainer from '../../image/image-container';
 
@@ -19,11 +20,11 @@ export interface ISuccess {
 interface Props {
     postId: string;
     inputName: string;
+    postPersonId: string;
     isHidden?: boolean;
     hasCancel?: boolean;
     parentId?: string;
     commentId?: string;
-    avatar: string;
     handleSuccess?: (data?: ISuccess) => void;
     handleCancel?: () => void;
 }
@@ -32,6 +33,7 @@ export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) =
     const store = useStore();
     const dispatch = useAppDispatch();
 
+    const sUser = useAppSelector(selectUser).data;
     const refEnter = useRef<HTMLButtonElement>(null);
     const refContainer = useRef<HTMLDivElement | null>(null);
 
@@ -80,6 +82,7 @@ export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) =
         if ('commentReply' in values) {
             const formData = new FormData();
             formData.append('postId', props.postId);
+            formData.append('postPersonId', props.postPersonId);
             formData.append('content', values[props.inputName]);
 
             if (image?.file) {
@@ -146,7 +149,7 @@ export const NewComment = React.forwardRef<HTMLDivElement, Props>((props, ref) =
 
     return (
         <div ref={refContainer} className={`flex gap-x-3 ${props.isHidden && 'hidden'}`}>
-            <Avatar url={props.avatar} size="medium" />
+            <Avatar url={sUser?.avatar || ''} size="medium" />
             <div className="w-full space-y-3">
                 <form onSubmit={handleSubmit(handleNewComment)}>
                     <Input

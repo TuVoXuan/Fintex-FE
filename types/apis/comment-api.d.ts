@@ -41,6 +41,8 @@ declare interface IDeleteComment {
 declare interface IReactionComment {
     commentId: string;
     type: ReactionEnum;
+    postId: string;
+    postPersonId: string;
 }
 
 declare interface IReactionCommentResponse {

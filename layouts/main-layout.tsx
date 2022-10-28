@@ -94,6 +94,7 @@ export const MainLayout = ({ children }: Props) => {
             if (arrId.length > 0) {
                 await dispatch(notifyHandleSee(arrId));
             }
+            dispatch(resetComments());
         } catch (error) {
             toastError((error as IResponseError).error);
         }

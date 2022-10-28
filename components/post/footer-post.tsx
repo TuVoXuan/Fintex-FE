@@ -332,11 +332,8 @@ export const FooterPost = ({ postId, numsComment, mineReaction, reactions, postP
             </div>
 
             <NewComment
-                avatar={
-                    sUser.data?.avatar ||
-                    'https://res.cloudinary.com/cake-shop/image/upload/v1663325246/Fintex/default-avatar_vpm7pw.jpg'
-                }
                 postId={postId}
+                postPersonId={postPersonId}
                 inputName="commentReply"
                 handleSuccess={handleNewCommentSuccess}
             />
@@ -347,7 +344,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction, reactions, postP
                         <div className="w-4/5 h-20 rounded-lg bg-slate-200"></div>
                     </div>
                 ) : (
-                    comments.map((item) => <Commnent key={item} id={item} />)
+                    comments.map((item) => <Commnent key={item} id={item} postPersonId={postPersonId} />)
                 )}
                 {!ended &&
                     (loading ? (

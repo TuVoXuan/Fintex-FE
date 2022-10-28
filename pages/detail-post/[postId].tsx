@@ -11,6 +11,7 @@ import { resetPost, selectPost } from '../../redux/reducers/post-slice';
 import { toastError } from '../../util/toast';
 import postApi from '../../api/post-api';
 import { useEffect, useState } from 'react';
+import { resetComments } from '../../redux/reducers/comments-slice';
 
 export default function DetailPost() {
     const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ export default function DetailPost() {
 
     const handleBack = () => {
         dispatch(resetPost());
+        dispatch(resetComments());
         router.back();
     };
 
