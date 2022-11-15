@@ -9,6 +9,7 @@ import { MainLayout } from '../layouts/main-layout';
 import { friendReqGetPagination, notifyGetPagination } from '../redux/actions/notify-action';
 import { selectNotification } from '../redux/reducers/notification-slice';
 import { toastError } from '../util/toast';
+import Image from 'next/image';
 
 export default function Notification() {
     const dispatch = useAppDispatch();
@@ -82,8 +83,9 @@ export default function Notification() {
                             </div>
                         </InfiniteScroll>
                     ) : (
-                        <div className="p-5">
+                        <div className="flex flex-col justify-center p-5">
                             <h3 className="mb-3">Thông báo</h3>
+                            <Image src={'/images/notification.svg'} height={300} width={300} objectFit="contain" />
                             <p className="pt-5 text-center">Không có thông báo</p>
                         </div>
                     )}
@@ -126,8 +128,9 @@ export default function Notification() {
                             </div>
                         </InfiniteScroll>
                     ) : (
-                        <div className="p-5">
+                        <div className="flex flex-col justify-center p-5">
                             <h3 className="mb-3">Lời mời kết bạn</h3>
+                            <Image src={'/images/friend-request.svg'} height={300} width={300} objectFit="contain" />
                             <p className="pt-5 text-center">Không có lời mời kết bạn</p>
                         </div>
                     )}

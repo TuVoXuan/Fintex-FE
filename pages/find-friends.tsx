@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -40,37 +41,44 @@ const FindFrends: NextPage = () => {
     return (
         <MainLayout>
             <section id="findFriendDiv" className="relative h-full overflow-y-auto rounded-2xl bg-secondary-10">
-                <InfiniteScroll
-                    next={function () {
-                        if (after) {
-                            dispatch(
-                                userGetStranger({
-                                    name: name,
-                                    limit: 10,
-                                    after,
-                                }),
-                            )
-                                .unwrap()
-                                .then((data) => {
-                                    if (!data.after) {
-                                        setEnded(true);
-                                    }
-                                    setStrangers((value) => [...value, ...data.data]);
-                                    setAfter(data.after);
-                                })
-                                .catch((error) => console.log('error', error));
-                        }
-                    }}
-                    hasMore={!ended}
-                    loader={<LoadingFindFriend />}
-                    dataLength={strangers.length}
-                    scrollableTarget="findFriendDiv"
-                    className="px-56 py-5 space-y-3"
-                >
-                    {strangers.map((item) => (
-                        <StrangerCard key={item._id} stranger={item} />
-                    ))}
-                </InfiniteScroll>
+                {strangers.length > 0 ? (
+                    <InfiniteScroll
+                        next={function () {
+                            if (after) {
+                                dispatch(
+                                    userGetStranger({
+                                        name: name,
+                                        limit: 10,
+                                        after,
+                                    }),
+                                )
+                                    .unwrap()
+                                    .then((data) => {
+                                        if (!data.after) {
+                                            setEnded(true);
+                                        }
+                                        setStrangers((value) => [...value, ...data.data]);
+                                        setAfter(data.after);
+                                    })
+                                    .catch((error) => console.log('error', error));
+                            }
+                        }}
+                        hasMore={!ended}
+                        loader={<LoadingFindFriend />}
+                        dataLength={strangers.length}
+                        scrollableTarget="findFriendDiv"
+                        className="px-56 py-5 space-y-3"
+                    >
+                        {strangers.map((item) => (
+                            <StrangerCard key={item._id} stranger={item} />
+                        ))}
+                    </InfiniteScroll>
+                ) : (
+                    <div className="flex flex-col items-center justify-center h-full">
+                        <Image src={'/images/people-search.svg'} height={400} width={400} />
+                        <p className="mt-4 text-center">Không tìm thấy kết quả phù hợp</p>
+                    </div>
+                )}
             </section>
         </MainLayout>
     );
