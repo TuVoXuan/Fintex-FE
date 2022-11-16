@@ -12,6 +12,7 @@ import { CgSpinnerTwo } from 'react-icons/cg';
 import { MainLayoutProvider } from '../context/main-layout-contex';
 import SocketRoute from '../route/socket-route';
 import { SocketProvider } from '../context/socket-context';
+import { MQTTProvider } from '../context/mqtt-context';
 
 function Loading() {
     const router = useRouter();
@@ -63,11 +64,13 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Loading />
             <Provider store={store}>
                 <MainLayoutProvider>
-                    <SocketProvider>
-                        <SocketRoute>
-                            <Component {...pageProps} />
-                        </SocketRoute>
-                    </SocketProvider>
+                    <MQTTProvider>
+                        <SocketProvider>
+                            <SocketRoute>
+                                <Component {...pageProps} />
+                            </SocketRoute>
+                        </SocketProvider>
+                    </MQTTProvider>
                 </MainLayoutProvider>
                 <Toaster
                     toastOptions={{

@@ -5,7 +5,7 @@ interface Props {
     position: 'first' | 'middle' | 'last';
     me?: boolean;
     className?: string;
-    images: IAlbum[];
+    images: string[];
 }
 
 export default function ChatImages({ position, me, images, className }: Props) {
@@ -37,12 +37,12 @@ export default function ChatImages({ position, me, images, className }: Props) {
                 <div
                     className={`${getMessageClasses()} ${
                         images.length > 3 && 'gap-y-1'
-                    } w-1/2 grid grid-cols-3 gap-x-1 overflow-hidden rounded-md`}
+                    } w-1/2 grid grid-cols-3 gap-x-1 overflow-hidden rounded-md ${className}`}
                 >
                     {images.map((item) => (
                         <Image
-                            key={item.publicId}
-                            src={item.url}
+                            key={item}
+                            src={item}
                             className="rounded-md"
                             alt="image"
                             width={90}
@@ -50,6 +50,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                             layout="responsive"
                             objectFit="cover"
                             objectPosition="center"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
                         />
                     ))}
                 </div>
@@ -61,7 +63,7 @@ export default function ChatImages({ position, me, images, className }: Props) {
                 <div
                     className={`${getMessageClasses()}  ${
                         images.length > 3 && 'space-y-1'
-                    } w-1/2 overflow-hidden rounded-md`}
+                    } w-1/2 overflow-hidden rounded-md ${className}`}
                 >
                     {images.length >= 3 && (
                         <div className="grid grid-cols-3 gap-1">
@@ -69,8 +71,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                                 if (index < images.length - 1) {
                                     return (
                                         <Image
-                                            key={item.publicId}
-                                            src={item.url}
+                                            key={item}
+                                            src={item}
                                             className="rounded-md"
                                             alt="image"
                                             width={90}
@@ -78,6 +80,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                                             layout="responsive"
                                             objectFit="cover"
                                             objectPosition="center"
+                                            placeholder="blur"
+                                            blurDataURL="/images/avatar.jpg"
                                         />
                                     );
                                 }
@@ -86,7 +90,7 @@ export default function ChatImages({ position, me, images, className }: Props) {
                     )}
                     <div>
                         <Image
-                            src={images[images.length - 1].url}
+                            src={images[images.length - 1]}
                             className="rounded-md"
                             alt="image"
                             width={160}
@@ -94,6 +98,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                             layout="responsive"
                             objectFit="cover"
                             objectPosition="center"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
                         />
                     </div>
                 </div>
@@ -105,7 +111,7 @@ export default function ChatImages({ position, me, images, className }: Props) {
                 <div
                     className={`${getMessageClasses()}  ${
                         images.length > 3 && 'space-y-1'
-                    } w-1/2 overflow-hidden rounded-md`}
+                    } w-1/2 overflow-hidden rounded-md ${className}`}
                 >
                     {images.length >= 3 && (
                         <div className="grid grid-cols-3 gap-1">
@@ -113,8 +119,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                                 if (index < images.length - 2) {
                                     return (
                                         <Image
-                                            key={item.publicId}
-                                            src={item.url}
+                                            key={item}
+                                            src={item}
                                             className="rounded-md"
                                             alt="image"
                                             width={90}
@@ -122,6 +128,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                                             layout="responsive"
                                             objectFit="cover"
                                             objectPosition="center"
+                                            placeholder="blur"
+                                            blurDataURL="/images/avatar.jpg"
                                         />
                                     );
                                 }
@@ -130,7 +138,7 @@ export default function ChatImages({ position, me, images, className }: Props) {
                     )}
                     <div className="grid grid-cols-2 gap-x-1">
                         <Image
-                            src={images[images.length - 2].url}
+                            src={images[images.length - 2]}
                             className="rounded-md"
                             alt="image"
                             width={100}
@@ -138,9 +146,11 @@ export default function ChatImages({ position, me, images, className }: Props) {
                             layout="responsive"
                             objectFit="cover"
                             objectPosition="center"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
                         />
                         <Image
-                            src={images[images.length - 1].url}
+                            src={images[images.length - 1]}
                             className="rounded-md"
                             alt="image"
                             width={100}
@@ -148,6 +158,8 @@ export default function ChatImages({ position, me, images, className }: Props) {
                             layout="responsive"
                             objectFit="cover"
                             objectPosition="center"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
                         />
                     </div>
                 </div>

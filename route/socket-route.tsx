@@ -18,7 +18,7 @@ export default function SocketRoute({ children }: Props) {
     const router = useRouter();
 
     const handleSocketResponse = (data: any) => {
-        switch (data.type) {
+        switch (data.typeSocket) {
             case 'friendReq':
                 toastSuccess('Ai đó gửi lời mời kết bạn');
                 console.log('data: ', data);

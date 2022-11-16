@@ -176,7 +176,7 @@ export const Input = ({
                         placeholder={placeholder}
                         defaultValue={defaultValue}
                         rows={1}
-                        className="items-center w-full py-4 overflow-y-hidden bg-transparent h-fit focus:outline-none"
+                        className="items-center w-full py-4 overflow-y-auto bg-transparent resize-none scrollbar-hide max-h-28 h-fit focus:outline-none"
                     ></textarea>
                 )}
                 {/* {iconEnds && <div className="flex items-end gap-3 pb-[14px]">{iconEnds}</div>} */}

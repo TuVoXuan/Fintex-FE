@@ -1,0 +1,43 @@
+declare interface IMessageContent {
+    _id: string;
+    text?: string;
+    images?: string[];
+    messType: 'text' | 'image';
+}
+
+declare interface IMessage {
+    _id: string;
+    sender: string;
+    message: IMessageContent[];
+    updatedAt: string;
+}
+
+declare interface IMessagePaginate {
+    after: string;
+    messages: MessageResDto[];
+}
+
+declare interface IParamMessPaginate {
+    conversationId: string;
+    limit: number;
+    after?: string;
+}
+
+declare interface IMessageCreateRes {
+    _id: string;
+    sender: string;
+    message: IMessageContent[];
+    createdAt: string;
+    conversationId: string;
+}
+
+declare interface IMessageCreate {
+    conversationId: string;
+    text?: string;
+    type: 'text' | 'image';
+    images?: File[];
+}
+
+declare interface ITestMqtt {
+    userId: string;
+}

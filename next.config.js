@@ -16,6 +16,7 @@ const nextConfig = {
         DEFAULT_AVATAR: process.env.DEFAULT_AVATAR,
         API_ADMINISTRATIVE_UNIT_URL: process.env.API_ADMINISTRATIVE_UNIT_URL,
         API_HOST: process.env.API_HOST,
+        MQTT_BROKER: process.env.MQTT_BROKER,
     },
     swcMinify: true,
     images: {

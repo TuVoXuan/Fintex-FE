@@ -32,7 +32,14 @@ export default function Avatar({ size, url, className, online }: Props) {
     return (
         <section className="relative">
             <div className={`${handleSize()} overflow-hidden rounded-full image-container ${className}`}>
-                <Image src={url} alt="avatar" layout="fill" objectFit="cover" />
+                <Image
+                    src={url}
+                    alt="avatar"
+                    layout="fill"
+                    objectFit="cover"
+                    placeholder="blur"
+                    blurDataURL="/images/avatar.jpg"
+                />
             </div>
             {online && (
                 <p className="absolute bottom-0 right-0 w-2 h-2 bg-green-600 rounded-full ring-2 ring-white"></p>

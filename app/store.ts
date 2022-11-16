@@ -6,6 +6,7 @@ import feeling from '../redux/reducers/feeling-slice';
 import post from '../redux/reducers/post-slice';
 import notification from '../redux/reducers/notification-slice';
 import friend from '../redux/reducers/friend-slice';
+import conversations from '../redux/reducers/conversation-slice';
 
 export const store = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
         post,
         notification,
         friend,
+        conversations,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

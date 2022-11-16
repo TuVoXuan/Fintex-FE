@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props {
-    position: 'first' | 'middle' | 'last';
+    position?: 'first' | 'middle' | 'last';
     me?: boolean;
     text: string;
     className?: string;
@@ -26,7 +26,7 @@ export default function ChatText({ position, me, text, className }: Props) {
                 }
                 return 'rounded-r-3xl rounded-bl-3xl';
             default:
-                break;
+                return '';
         }
     };
 
