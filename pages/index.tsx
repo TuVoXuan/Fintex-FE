@@ -7,7 +7,7 @@ import Post from '../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
-import { selectPost } from '../redux/reducers/post-slice';
+import { resetPost, selectPost } from '../redux/reducers/post-slice';
 import { postLoadMore } from '../redux/actions/post-action';
 import { toastError } from '../util/toast';
 import LoadingPost from '../components/post/loading-post';
@@ -19,6 +19,7 @@ import { FormPost } from '../components/post/form-post/form-post';
 import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
 import Image from 'next/image';
+import { resetComments } from '../redux/reducers/comments-slice';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();

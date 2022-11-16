@@ -1,6 +1,10 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import APP_PATH from '../../constants/app-path';
 import { useAppDispatch } from '../../hook/redux';
 import { friendReqCreate } from '../../redux/actions/notify-action';
+import { resetComments } from '../../redux/reducers/comments-slice';
+import { resetPost } from '../../redux/reducers/post-slice';
 import { toastError, toastSuccess } from '../../util/toast';
 import Avatar from '../avatar/avatar';
 
@@ -10,6 +14,8 @@ interface Props {
 
 export default function StrangerCard({ stranger }: Props) {
     const dispatch = useAppDispatch();
+    const router = useRouter();
+
     const { avatar, fullName, address, _id } = stranger;
     const [relationship, setRelationship] = useState<string>(stranger.relationship);
 
@@ -52,12 +58,20 @@ export default function StrangerCard({ stranger }: Props) {
         }
     };
 
+    const handleSeeProfilePage = () => {
+        dispatch(resetComments());
+        dispatch(resetPost());
+        router.push(`${APP_PATH.PROFILE}/${stranger._id}`);
+    };
+
     return (
         <div className="flex items-center justify-between px-4 py-4 bg-white rounded-lg shadow-light">
             <div className="flex items-center gap-3">
                 <Avatar size="semi-large" url={avatar} />
                 <div>
-                    <p className="font-semibold">{fullName}</p>
+                    <p onClick={handleSeeProfilePage} className="font-semibold hover:underline hover:cursor-pointer">
+                        {fullName}
+                    </p>
                     <p>{address}</p>
                 </div>
             </div>
