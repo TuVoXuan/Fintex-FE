@@ -11,14 +11,14 @@ const friendReqApi = {
     createFriendReq: (toId: string) => {
         return axiosService.post<IResponseSuccess<IFriendReq>>(`${URL}`, { toId });
     },
-    getFriendReqPagination: (pagination: IPagination) => {
+    getFriendReqPagination: (pagination: IFriendReqPagination) => {
         if (pagination.after) {
             return axiosService.get<IResponseSuccess<IFriendReqPaginationRes>>(
-                `${URL}/receive-friend-req-pagination?limit=${pagination.limit}&after=${pagination.after}`,
+                `${URL}/friend-req-pagination?limit=${pagination.limit}&after=${pagination.after}&type=${pagination.type}`,
             );
         }
         return axiosService.get<IResponseSuccess<IFriendReqPaginationRes>>(
-            `${URL}/receive-friend-req-pagination?limit=${pagination.limit}`,
+            `${URL}/friend-req-pagination?limit=${pagination.limit}&type=${pagination.type}`,
         );
     },
     acceptFriendReq: (friendReqId: string) => {
