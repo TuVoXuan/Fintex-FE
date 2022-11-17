@@ -34,6 +34,11 @@ const messageApi = {
         const url = `${URL}/notifications`;
         return (await axiosService.post(url, body)).data;
     },
+    seenMessage: async (body: ISeenMessage) => {
+        const url = `${URL}/seen/${body.messageId}`;
+        return (await axiosService.put<IResponseSuccess<ISeenMessage>>(url, { conversationId: body.conversationId }))
+            .data.data;
+    },
 };
 
 export default messageApi;

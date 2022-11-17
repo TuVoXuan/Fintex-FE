@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { createMessage, getConversations, getMessageFirstTime } from '../actions/conversation-action';
+import { createMessage, getConversations, getMessageFirstTime, seenMessage } from '../actions/conversation-action';
 
 const initialState: IConversationStore[] = [];
 
@@ -20,7 +20,17 @@ export const conversationsSlice = createSlice({
                         message: action.payload.message,
                         sender: action.payload.sender,
                         updatedAt: action.payload.createdAt,
+                        seen: action.payload.seen,
                     });
+                }
+            }
+        },
+        seen: (state, action: PayloadAction<ISeenMessage>) => {
+            const conversation = state.find((item) => item._id === action.payload.conversationId);
+            if (conversation) {
+                const indexMess = conversation.messages.findIndex((item) => item._id === action.payload.messageId);
+                if (indexMess > -1) {
+                    conversation.messages[indexMess].seen.push(action.payload.userId || '');
                 }
             }
         },
@@ -28,19 +38,29 @@ export const conversationsSlice = createSlice({
     extraReducers(builder) {
         builder.addCase(getConversations.fulfilled, (state, action: PayloadAction<IConversation[]>) => {
             for (const conv of action.payload) {
-                state.push({
-                    after: '',
-                    _id: conv._id,
-                    messages: [
-                        {
-                            _id: conv.messages[0]._id,
-                            message: conv.messages[0].message,
-                            sender: '',
-                            updatedAt: conv.messages[0].updatedAt,
-                        },
-                    ],
-                    participants: conv.participants,
-                });
+                if (conv.messages.length > 0) {
+                    state.push({
+                        after: '',
+                        _id: conv._id,
+                        messages: [
+                            {
+                                _id: conv.messages[0]._id,
+                                message: conv.messages[0].message,
+                                sender: conv.messages[0].sender,
+                                seen: conv.messages[0].seen,
+                                updatedAt: conv.messages[0].updatedAt,
+                            },
+                        ],
+                        participants: conv.participants,
+                    });
+                } else {
+                    state.push({
+                        after: '',
+                        _id: conv._id,
+                        messages: [],
+                        participants: conv.participants,
+                    });
+                }
             }
         });
         builder.addCase(getMessageFirstTime.fulfilled, (state, action: PayloadAction<IGetMessFirstTime>) => {
@@ -62,14 +82,24 @@ export const conversationsSlice = createSlice({
                         message: action.payload.message,
                         sender: action.payload.sender,
                         updatedAt: action.payload.createdAt,
+                        seen: action.payload.seen,
                     });
+                }
+            }
+        });
+        builder.addCase(seenMessage.fulfilled, (state, action: PayloadAction<ISeenMessage>) => {
+            const conversation = state.find((item) => item._id === action.payload.conversationId);
+            if (conversation) {
+                const indexMess = conversation.messages.findIndex((item) => item._id === action.payload.messageId);
+                if (indexMess > -1) {
+                    conversation.messages[indexMess].seen.push(action.payload.userId || '');
                 }
             }
         });
     },
 });
 
-export const { addMessage } = conversationsSlice.actions;
+export const { addMessage, seen } = conversationsSlice.actions;
 
 export const selectConversations = (state: RootState) => state.conversations;
 

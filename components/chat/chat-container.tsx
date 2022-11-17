@@ -28,6 +28,8 @@ export default function ChatContainer({ conversationId, participants }: Props) {
     const refInfinityScroll = useRef<HTMLDivElement>(null);
 
     const [loading, setLoading] = useState(false);
+    // const [isFirst, setIsFirst] = useState(true);
+    let first = true;
 
     const fetchMessages = () => {
         if (sAfter !== 'end') {
@@ -76,6 +78,11 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                         scrollableTarget="chat"
                     >
                         {sMessages.map((item) => {
+                            if (first && item.sender === sUser?._id && item.seen.length > 0) {
+                                first = false;
+                                return <ChatItemMe key={item._id} message={item} participants={participants} />;
+                            }
+
                             if (item.sender === sUser?._id) {
                                 return <ChatItemMe key={item._id} message={item} />;
                             } else {

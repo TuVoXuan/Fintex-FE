@@ -7,20 +7,21 @@ import vi from 'timeago.js/lib/lang/vi';
 interface Props {
     avatar: string;
     name: string;
-    message: string;
-    date: Date;
+    message?: string;
+    date?: Date;
     isOnline?: boolean;
     active?: boolean;
+    notSeen: boolean;
     onClick: () => void;
 }
 
-export default function ChatPerson({ avatar, name, message, date, isOnline, active, onClick }: Props) {
+export default function ChatPerson({ avatar, name, message, date, isOnline, active, onClick, notSeen }: Props) {
     timeago.register('vi', vi);
 
     return (
         <div
             onClick={() => onClick()}
-            className={`flex px-3 py-4 rounded-lg cursor-pointer gap-x-2 hover:bg-secondary-20 transition-colors duration-500 ease-out t ${
+            className={`flex items-center px-3 py-4 rounded-lg cursor-pointer gap-x-2 hover:bg-secondary-20 transition-colors duration-500 ease-out t ${
                 active && 'bg-secondary-20'
             }`}
         >
@@ -28,10 +29,11 @@ export default function ChatPerson({ avatar, name, message, date, isOnline, acti
             <div className="flex flex-col justify-center flex-grow overflow-hidden">
                 <div className="flex justify-between">
                     <p className="inline font-semibold truncate">{name}</p>
-                    <TimeAgo className="shrink-0" datetime={date} locale="vi" />
+                    {date && <TimeAgo className="self-center text-sm shrink-0" datetime={date} locale="vi" />}
                 </div>
-                <p className="text-sm truncate">{message}</p>
+                {message && <p className="text-sm truncate">{message}</p>}
             </div>
+            {notSeen && <div className="w-4 h-4 rounded-full bg-primary-80 shrink-0"></div>}
         </div>
     );
 }

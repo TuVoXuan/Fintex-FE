@@ -35,3 +35,12 @@ export const createMessage = createAsyncThunk('conversations/createMessage', asy
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const seenMessage = createAsyncThunk('converstions/seenMessage', async (body: ISeenMessage, thunkAPI) => {
+    try {
+        const response = await messageApi.seenMessage(body);
+        return response;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

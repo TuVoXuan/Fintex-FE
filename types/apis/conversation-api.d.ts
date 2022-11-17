@@ -19,6 +19,8 @@ declare interface IConversation {
             images?: string[];
             messType: 'text' | 'image';
         }[];
+        sender: string;
+        seen: string[];
         updatedAt: string;
     }[];
 }

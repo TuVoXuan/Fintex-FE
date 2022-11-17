@@ -1,11 +1,18 @@
 import mqtt, { MqttClient } from 'mqtt';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
-import { addMessage } from '../redux/reducers/conversation-slice';
+import { seenMessage } from '../redux/actions/conversation-action';
+import { addMessage, seen } from '../redux/reducers/conversation-slice';
 import { selectUser } from '../redux/reducers/user-slice';
-import { toastSuccess } from '../util/toast';
+import { toastError, toastSuccess } from '../util/toast';
 
-export const MQTTContext = createContext<MqttClient | null>(null);
+type MqttType = {
+    mqttClient: MqttClient | null;
+    setConversation: (value: string) => void;
+};
+
+export const MQTTContext = createContext<MqttType | null>(null);
 
 interface Props {
     children: React.ReactNode;
@@ -16,6 +23,47 @@ export const MQTTProvider = ({ children }: Props) => {
     const dispatch = useAppDispatch();
     const sUser = useAppSelector(selectUser);
     const userId = sUser.data?._id || '';
+    const activedConversation = useRef<string>('');
+
+    const setConversation = (value: string) => {
+        activedConversation.current = value;
+    };
+
+    const handleTopic = async (topic: string, payload: Buffer) => {
+        const data = JSON.parse(payload.toString());
+        let message;
+        switch (topic) {
+            case `${userId}/chat`:
+                message = JSON.parse(data.data) as IMessageCreateRes;
+
+                dispatch(addMessage(message));
+                if (activedConversation.current === message.conversationId) {
+                    try {
+                        await dispatch(
+                            seenMessage({
+                                messageId: message._id,
+                                conversationId: message.conversationId,
+                            }),
+                        );
+                    } catch (error) {
+                        console.log('error: ', error);
+                    }
+                }
+                break;
+            case `${userId}/chat/seen-message`:
+                message = JSON.parse(data.data) as ISeenMessage;
+                if (activedConversation.current === message.conversationId) {
+                    try {
+                        dispatch(seen(message));
+                    } catch (error) {
+                        console.log('error: ', error);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    };
 
     if (!mqttRef.current && sUser.isLogin && userId) {
         console.log('connect to mqtt broker');
@@ -26,11 +74,11 @@ export const MQTTProvider = ({ children }: Props) => {
         mqttRef.current.subscribe(`${sUser.data?._id}/chat`, { qos: 1 }, function (err) {
             console.log('error subscribe: ', err);
         });
-        mqttRef.current.on('message', (topic, payload) => {
-            if (topic === `${userId}/chat`) {
-                const data = JSON.parse(payload.toString());
-                dispatch(addMessage(JSON.parse(data.data)));
-            }
+        mqttRef.current.subscribe(`${sUser.data?._id}/chat/seen-message`, { qos: 1 }, function (err) {
+            console.log('error subscribe: ', err);
+        });
+        mqttRef.current.on('message', (topic: string, payload: Buffer, packet: mqtt.IPublishPacket) => {
+            handleTopic(topic, payload);
         });
     }
 
@@ -43,11 +91,13 @@ export const MQTTProvider = ({ children }: Props) => {
         };
     }, []);
 
-    return <MQTTContext.Provider value={mqttRef.current}>{children}</MQTTContext.Provider>;
+    return (
+        <MQTTContext.Provider value={{ mqttClient: mqttRef.current, setConversation }}>{children}</MQTTContext.Provider>
+    );
 };
 
 export const useMQTT = () => {
-    const mqttClient = useContext(MQTTContext);
+    const mqtt = useContext(MQTTContext);
     // console.log("mqttClient: ", mqttClient);
-    return mqttClient;
+    return mqtt;
 };

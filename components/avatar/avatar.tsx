@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 interface Props {
-    size: 'nano' | 'tiny' | 'small' | 'medium' | 'semi-large' | 'large' | 'huge';
+    size: 'super-nano' | 'nano' | 'tiny' | 'small' | 'medium' | 'semi-large' | 'large' | 'huge';
     url: string;
     className?: string;
     online?: boolean;
@@ -10,6 +10,8 @@ interface Props {
 export default function Avatar({ size, url, className, online }: Props) {
     const handleSize = () => {
         switch (size) {
+            case 'super-nano':
+                return 'w-4 h-4';
             case 'nano':
                 return 'w-6 h-6';
             case 'tiny':

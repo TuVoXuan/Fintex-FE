@@ -4,12 +4,17 @@ import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import ChatImages from './chat-images';
+import Avatar from '../avatar/avatar';
 
 interface Props {
     message: IMessage;
+    participants?: IParticipant[];
 }
 
-export default function ChatItemMe({ message }: Props) {
+export default function ChatItemMe({ message, participants }: Props) {
+    if (participants) {
+        console.log('participants: ', participants);
+    }
     timeago.register('vi', vi);
     const length = message.message.length;
 
@@ -51,6 +56,16 @@ export default function ChatItemMe({ message }: Props) {
                     }
                 })}
             </section>
+            {participants && (
+                <div className="flex justify-end">
+                    {participants.map((item) => {
+                        console.log('message.seen.includes(item._id): ', message.seen.includes(item._id));
+                        if (message.seen.includes(item._id)) {
+                            return <Avatar size="super-nano" url={item.avatar} key={item._id} />;
+                        }
+                    })}
+                </div>
+            )}
             <div className="flex justify-end">
                 <TimeAgo className="text-sm" datetime={new Date(message.updatedAt)} locale="vi" />
             </div>

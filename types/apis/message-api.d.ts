@@ -8,6 +8,7 @@ declare interface IMessageContent {
 declare interface IMessage {
     _id: string;
     sender: string;
+    seen: string[];
     message: IMessageContent[];
     updatedAt: string;
 }
@@ -28,6 +29,7 @@ declare interface IMessageCreateRes {
     sender: string;
     message: IMessageContent[];
     createdAt: string;
+    seen: string[];
     conversationId: string;
 }
 
@@ -40,4 +42,10 @@ declare interface IMessageCreate {
 
 declare interface ITestMqtt {
     userId: string;
+}
+
+declare interface ISeenMessage {
+    messageId: string;
+    conversationId: string;
+    userId?: string;
 }
