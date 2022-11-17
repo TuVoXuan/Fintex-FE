@@ -1,6 +1,7 @@
 import { async } from '@firebase/util';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import authApi from '../../api/auth-api';
+import friendReqApi from '../../api/friend-req-api';
 import userApi from '../../api/user-api';
 
 export const userVerify = createAsyncThunk('user/userLoginWithGoogle', async (body: IVerifyUser, thunkAPI) => {
@@ -62,7 +63,7 @@ export const userGetCurrentUser = createAsyncThunk('user/getCurrentUser', async 
 
 export const userGetStranger = createAsyncThunk('user/getStrangers', async (param: IGetStragers, thunkAPI) => {
     try {
-        const response = await userApi.getStranger(param);
+        const response = await friendReqApi.getStranger(param);
         return response.data.data;
     } catch (error) {
         return thunkAPI.rejectWithValue(error);

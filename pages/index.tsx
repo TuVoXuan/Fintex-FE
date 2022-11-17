@@ -18,6 +18,7 @@ import 'swiper/css/navigation';
 import { FormPost } from '../components/post/form-post/form-post';
 import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
+import Image from 'next/image';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
@@ -167,18 +168,32 @@ const Home: NextPage = () => {
                 </div>
                 <aside className="w-1/4 h-full overflow-y-auto">
                     <p className="ml-5 text-xl font-semibold">Friends</p>
-                    {onlineFriends.map((friend) => (
-                        <OnlineCard
-                            key={friend._id}
-                            id={friend._id}
-                            url={friend.avatar}
-                            name={
-                                friend.name.lastName
-                                    ? `${friend.name.firstName} ${friend.name.lastName}`
-                                    : friend.name.firstName
-                            }
-                        />
-                    ))}
+
+                    {onlineFriends.length > 0 ? (
+                        onlineFriends.map((friend) => (
+                            <OnlineCard
+                                key={friend._id}
+                                id={friend._id}
+                                url={friend.avatar}
+                                name={
+                                    friend.name.lastName
+                                        ? `${friend.name.firstName} ${friend.name.lastName}`
+                                        : friend.name.firstName
+                                }
+                            />
+                        ))
+                    ) : (
+                        <div className="px-6 pt-4">
+                            <Image
+                                src={'/images/online-user.svg'}
+                                height={100}
+                                width={100}
+                                layout="responsive"
+                                objectFit="contain"
+                            />
+                            <p className="mt-3 text-center">Không có bạn online</p>
+                        </div>
+                    )}
                 </aside>
             </section>
             {isShowModal && (

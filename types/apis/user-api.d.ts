@@ -7,9 +7,9 @@ declare interface IGetStragers {
 declare interface Stranger {
     _id: string;
     fullName: string;
-    isFriend: boolean;
     avatar: string;
     address: string;
+    relationship: string;
 }
 
 declare interface StrangerPagination {

@@ -12,6 +12,7 @@ declare interface ILoadMorePostResponse {
 declare interface IReactionPost {
     postId: string;
     type: string;
+    postPersonId: string;
 }
 
 declare interface IReactionPostRes {
@@ -43,4 +44,9 @@ declare interface IDeleteReactionPostRes {
 declare interface IUpdateAvatarCover {
     content?: string;
     typeUpdate: string;
+}
+
+declare interface IGetDetailPost {
+    postId: string;
+    postPersonId: string;
 }

@@ -21,6 +21,10 @@ import { userGetStranger } from '../redux/actions/user-action';
 import Stranger from '../components/stranger/stranger';
 import { useMainLayout } from '../context/main-layout-contex';
 import { useSocket } from '../context/socket-context';
+import { selectNotification } from '../redux/reducers/notification-slice';
+import { notifyGetPagination, notifyHandleSee } from '../redux/actions/notify-action';
+import { toastError } from '../util/toast';
+import { selectConversations } from '../redux/reducers/conversation-slice';
 
 interface Props {
     children?: React.ReactNode;
@@ -34,6 +38,8 @@ export const MainLayout = ({ children }: Props) => {
     const { register, watch, getValues } = useForm<FormData>();
     const ref = useRef<HTMLDivElement>(null);
     const sUser = useAppSelector(selectUser);
+    const sConversation = useAppSelector(selectConversations);
+    const sNotify = useAppSelector(selectNotification).notify;
     const dispatch = useAppDispatch();
     const router = useRouter();
     const path = router.asPath;
@@ -43,6 +49,8 @@ export const MainLayout = ({ children }: Props) => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [strangers, setStrangers] = useState<Stranger[]>([]);
+    const [after, setAfter] = useState<string>();
+    const [notSeenConversation, setNotSeenConversation] = useState<number>(0);
 
     const handleSignOut = () => {
         try {
@@ -67,7 +75,7 @@ export const MainLayout = ({ children }: Props) => {
         router.push(APP_PATH.EDIT_PROFILE);
     };
 
-    const handleEnter = () => {
+    const handleSearch = () => {
         console.log('router.basePath: ', router.pathname);
         if (router.pathname === APP_PATH.FIND_FRIENDS) {
             setName(getValues('search'));
@@ -77,6 +85,49 @@ export const MainLayout = ({ children }: Props) => {
             });
         }
     };
+
+    const handleSeeNotify = async () => {
+        try {
+            const arrId: { id: string }[] = [];
+            sNotify.data.forEach((notify) => {
+                if (!notify.isSeen) {
+                    arrId.push({ id: notify._id });
+                }
+            });
+            if (arrId.length > 0) {
+                await dispatch(notifyHandleSee(arrId));
+            }
+            dispatch(resetComments());
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const fetchNotify = async (limit: number, after?: string) => {
+        try {
+            await dispatch(notifyGetPagination({ limit, after })).unwrap();
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const handleNotSeenCoversation = () => {
+        let num = 0;
+        for (const conv of sConversation) {
+            if (
+                conv.messages.length > 0 &&
+                conv.messages[0].seen.length === 0 &&
+                conv.messages[0].sender !== sUser.data?._id
+            ) {
+                num++;
+            }
+        }
+        return num;
+    };
+
+    useEffect(() => {
+        setNotSeenConversation(handleNotSeenCoversation());
+    }, [sConversation]);
 
     useEffect(() => {
         let delayDebounceFn: any;
@@ -93,14 +144,17 @@ export const MainLayout = ({ children }: Props) => {
                 isFirst = true;
                 try {
                     if (value.search) {
-                        const { data } = await dispatch(
+                        setName(getValues('search'));
+
+                        const { data, after } = await dispatch(
                             userGetStranger({
                                 name: value.search || '',
-                                limit: 10,
+                                limit: 5,
                                 after: '',
                             }),
                         ).unwrap();
                         setStrangers(data);
+                        setAfter(after);
                     }
                 } catch (error) {
                     console.log('error: ', error);
@@ -124,6 +178,13 @@ export const MainLayout = ({ children }: Props) => {
         };
     }, [watch]);
 
+    useEffect(() => {
+        if (sNotify.data.length === 0 && !sNotify.after && !sNotify.ended) {
+            const limit = +(process.env.LIMIT_NOTIFY as string);
+            fetchNotify(limit);
+        }
+    }, []);
+
     return (
         <section
             className="flex justify-center h-screen"
@@ -144,7 +205,7 @@ export const MainLayout = ({ children }: Props) => {
                         <Input
                             name="search"
                             border={true}
-                            onKeyPress={handleEnter}
+                            onKeyPress={handleSearch}
                             placeholder="Tìm kiếm tại đây..."
                             icon={<FiSearch size={24} />}
                             type="text"
@@ -155,9 +216,21 @@ export const MainLayout = ({ children }: Props) => {
                             className="absolute z-10 hidden w-full p-4 space-y-1 bg-white rounded-md drop-shadow-lg top-14"
                         >
                             {!loading ? (
-                                strangers.map((item) => (
-                                    <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
-                                ))
+                                <>
+                                    {strangers.map((item) => (
+                                        <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
+                                    ))}
+                                    {after ? (
+                                        <div
+                                            onClick={handleSearch}
+                                            className="p-2 rounded-md cursor-pointer hover:bg-secondary-20"
+                                        >
+                                            <p className="text-center text-primary-80">
+                                                Xem thêm kết quả tìm kiếm tại đây
+                                            </p>
+                                        </div>
+                                    ) : null}
+                                </>
                             ) : (
                                 <>
                                     <section className="flex items-center gap-3 p-2 rounded-md cursor-pointer animate-pulse ripple-bg-white">
@@ -203,38 +276,25 @@ export const MainLayout = ({ children }: Props) => {
                                     onClick={() => dispatch(resetPost())}
                                 />
                             </div>
-                            {/* <div className="pl-1 pr-5">
-                                <MenuItem
-                                    icon={<FiUsers size={20} />}
-                                    title={'My community'}
-                                    isActive={path === APP_PATH.MY_COMMUNITY}
-                                    link={APP_PATH.MY_COMMUNITY}
-                                />
-                            </div> */}
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<RiChatSmileLine size={20} />}
                                     title={'Message'}
-                                    isActive={false}
+                                    isActive={path === APP_PATH.CHAT}
                                     link={APP_PATH.CHAT}
+                                    notSeenNum={notSeenConversation}
                                 />
                             </div>
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<RiNotification3Line size={20} />}
                                     title={'Notification'}
-                                    isActive={false}
-                                    link={'#'}
+                                    isActive={path === APP_PATH.NOTIFICATION}
+                                    link={APP_PATH.NOTIFICATION}
+                                    notSeenNum={sNotify.notSeen}
+                                    onClick={handleSeeNotify}
                                 />
                             </div>
-                            {/* <div className="pl-1 pr-5">
-                                <MenuItem
-                                    icon={<FiUser size={20} />}
-                                    title={'Profile'}
-                                    isActive={path === APP_PATH.PROFILE}
-                                    link={APP_PATH.PROFILE}
-                                />
-                            </div> */}
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<IoSettingsOutline size={20} />}

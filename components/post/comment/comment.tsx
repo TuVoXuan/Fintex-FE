@@ -17,9 +17,10 @@ import { ReactionEnum } from '../../../constants/reaction';
 
 interface Props {
     id: string;
+    postPersonId: string;
 }
 
-export const Commnent = ({ id }: Props) => {
+export const Commnent = ({ id, postPersonId }: Props) => {
     const store = useStore();
     const dispatch = useAppDispatch();
     const sUser = useAppSelector(selectUser);
@@ -105,7 +106,7 @@ export const Commnent = ({ id }: Props) => {
                 const state = store.getState() as RootState;
                 const child = state.comments
                     .filter((item) => item.parentId === id)
-                    .map((item) => <Commnent key={item._id} id={item._id} />);
+                    .map((item) => <Commnent postPersonId={postPersonId} key={item._id} id={item._id} />);
                 setChildComment(child);
                 setLoading(false);
             }
@@ -117,7 +118,7 @@ export const Commnent = ({ id }: Props) => {
             const state = store.getState() as RootState;
             const child = state.comments
                 .filter((item) => item.parentId === data.parentId)
-                .map((item) => <Commnent key={item._id} id={item._id} />);
+                .map((item) => <Commnent postPersonId={postPersonId} key={item._id} id={item._id} />);
             setChildComment(child);
 
             console.log('child: ', child);
@@ -149,6 +150,8 @@ export const Commnent = ({ id }: Props) => {
                 reactionComment({
                     commentId: comment?._id || '',
                     type: type,
+                    postId: comment?.postId || '',
+                    postPersonId,
                 }),
             ).unwrap();
 
@@ -336,9 +339,9 @@ export const Commnent = ({ id }: Props) => {
                         </div>
                     </div>
                     <NewComment
-                        avatar={comment.avatar}
                         inputName="commentReply"
                         postId={comment.postId}
+                        postPersonId={postPersonId}
                         isHidden={true}
                         parentId={comment._id}
                         ref={refReply}
@@ -367,9 +370,9 @@ export const Commnent = ({ id }: Props) => {
             </div>
         ) : (
             <NewComment
-                avatar={comment.avatar}
                 inputName="commentEdit"
                 postId={comment.postId}
+                postPersonId={postPersonId}
                 commentId={comment._id}
                 hasCancel={true}
                 handleCancel={handleShowCloseEditComment}

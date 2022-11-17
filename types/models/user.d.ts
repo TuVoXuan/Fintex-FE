@@ -19,6 +19,7 @@ declare interface IUserSimple {
     name: {
         firstName: string;
         lastName: string;
+        fullName: string;
     };
     avatar: string;
 }

@@ -76,6 +76,7 @@ export const conversationsSlice = createSlice({
                 const message = conversation.messages.find((e) => e._id === action.payload._id);
                 if (message) {
                     message.message.push(...action.payload.message);
+                    message.seen = action.payload.seen;
                 } else {
                     conversation.messages.unshift({
                         _id: action.payload._id,

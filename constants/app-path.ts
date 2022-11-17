@@ -12,5 +12,7 @@ const APP_PATH = {
     EDIT_PROFILE: '/setting/edit-profile',
     CHANGE_PASS: '/setting/change-pass',
     ALBUM: '/profile/album',
+    NOTIFICATION: '/notification',
+    DETAIL_POST: '/detail-post',
 };
 export default APP_PATH;

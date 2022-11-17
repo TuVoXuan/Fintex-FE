@@ -6,9 +6,19 @@ interface Props {
     form?: string;
     className?: string;
     onClick?: () => void;
+    disable?: boolean;
 }
 
-export const Button = ({ icon, title, color, typeBtn = 'button', form, onClick, className }: Props) => {
+export const Button = ({
+    icon,
+    title,
+    color,
+    typeBtn = 'button',
+    form,
+    onClick,
+    className,
+    disable = false,
+}: Props) => {
     const colorButton = () => {
         switch (color) {
             case 'primary':
@@ -22,10 +32,13 @@ export const Button = ({ icon, title, color, typeBtn = 'button', form, onClick, 
 
     return (
         <button
-            className={`btn ${colorButton()} ${icon ? 'justify-between' : 'w-full'} ${className}`}
+            className={`btn ${colorButton()} ${icon ? 'justify-between' : 'w-full'} ${className} ${
+                disable ? 'cursor-not-allowed' : null
+            }`}
             type={typeBtn}
             form={form}
             onClick={onClick}
+            disabled={disable}
         >
             {icon && icon}
             {title}

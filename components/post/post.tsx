@@ -57,7 +57,13 @@ export default function Post({
             <p>{content}</p>
             {postType !== 'avatar' && isViewedDetail && images && <ImageLayout images={images} postId={_id} />}
             {postType === 'avatar' && isViewedDetail && <AvatarCover images={images || []} postId={_id} />}
-            <FooterPost postId={_id} numsComment={comments} mineReaction={mineReaction?.type} />
+            <FooterPost
+                postId={_id}
+                postPersonId={userId}
+                numsComment={comments}
+                reactions={reactions}
+                mineReaction={mineReaction?.type}
+            />
         </div>
     );
 }
