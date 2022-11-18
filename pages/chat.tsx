@@ -1,20 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FiSearch } from 'react-icons/fi';
-import conversationApi from '../api/conversation.api';
 import { Input } from '../components';
 import ChatPersonCard from '../components/card/chat-person-card';
 import ChatContainer from '../components/chat/chat-container';
-import { MainLayout } from '../layouts/main-layout';
-import { toastError } from '../util/toast';
-import { selectConversations } from '../redux/reducers/conversation-slice';
+import { MQTTContext, useMQTT } from '../context/mqtt-context';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
-import { getConversations, seenMessage } from '../redux/actions/conversation-action';
-import { PayloadAction } from '@reduxjs/toolkit';
-import { useRouter } from 'next/router';
-import APP_PATH from '../constants/app-path';
+import { MainLayout } from '../layouts/main-layout';
+import { seenMessage, getConversations } from '../redux/actions/conversation-action';
+import { selectConversations } from '../redux/reducers/conversation-slice';
 import { selectUser } from '../redux/reducers/user-slice';
-import { useMQTT } from '../context/mqtt-context';
+import { toastError } from '../util/toast';
 
 export default function Chat() {
     const { register } = useForm();
@@ -44,15 +40,24 @@ export default function Chat() {
         if (sConversations.length === 0) {
             dispatch(getConversations()).then((data) => {
                 const convs = data.payload as IConversationStore[];
-                setActivedConversation(convs[0]._id);
                 if (mqtt) {
-                    mqtt.setConversation(convs[0]._id);
+                    if (mqtt.activedConversation.current) {
+                        setActivedConversation(mqtt.activedConversation.current);
+                    } else {
+                        setActivedConversation(convs[0]._id);
+                        mqtt.setConversation(convs[0]._id);
+                    }
                 }
             });
         } else {
-            setActivedConversation(sConversations[0]._id);
             if (mqtt) {
-                mqtt.setConversation(sConversations[0]._id);
+                console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
+                if (mqtt.activedConversation.current) {
+                    setActivedConversation(mqtt.activedConversation.current);
+                } else {
+                    setActivedConversation(sConversations[0]._id);
+                    mqtt.setConversation(sConversations[0]._id);
+                }
             }
         }
     }, []);

@@ -45,6 +45,15 @@ export const seenMessage = createAsyncThunk('converstions/seenMessage', async (b
     }
 });
 
+export const createConversation = createAsyncThunk('converstions/create', async (friendId: string, thunkAPI) => {
+    try {
+        const response = await conversationApi.createConversation(friendId);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
 export const getMessagePagination = createAsyncThunk(
     'conversations/getMessagePagination',
     async (param: IParamMessPaginate, thunkAPI) => {
