@@ -49,28 +49,30 @@ export const conversationsSlice = createSlice({
     },
     extraReducers(builder) {
         builder.addCase(getConversations.fulfilled, (state, action: PayloadAction<IConversation[]>) => {
-            for (const conv of action.payload) {
-                if (conv.messages.length > 0) {
-                    state.push({
-                        after: '',
-                        _id: conv._id,
-                        messages: [
-                            {
-                                _id: conv.messages[0]._id,
-                                message: conv.messages[0].message,
-                                sender: conv.messages[0].sender,
-                                updatedAt: conv.messages[0].updatedAt,
-                            },
-                        ],
-                        participants: conv.participants,
-                    });
-                } else {
-                    state.push({
-                        after: '',
-                        _id: conv._id,
-                        messages: [],
-                        participants: conv.participants,
-                    });
+            if (state.length === 0) {
+                for (const conv of action.payload) {
+                    if (conv.messages.length > 0) {
+                        state.push({
+                            after: '',
+                            _id: conv._id,
+                            messages: [
+                                {
+                                    _id: conv.messages[0]._id,
+                                    message: conv.messages[0].message,
+                                    sender: conv.messages[0].sender,
+                                    updatedAt: conv.messages[0].updatedAt,
+                                },
+                            ],
+                            participants: conv.participants,
+                        });
+                    } else {
+                        state.push({
+                            after: '',
+                            _id: conv._id,
+                            messages: [],
+                            participants: conv.participants,
+                        });
+                    }
                 }
             }
         });

@@ -161,7 +161,7 @@ export const Input = ({
             {/* remove h-full */}
             <div
                 aria-disabled={disabled}
-                className={`${border ? 'border' : ''} flex ${background ? 'bg-secondary-10' : 'bg-white'} ${
+                className={`${border ? 'border' : ''} flex ${background ? 'bg-secondary-10' : 'bg-transparent'} ${
                     disabled && 'cursor-not-allowed'
                 } px-[10px] gap-3 relative rounded-lg focus-within:border-secondary-30 `}
             >
@@ -234,7 +234,7 @@ export const Input = ({
                     )}
                 </div>
                 {isHasEmojiIcon && (
-                    <div ref={refPickerEmoji} className="absolute right-0 z-10 hidden translate-x-1/2 top-10">
+                    <div ref={refPickerEmoji} className="absolute z-10 hidden translate-x-1/2 right-1/4 bottom-full">
                         <Picker onEmojiClick={onEmojiClick} />
                     </div>
                 )}

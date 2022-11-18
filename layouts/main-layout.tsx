@@ -206,7 +206,11 @@ export const MainLayout = ({ children }: Props) => {
             className="flex justify-center h-screen"
             onClick={() => {
                 if (ref.current) {
-                    ref.current.classList.add('hidden');
+                    setTimeout(() => {
+                        if (ref.current) {
+                            ref.current.classList.add('hidden');
+                        }
+                    }, 500);
                 }
             }}
         >

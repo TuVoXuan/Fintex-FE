@@ -18,6 +18,7 @@ export default function Stranger({ name, avatar, userId }: Props) {
     const handleClick = () => {
         const currentRoute = router.asPath;
         if (currentRoute !== `${APP_PATH.PROFILE}/${userId}`) {
+            console.log('chuyen toi trang ca nhan');
             dispatch(resetComments());
             dispatch(resetPost());
             router.push(`${APP_PATH.PROFILE}/${userId}`);

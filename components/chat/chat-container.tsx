@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function ChatContainer({ conversationId, participants }: Props) {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, setValue } = useForm();
     const dispatch = useAppDispatch();
 
     const sUser = useAppSelector(selectUser).data;
@@ -73,6 +73,7 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                 );
                 setImages([]);
             }
+            setValue('message', '');
             setIsSubmit(false);
         } catch (error) {
             console.log('error: ', error);
@@ -148,9 +149,7 @@ export default function ChatContainer({ conversationId, participants }: Props) {
             <div className="px-5 py-2 flex border-t-[1px] border-secondary-20 gap-x-4 w-full">
                 <form
                     id="chatMessage"
-                    className={`overflow-hidden grow border-[1px] rounded-2xl space-y-2 ${
-                        isSubmit && 'cursor-not-allowed'
-                    }`}
+                    className={`w-4/5 grow border-[1px] rounded-2xl space-y-2 ${isSubmit && 'cursor-not-allowed'}`}
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     {images.length > 0 && (

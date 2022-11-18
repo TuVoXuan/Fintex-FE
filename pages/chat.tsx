@@ -37,30 +37,16 @@ export default function Chat() {
     };
 
     useEffect(() => {
-        if (sConversations.length === 0) {
-            dispatch(getConversations()).then((data) => {
-                const convs = data.payload as IConversationStore[];
-                if (mqtt) {
-                    if (mqtt.activedConversation.current) {
-                        setActivedConversation(mqtt.activedConversation.current);
-                    } else {
-                        setActivedConversation(convs[0]._id);
-                        mqtt.setConversation(convs[0]._id);
-                    }
-                }
-            });
-        } else {
-            if (mqtt) {
-                console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
-                if (mqtt.activedConversation.current) {
-                    setActivedConversation(mqtt.activedConversation.current);
-                } else {
-                    setActivedConversation(sConversations[0]._id);
-                    mqtt.setConversation(sConversations[0]._id);
-                }
+        if (mqtt && sConversations.length > 0) {
+            console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
+            if (mqtt.activedConversation.current) {
+                setActivedConversation(mqtt.activedConversation.current);
+            } else {
+                setActivedConversation(sConversations[0]._id);
+                mqtt.setConversation(sConversations[0]._id);
             }
         }
-    }, []);
+    }, [sConversations.length]);
 
     useEffect(() => {
         if (activedConversation) {
