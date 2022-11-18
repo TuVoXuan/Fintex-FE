@@ -40,7 +40,7 @@ export const FooterPost = ({ postId, numsComment, mineReaction, reactions, postP
     const [isClose, setIsClose] = useState(false);
     const [reactionType, setReactionType] = useState(mineReaction);
     const [reactionList, setReactionList] = useState<ReactionTypeList | undefined>();
-    console.log('reactionList: ', reactionList);
+    // console.log('reactionList: ', reactionList);
 
     const handdleShowComment = () => {
         if (refComment.current) {

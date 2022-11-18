@@ -13,7 +13,7 @@ export const friendReqCreate = createAsyncThunk('friendReq/create', async (toId:
 
 export const friendReqGetPagination = createAsyncThunk(
     'friendReq/getPagination',
-    async (pagination: IPagination, thunkAPI) => {
+    async (pagination: IFriendReqPagination, thunkAPI) => {
         try {
             const response = await friendReqApi.getFriendReqPagination(pagination);
             return response.data.data;

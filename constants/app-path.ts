@@ -11,6 +11,7 @@ const APP_PATH = {
     FIND_FRIENDS: '/find-friends',
     EDIT_PROFILE: '/setting/edit-profile',
     CHANGE_PASS: '/setting/change-pass',
+    FRIEND_REQ: '/setting/friend-request',
     ALBUM: '/profile/album',
     NOTIFICATION: '/notification',
     DETAIL_POST: '/detail-post',

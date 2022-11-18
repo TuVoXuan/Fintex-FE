@@ -13,7 +13,7 @@ import { IoIosArrowUp } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import userApi from '../../api/user-api';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
-import { selectPost } from '../../redux/reducers/post-slice';
+import { resetPost, selectPost } from '../../redux/reducers/post-slice';
 import { postPersonLoadMore } from '../../redux/actions/post-action';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -23,15 +23,16 @@ import { IoClose } from 'react-icons/io5';
 import SwiperCore from 'swiper';
 import APP_PATH from '../../constants/app-path';
 import friendReqApi from '../../api/friend-req-api';
-import { Button } from '../../components';
 import { friendReqCreate } from '../../redux/actions/notify-action';
 import { VscLoading } from 'react-icons/vsc';
+import { resetComments } from '../../redux/reducers/comments-slice';
 
 interface Props {
     personId: string;
 }
 
 export default function Profile({ personId }: Props) {
+    console.log('personId: ', personId);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const sPost = useAppSelector(selectPost);
@@ -43,16 +44,6 @@ export default function Profile({ personId }: Props) {
     const [loading, setLoading] = useState<boolean>(true);
     const [album, setAlbum] = useState<IAlbum[]>([]);
     const [swiper, setSwiper] = useState<SwiperCore>();
-
-    const [isShowModal, setIsShowModal] = useState<boolean>(false);
-    const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
-    const [isShowsUpdateAvatarModal, setIsShowUpdateAvatarModal] = useState<boolean>(false);
-    const [deletePostId, setDeletePostId] = useState<string>('');
-    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [postEdit, setPostEdit] = useState<IPost | undefined>();
-    const [tempCoverImg, setTempCoverImg] = useState('');
-    const [imageFile, setImageFile] = useState<File>();
-    const [isUpdatingCover, setIsUpdatingCover] = useState(false);
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
 
@@ -112,7 +103,7 @@ export default function Profile({ personId }: Props) {
         try {
             setLoadingMakeFriendReq(true);
             await dispatch(friendReqCreate(personId));
-            // setRelationship('requesting');
+            setRelationship('requesting');
             toastSuccess('Gửi lời mời kết bạn thành công');
             setLoadingMakeFriendReq(false);
         } catch (error) {
@@ -154,7 +145,7 @@ export default function Profile({ personId }: Props) {
         }
 
         if (index === 1) {
-            console.log(className);
+            // console.log(className);
         }
 
         return className;
@@ -164,6 +155,7 @@ export default function Profile({ personId }: Props) {
         getUserProfile(personId);
         getRelationship(personId);
         const limit = +(process.env.LIMIT as string);
+
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             fetchPost(personId, limit);
             setTimeout(() => {
@@ -179,7 +171,16 @@ export default function Profile({ personId }: Props) {
             .getAlbum({ limit: 9, after: '', id: personId })
             .then((data) => setAlbum(data.album))
             .catch((error) => toastError(error));
-    }, []);
+
+        return () => {
+            setUser(undefined);
+            setAlbum([]);
+            setRelationship(undefined);
+            setSwiper(undefined);
+            dispatch(resetPost());
+            dispatch(resetComments());
+        };
+    }, [personId]);
 
     return (
         <MainLayout>

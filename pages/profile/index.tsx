@@ -7,7 +7,7 @@ import { HiOutlineAcademicCap, HiOutlineCake } from 'react-icons/hi';
 import { GrLocation } from 'react-icons/gr';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
-import { selectPost } from '../../redux/reducers/post-slice';
+import { resetPost, selectPost } from '../../redux/reducers/post-slice';
 import LoadingPost from '../../components/post/loading-post';
 import { postDelete, postMineLoadMore, postUpdateAvatarCover } from '../../redux/actions/post-action';
 import { toastError, toastSuccess } from '../../util/toast';
@@ -34,6 +34,7 @@ import { Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { IoClose } from 'react-icons/io5';
 import SwiperCore from 'swiper';
+import { resetComments } from '../../redux/reducers/comments-slice';
 
 const postTemp: IPost = {
     _id: '123',
@@ -277,6 +278,7 @@ export default function Profile() {
     }, [tempCoverImg, croppedAreaPixels]);
 
     useEffect(() => {
+        console.log('sPost.posts.length: ', sPost.posts.length);
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
 

@@ -69,6 +69,7 @@ export const MainLayout = ({ children }: Props) => {
 
     const handleGoProfile = () => {
         dispatch(resetPost());
+        dispatch(resetComments());
         router.push(`${APP_PATH.PROFILE}`);
     };
 
@@ -134,7 +135,7 @@ export const MainLayout = ({ children }: Props) => {
         let delayDebounceFn: any;
         let isFirst = true;
         const subscription = watch((value, { name, type }) => {
-            console.log('loading 1', loading);
+            // console.log('loading 1', loading);
             if (isFirst) {
                 setLoading(true);
                 isFirst = false;
@@ -219,7 +220,12 @@ export const MainLayout = ({ children }: Props) => {
                             {!loading ? (
                                 <>
                                     {strangers.map((item) => (
-                                        <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
+                                        <Stranger
+                                            key={item._id}
+                                            userId={item._id}
+                                            name={item.fullName}
+                                            avatar={item.avatar}
+                                        />
                                     ))}
                                     {after ? (
                                         <div
