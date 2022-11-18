@@ -23,8 +23,6 @@ export default function DetailPost() {
     const [post, setPost] = useState<IPost>();
 
     const handleBack = () => {
-        dispatch(resetPost());
-        dispatch(resetComments());
         router.back();
     };
 
@@ -45,6 +43,11 @@ export default function DetailPost() {
                 setPost(tempPost);
             }
         }
+
+        return () => {
+            dispatch(resetPost());
+            dispatch(resetComments());
+        };
     }, []);
 
     return (

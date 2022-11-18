@@ -96,3 +96,27 @@ export const userUpdateCover = createAsyncThunk('user/updateCover', async (formD
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const userGetSendFriendReq = createAsyncThunk(
+    'user/getSendFriendReq',
+    async (pagination: IFriendReqPagination, thunkAPI) => {
+        try {
+            const response = await friendReqApi.getFriendReqPagination(pagination);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);
+
+export const userDeleteSendFriendReq = createAsyncThunk(
+    'user/deleteSendFriendReq',
+    async (friendReqId: string, thunkAPI) => {
+        try {
+            const response = await friendReqApi.deleteFriendReq(friendReqId);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);

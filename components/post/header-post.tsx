@@ -70,13 +70,17 @@ export default function HeaderPost({
     };
 
     const handleSeeProfile = () => {
-        dispatch(resetPost());
-        dispatch(resetComments());
-        if (mine) {
-            if (mine._id === userId) {
-                router.push(APP_PATH.PROFILE);
-            } else {
-                router.push(`${APP_PATH.PROFILE}/${userId}`);
+        const currentRoute = router.asPath;
+        console.log('currentRoute: ', currentRoute);
+        if (currentRoute !== `/profile/${userId}`) {
+            dispatch(resetPost());
+            dispatch(resetComments());
+            if (mine) {
+                if (mine._id === userId) {
+                    router.push(APP_PATH.PROFILE);
+                } else {
+                    router.push(`${APP_PATH.PROFILE}/${userId}`);
+                }
             }
         }
     };

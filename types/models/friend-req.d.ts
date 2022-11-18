@@ -15,3 +15,7 @@ declare interface IFriendReqPaginationRes {
     ended: boolean;
     friendReqs: IFriendReq[];
 }
+
+declare interface IFriendReqPagination extends IPagination {
+    type: string;
+}
