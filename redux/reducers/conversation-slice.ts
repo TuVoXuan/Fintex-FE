@@ -20,17 +20,22 @@ export const conversationsSlice = createSlice({
                         message: action.payload.message,
                         sender: action.payload.sender,
                         updatedAt: action.payload.createdAt,
-                        seen: action.payload.seen,
                     });
                 }
             }
         },
         seen: (state, action: PayloadAction<ISeenMessage>) => {
+            // console.log('action.payload: ', action.payload);
             const conversation = state.find((item) => item._id === action.payload.conversationId);
             if (conversation) {
                 const indexMess = conversation.messages.findIndex((item) => item._id === action.payload.messageId);
                 if (indexMess > -1) {
-                    conversation.messages[indexMess].seen.push(action.payload.userId || '');
+                    const subMessage = conversation.messages[indexMess].message.find(
+                        (item) => item._id === action.payload.subMessageId,
+                    );
+                    if (subMessage) {
+                        subMessage.seen.push(action.payload.userId as string);
+                    }
                 }
             }
         },
@@ -47,7 +52,6 @@ export const conversationsSlice = createSlice({
                                 _id: conv.messages[0]._id,
                                 message: conv.messages[0].message,
                                 sender: conv.messages[0].sender,
-                                seen: conv.messages[0].seen,
                                 updatedAt: conv.messages[0].updatedAt,
                             },
                         ],
@@ -76,14 +80,12 @@ export const conversationsSlice = createSlice({
                 const message = conversation.messages.find((e) => e._id === action.payload._id);
                 if (message) {
                     message.message.push(...action.payload.message);
-                    message.seen = action.payload.seen;
                 } else {
                     conversation.messages.unshift({
                         _id: action.payload._id,
                         message: action.payload.message,
                         sender: action.payload.sender,
                         updatedAt: action.payload.createdAt,
-                        seen: action.payload.seen,
                     });
                 }
             }
@@ -93,7 +95,12 @@ export const conversationsSlice = createSlice({
             if (conversation) {
                 const indexMess = conversation.messages.findIndex((item) => item._id === action.payload.messageId);
                 if (indexMess > -1) {
-                    conversation.messages[indexMess].seen.push(action.payload.userId || '');
+                    const subMessage = conversation.messages[indexMess].message.find(
+                        (item) => item._id === action.payload.subMessageId,
+                    );
+                    if (subMessage) {
+                        subMessage.seen.push(action.payload.userId || '');
+                    }
                 }
             }
         });

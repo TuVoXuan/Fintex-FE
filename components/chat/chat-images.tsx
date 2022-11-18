@@ -1,14 +1,17 @@
 import React from 'react';
 import Image from 'next/image';
+import Avatar from '../avatar/avatar';
 
 interface Props {
     position: 'first' | 'middle' | 'last';
     me?: boolean;
     className?: string;
     images: string[];
+    seen?: string[];
+    participants?: IParticipant[];
 }
 
-export default function ChatImages({ position, me, images, className }: Props) {
+export default function ChatImages({ position, me, images, className, seen, participants }: Props) {
     const getMessageClasses = () => {
         switch (position) {
             case 'first':
@@ -33,137 +36,191 @@ export default function ChatImages({ position, me, images, className }: Props) {
 
     if (images.length % 3 === 0) {
         return (
-            <div className={`${me && 'justify-end'} flex`}>
-                <div
-                    className={`${getMessageClasses()} ${
-                        images.length > 3 && 'gap-y-1'
-                    } w-1/2 grid grid-cols-3 gap-x-1 overflow-hidden rounded-md ${className}`}
-                >
-                    {images.map((item) => (
-                        <Image
-                            key={item}
-                            src={item}
-                            className="rounded-md"
-                            alt="image"
-                            width={90}
-                            height={160}
-                            layout="responsive"
-                            objectFit="cover"
-                            objectPosition="center"
-                            placeholder="blur"
-                            blurDataURL="/images/avatar.jpg"
-                        />
-                    ))}
+            <>
+                <div className={`${me && 'justify-end'} flex`}>
+                    <div
+                        className={`${getMessageClasses()} ${
+                            images.length > 3 && 'gap-y-1'
+                        } w-1/2 grid grid-cols-3 gap-x-1 overflow-hidden rounded-md ${className}`}
+                    >
+                        {images.map((item) => (
+                            <Image
+                                key={item}
+                                src={item}
+                                className="rounded-md"
+                                alt="image"
+                                width={90}
+                                height={160}
+                                layout="responsive"
+                                objectFit="cover"
+                                objectPosition="center"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
+                            />
+                        ))}
+                    </div>
+                    {seen && participants && seen.length === 1 && (
+                        <div className="w-4 h-4">
+                            <Avatar
+                                size="super-nano"
+                                url={participants.find((item) => item._id === seen[0])?.avatar || ''}
+                            />
+                        </div>
+                    )}
                 </div>
-            </div>
+                {seen && participants && seen.length > 1 && (
+                    <div className="flex justify-end">
+                        {seen.map((item) => {
+                            const participant = participants.find((p) => p._id === item);
+                            return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;
+                        })}
+                    </div>
+                )}
+            </>
         );
     } else if (images.length % 3 === 1) {
         return (
-            <div className={`${me && 'justify-end'} flex`}>
-                <div
-                    className={`${getMessageClasses()}  ${
-                        images.length > 3 && 'space-y-1'
-                    } w-1/2 overflow-hidden rounded-md ${className}`}
-                >
-                    {images.length >= 3 && (
-                        <div className="grid grid-cols-3 gap-1">
-                            {images.map((item, index) => {
-                                if (index < images.length - 1) {
-                                    return (
-                                        <Image
-                                            key={item}
-                                            src={item}
-                                            className="rounded-md"
-                                            alt="image"
-                                            width={90}
-                                            height={160}
-                                            layout="responsive"
-                                            objectFit="cover"
-                                            objectPosition="center"
-                                            placeholder="blur"
-                                            blurDataURL="/images/avatar.jpg"
-                                        />
-                                    );
-                                }
-                            })}
+            <>
+                <div className={`${me && 'justify-end'} flex`}>
+                    <div
+                        className={`${getMessageClasses()}  ${
+                            images.length > 3 && 'space-y-1'
+                        } w-1/2 overflow-hidden rounded-md ${className}`}
+                    >
+                        {images.length >= 3 && (
+                            <div className="grid grid-cols-3 gap-1">
+                                {images.map((item, index) => {
+                                    if (index < images.length - 1) {
+                                        return (
+                                            <Image
+                                                key={item}
+                                                src={item}
+                                                className="rounded-md"
+                                                alt="image"
+                                                width={90}
+                                                height={160}
+                                                layout="responsive"
+                                                objectFit="cover"
+                                                objectPosition="center"
+                                                placeholder="blur"
+                                                blurDataURL="/images/avatar.jpg"
+                                            />
+                                        );
+                                    }
+                                })}
+                            </div>
+                        )}
+                        <div>
+                            <Image
+                                src={images[images.length - 1]}
+                                className="rounded-md"
+                                alt="image"
+                                width={160}
+                                height={90}
+                                layout="responsive"
+                                objectFit="cover"
+                                objectPosition="center"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
+                            />
+                        </div>
+                    </div>
+                    {seen && participants && seen.length === 1 && (
+                        <div className="w-4 h-4">
+                            <Avatar
+                                size="super-nano"
+                                url={participants.find((item) => item._id === seen[0])?.avatar || ''}
+                            />
                         </div>
                     )}
-                    <div>
-                        <Image
-                            src={images[images.length - 1]}
-                            className="rounded-md"
-                            alt="image"
-                            width={160}
-                            height={90}
-                            layout="responsive"
-                            objectFit="cover"
-                            objectPosition="center"
-                            placeholder="blur"
-                            blurDataURL="/images/avatar.jpg"
-                        />
-                    </div>
                 </div>
-            </div>
+                {seen && participants && seen.length > 1 && (
+                    <div className="flex justify-end">
+                        {seen.map((item) => {
+                            const participant = participants.find((p) => p._id === item);
+                            return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;
+                        })}
+                    </div>
+                )}
+            </>
         );
     } else if (images.length % 3 === 2) {
         return (
-            <div className={`${me && 'justify-end'} flex`}>
-                <div
-                    className={`${getMessageClasses()}  ${
-                        images.length > 3 && 'space-y-1'
-                    } w-1/2 overflow-hidden rounded-md ${className}`}
-                >
-                    {images.length >= 3 && (
-                        <div className="grid grid-cols-3 gap-1">
-                            {images.map((item, index) => {
-                                if (index < images.length - 2) {
-                                    return (
-                                        <Image
-                                            key={item}
-                                            src={item}
-                                            className="rounded-md"
-                                            alt="image"
-                                            width={90}
-                                            height={160}
-                                            layout="responsive"
-                                            objectFit="cover"
-                                            objectPosition="center"
-                                            placeholder="blur"
-                                            blurDataURL="/images/avatar.jpg"
-                                        />
-                                    );
-                                }
-                            })}
+            <>
+                <div className={`${me && 'justify-end'} flex`}>
+                    <div
+                        className={`${getMessageClasses()}  ${
+                            images.length > 3 && 'space-y-1'
+                        } w-1/2 overflow-hidden rounded-md ${className}`}
+                    >
+                        {images.length >= 3 && (
+                            <div className="grid grid-cols-3 gap-1">
+                                {images.map((item, index) => {
+                                    if (index < images.length - 2) {
+                                        return (
+                                            <Image
+                                                key={item}
+                                                src={item}
+                                                className="rounded-md"
+                                                alt="image"
+                                                width={90}
+                                                height={160}
+                                                layout="responsive"
+                                                objectFit="cover"
+                                                objectPosition="center"
+                                                placeholder="blur"
+                                                blurDataURL="/images/avatar.jpg"
+                                            />
+                                        );
+                                    }
+                                })}
+                            </div>
+                        )}
+                        <div className="grid grid-cols-2 gap-x-1">
+                            <Image
+                                src={images[images.length - 2]}
+                                className="rounded-md"
+                                alt="image"
+                                width={100}
+                                height={100}
+                                layout="responsive"
+                                objectFit="cover"
+                                objectPosition="center"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
+                            />
+                            <Image
+                                src={images[images.length - 1]}
+                                className="rounded-md"
+                                alt="image"
+                                width={100}
+                                height={100}
+                                layout="responsive"
+                                objectFit="cover"
+                                objectPosition="center"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
+                            />
+                        </div>
+                    </div>
+                    {seen && participants && seen.length === 1 && (
+                        <div className="w-4 h-4">
+                            <Avatar
+                                size="super-nano"
+                                url={participants.find((item) => item._id === seen[0])?.avatar || ''}
+                            />
                         </div>
                     )}
-                    <div className="grid grid-cols-2 gap-x-1">
-                        <Image
-                            src={images[images.length - 2]}
-                            className="rounded-md"
-                            alt="image"
-                            width={100}
-                            height={100}
-                            layout="responsive"
-                            objectFit="cover"
-                            objectPosition="center"
-                            placeholder="blur"
-                            blurDataURL="/images/avatar.jpg"
-                        />
-                        <Image
-                            src={images[images.length - 1]}
-                            className="rounded-md"
-                            alt="image"
-                            width={100}
-                            height={100}
-                            layout="responsive"
-                            objectFit="cover"
-                            objectPosition="center"
-                            placeholder="blur"
-                            blurDataURL="/images/avatar.jpg"
-                        />
-                    </div>
                 </div>
-            </div>
+                {seen && participants && seen.length > 1 && (
+                    <div className="flex justify-end">
+                        {seen.map((item) => {
+                            const participant = participants.find((p) => p._id === item);
+                            return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;
+                        })}
+                    </div>
+                )}
+            </>
         );
     }
     return <></>;

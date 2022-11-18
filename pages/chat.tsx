@@ -25,12 +25,13 @@ export default function Chat() {
     const sConversations = useAppSelector(selectConversations);
     const [activedConversation, setActivedConversation] = useState<string>('');
 
-    const handleSeenMessage = async (messageId: string, conversationId: string) => {
+    const handleSeenMessage = async (messageId: string, conversationId: string, subMessageId: string) => {
         try {
             await dispatch(
                 seenMessage({
                     messageId,
                     conversationId,
+                    subMessageId,
                 }),
             ).unwrap();
         } catch (error) {
@@ -61,8 +62,9 @@ export default function Chat() {
             const conv = sConversations.find((item) => item._id === activedConversation);
             if (conv && conv.messages.length > 0) {
                 if (sUser && conv.messages[0].sender !== sUser._id) {
-                    if (!conv.messages[0].seen.includes(sUser._id)) {
-                        handleSeenMessage(conv.messages[0]._id, conv._id);
+                    const length = conv.messages[0].message.length;
+                    if (!conv.messages[0].message[length - 1].seen.includes(sUser._id)) {
+                        handleSeenMessage(conv.messages[0]._id, conv._id, conv.messages[0].message[length - 1]._id);
                     }
                 }
             }
@@ -118,7 +120,10 @@ export default function Chat() {
                                                 ? messages[0].message[messages[0].message.length - 1].text || ''
                                                 : `${participants[0].name.lastName} đã gửi ảnh`
                                         }
-                                        notSeen={messages[0].seen.length === 0 && messages[0].sender !== sUser?._id}
+                                        notSeen={
+                                            messages[0].message[messages[0].message.length - 1].seen.length === 0 &&
+                                            messages[0].sender !== sUser?._id
+                                        }
                                         avatar={participants[0].avatar}
                                     />
                                 );

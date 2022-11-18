@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ChatText from './chat-text';
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
@@ -12,11 +12,12 @@ interface Props {
 }
 
 export default function ChatItemMe({ message, participants }: Props) {
-    if (participants) {
-        console.log('participants: ', participants);
-    }
     timeago.register('vi', vi);
     const length = message.message.length;
+    const [id, setId] = useState<string>('');
+    if (participants) {
+        console.log('id: ', id);
+    }
 
     const locate = (index: number) => {
         switch (index) {
@@ -29,6 +30,18 @@ export default function ChatItemMe({ message, participants }: Props) {
         }
     };
 
+    useEffect(() => {
+        let index = -1;
+        message.message.forEach((item, itemIndex) => {
+            if (item.seen.length > 0) {
+                index = itemIndex;
+            }
+        });
+        if (index > -1) {
+            setId(message.message[index]._id);
+        }
+    }, [participants, message]);
+
     return (
         <div className="space-y-1">
             <section className="space-y-1">
@@ -40,6 +53,8 @@ export default function ChatItemMe({ message, participants }: Props) {
                                 position={locate(index)}
                                 text={item.text || ''}
                                 me
+                                participants={item._id === id ? participants : undefined}
+                                seen={item._id === id ? item.seen : undefined}
                                 className={`text-white bg-primary-80 ${length === 1 && 'rounded-3xl'}`}
                             />
                         );
@@ -49,6 +64,8 @@ export default function ChatItemMe({ message, participants }: Props) {
                                 key={item._id}
                                 position={locate(index)}
                                 me
+                                participants={item._id === id ? participants : undefined}
+                                seen={item._id === id ? item.seen : undefined}
                                 className={(length === 1 && 'rounded-3xl') || 'haha'}
                                 images={item.images || []}
                             />
@@ -56,19 +73,12 @@ export default function ChatItemMe({ message, participants }: Props) {
                     }
                 })}
             </section>
-            {participants && (
-                <div className="flex justify-end">
-                    {participants.map((item) => {
-                        console.log('message.seen.includes(item._id): ', message.seen.includes(item._id));
-                        if (message.seen.includes(item._id)) {
-                            return <Avatar size="super-nano" url={item.avatar} key={item._id} />;
-                        }
-                    })}
-                </div>
-            )}
             <div className="flex justify-end">
                 <TimeAgo className="text-sm" datetime={new Date(message.updatedAt)} locale="vi" />
             </div>
         </div>
     );
+}
+function useSate<T>(arg0: string): [any, any] {
+    throw new Error('Function not implemented.');
 }

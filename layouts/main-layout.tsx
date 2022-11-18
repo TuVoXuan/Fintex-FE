@@ -25,6 +25,7 @@ import { selectNotification } from '../redux/reducers/notification-slice';
 import { notifyGetPagination, notifyHandleSee } from '../redux/actions/notify-action';
 import { toastError } from '../util/toast';
 import { selectConversations } from '../redux/reducers/conversation-slice';
+import { isMessageSeen } from '../util/is-message-seen';
 
 interface Props {
     children?: React.ReactNode;
@@ -114,12 +115,12 @@ export const MainLayout = ({ children }: Props) => {
     const handleNotSeenCoversation = () => {
         let num = 0;
         for (const conv of sConversation) {
-            if (
-                conv.messages.length > 0 &&
-                conv.messages[0].seen.length === 0 &&
-                conv.messages[0].sender !== sUser.data?._id
-            ) {
-                num++;
+            if (conv.messages.length > 0) {
+                const isSeen = isMessageSeen(conv.messages[0]);
+                if (conv.messages.length > 0 && !isSeen && conv.messages[0].sender !== sUser.data?._id) {
+                    num++;
+                    break;
+                }
             }
         }
         return num;

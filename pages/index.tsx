@@ -19,11 +19,14 @@ import { FormPost } from '../components/post/form-post/form-post';
 import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
 import Image from 'next/image';
+import { getConversations } from '../redux/actions/conversation-action';
+import { selectConversations } from '../redux/reducers/conversation-slice';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
+    const sConversation = useAppSelector(selectConversations);
     const onlineFriends = useAppSelector(selectFriend).onlineFriends;
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -61,6 +64,17 @@ const Home: NextPage = () => {
         }
     };
 
+    const fetchConversations = async () => {
+        try {
+            if (sConversation.length === 0) {
+                await dispatch(getConversations()).unwrap();
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
     const fetchPost = async (limit: number, after?: string) => {
         try {
             await dispatch(postLoadMore({ limit, after })).unwrap();
@@ -82,6 +96,8 @@ const Home: NextPage = () => {
         if (sPost.posts.length > 0) {
             setLoading(false);
         }
+
+        fetchConversations();
     }, []);
 
     return (
@@ -188,6 +204,7 @@ const Home: NextPage = () => {
                                 src={'/images/online-user.svg'}
                                 height={100}
                                 width={100}
+                                alt={'no one onlines'}
                                 layout="responsive"
                                 objectFit="contain"
                             />

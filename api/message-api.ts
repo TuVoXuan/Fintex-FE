@@ -36,8 +36,12 @@ const messageApi = {
     },
     seenMessage: async (body: ISeenMessage) => {
         const url = `${URL}/seen/${body.messageId}`;
-        return (await axiosService.put<IResponseSuccess<ISeenMessage>>(url, { conversationId: body.conversationId }))
-            .data.data;
+        return (
+            await axiosService.put<IResponseSuccess<ISeenMessage>>(url, {
+                conversationId: body.conversationId,
+                subMessageId: body.subMessageId,
+            })
+        ).data.data;
     },
 };
 

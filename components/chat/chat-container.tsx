@@ -11,6 +11,7 @@ import ChatItemFriend from './chat-item-friend';
 import ChatItemMe from './chat-item-me';
 import { selectConversations } from '../../redux/reducers/conversation-slice';
 import { createMessage, getMessageFirstTime } from '../../redux/actions/conversation-action';
+import { isMessageSeen } from '../../util/is-message-seen';
 
 interface Props {
     conversationId: string;
@@ -77,8 +78,12 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                         className="flex flex-col-reverse gap-y-5"
                         scrollableTarget="chat"
                     >
-                        {sMessages.map((item) => {
-                            if (first && item.sender === sUser?._id && item.seen.length > 0) {
+                        {sMessages.map((item, index) => {
+                            if (first && item.sender === sUser?._id && isMessageSeen(item)) {
+                                console.log('item._id: ', item._id);
+                                console.log('isMessageSeen(item): ', isMessageSeen(item));
+                                console.log('item.sender === sUser?._id: ', item.sender === sUser?._id);
+                                console.log('first: ', first);
                                 first = false;
                                 return <ChatItemMe key={item._id} message={item} participants={participants} />;
                             }

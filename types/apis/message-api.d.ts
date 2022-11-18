@@ -2,13 +2,13 @@ declare interface IMessageContent {
     _id: string;
     text?: string;
     images?: string[];
+    seen: string[];
     messType: 'text' | 'image';
 }
 
 declare interface IMessage {
     _id: string;
     sender: string;
-    seen: string[];
     message: IMessageContent[];
     updatedAt: string;
 }
@@ -46,6 +46,7 @@ declare interface ITestMqtt {
 
 declare interface ISeenMessage {
     messageId: string;
+    subMessageId: string;
     conversationId: string;
     userId?: string;
 }
