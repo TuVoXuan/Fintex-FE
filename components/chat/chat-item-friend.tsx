@@ -59,7 +59,7 @@ export default function ChatItemFriend({ message, senderAvatar }: Props) {
                 </aside>
             </div>
             <div className="ml-12">
-                <TimeAgo className="text-sm" datetime={new Date(message.updatedAt)} locale="vi" />
+                <TimeAgo className="text-xs" datetime={new Date(message.updatedAt)} locale="vi" />
             </div>
         </div>
     );

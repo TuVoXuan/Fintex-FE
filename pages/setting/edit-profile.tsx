@@ -242,7 +242,7 @@ export default function EditProfile() {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                             >
-                                <Listbox.Options className="absolute z-10 w-full py-1 mt-2 overflow-auto text-base bg-white rounded-md max-h-60 ring-1 ring-black ring-opacity-10 focus:outline-none sm:text-sm">
+                                <Listbox.Options className="absolute z-10 w-full py-1 mt-2 hover:scrollbar-show overflow-auto text-base bg-white rounded-md max-h-60 ring-1 ring-black ring-opacity-10 focus:outline-none sm:text-sm">
                                     {educations.map((education) => (
                                         <Listbox.Option
                                             key={education._id}
@@ -326,7 +326,7 @@ export default function EditProfile() {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                             >
-                                <Listbox.Options className="absolute z-10 w-full py-1 mt-2 overflow-auto text-base bg-white rounded-md max-h-60 ring-1 ring-black ring-opacity-10 focus:outline-none sm:text-sm">
+                                <Listbox.Options className="absolute z-10 w-full py-1 mt-2 hover:scrollbar-show overflow-auto text-base bg-white rounded-md max-h-60 ring-1 ring-black ring-opacity-10 focus:outline-none sm:text-sm">
                                     {provinces.map((province) => (
                                         <Listbox.Option
                                             key={province.province_id}

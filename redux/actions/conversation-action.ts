@@ -44,3 +44,16 @@ export const seenMessage = createAsyncThunk('converstions/seenMessage', async (b
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const getMessagePagination = createAsyncThunk(
+    'conversations/getMessagePagination',
+    async (param: IParamMessPaginate, thunkAPI) => {
+        try {
+            const response = await messageApi.getMessages(param);
+            response.conversationId = param.conversationId;
+            return response;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);

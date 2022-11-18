@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { createMessage, getConversations, getMessageFirstTime, seenMessage } from '../actions/conversation-action';
+import {
+    createMessage,
+    getConversations,
+    getMessageFirstTime,
+    getMessagePagination,
+    seenMessage,
+} from '../actions/conversation-action';
 
 const initialState: IConversationStore[] = [];
 
@@ -100,6 +106,17 @@ export const conversationsSlice = createSlice({
                     );
                     if (subMessage) {
                         subMessage.seen.push(action.payload.userId || '');
+                    }
+                }
+            }
+        });
+        builder.addCase(getMessagePagination.fulfilled, (state, action: PayloadAction<IMessagePaginate>) => {
+            if (action.payload.conversationId) {
+                const conv = state.find((item) => item._id === action.payload.conversationId);
+                if (conv) {
+                    conv.after = action.payload.after;
+                    for (const mess of action.payload.messages) {
+                        conv.messages.push(mess);
                     }
                 }
             }

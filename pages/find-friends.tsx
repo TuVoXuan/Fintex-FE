@@ -44,7 +44,10 @@ const FindFrends: NextPage = () => {
 
     return (
         <MainLayout>
-            <section id="findFriendDiv" className="relative h-full overflow-y-auto rounded-2xl bg-secondary-10">
+            <section
+                id="findFriendDiv"
+                className="relative h-full overflow-y-auto hover:scrollbar-show rounded-2xl bg-secondary-10"
+            >
                 {loading ? (
                     <div className="px-56 py-5 space-y-3">
                         <LoadingFindFriend />
@@ -89,7 +92,14 @@ const FindFrends: NextPage = () => {
                             </InfiniteScroll>
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full">
-                                <Image src={'/images/people-search.svg'} height={400} width={400} />
+                                <Image
+                                    src={'/images/people-search.svg'}
+                                    height={400}
+                                    width={400}
+                                    placeholder="blur"
+                                    alt="search icon"
+                                    blurDataURL="/images/avatar.jpg"
+                                />
                                 <p className="mt-4 text-center">Không tìm thấy kết quả phù hợp</p>
                             </div>
                         )}

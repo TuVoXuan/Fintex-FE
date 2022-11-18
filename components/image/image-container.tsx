@@ -44,6 +44,8 @@ export default function ImageContainer({
                                 setRatio(naturalWidth / naturalHeight);
                             }
                         }}
+                        placeholder="blur"
+                        blurDataURL="/images/avatar.jpg"
                     />
                 </div>
             </div>
@@ -62,6 +64,8 @@ export default function ImageContainer({
                 layout="responsive"
                 objectFit="cover"
                 objectPosition="center"
+                placeholder="blur"
+                blurDataURL="/images/avatar.jpg"
             />
             {moreImage && (
                 <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center bg-secondary-80/50">

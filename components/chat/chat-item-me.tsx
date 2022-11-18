@@ -4,7 +4,6 @@ import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import ChatImages from './chat-images';
-import Avatar from '../avatar/avatar';
 
 interface Props {
     message: IMessage;
@@ -73,8 +72,8 @@ export default function ChatItemMe({ message, participants }: Props) {
                     }
                 })}
             </section>
-            <div className="flex justify-end">
-                <TimeAgo className="text-sm" datetime={new Date(message.updatedAt)} locale="vi" />
+            <div className="flex justify-end mr-5">
+                <TimeAgo className="text-xs" datetime={new Date(message.updatedAt)} locale="vi" />
             </div>
         </div>
     );

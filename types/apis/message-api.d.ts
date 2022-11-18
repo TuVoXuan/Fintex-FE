@@ -15,6 +15,7 @@ declare interface IMessage {
 
 declare interface IMessagePaginate {
     after: string;
+    conversationId?: string;
     messages: MessageResDto[];
 }
 

@@ -96,7 +96,7 @@ export default function MyAlbum({ personId }: Props) {
     return (
         <MainLayout>
             <section
-                className="relative flex flex-col h-full overflow-y-auto"
+                className="relative flex flex-col h-full overflow-y-auto hover:scrollbar-show"
                 id="album"
                 ref={postsRef}
                 onScroll={handleShowScrollTop}
@@ -112,6 +112,8 @@ export default function MyAlbum({ personId }: Props) {
                                 layout="fill"
                                 objectFit="cover"
                                 objectPosition="top"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
                             />
                         </div>
 
@@ -169,6 +171,8 @@ export default function MyAlbum({ personId }: Props) {
                                                 layout="responsive"
                                                 objectFit="cover"
                                                 objectPosition="center"
+                                                placeholder="blur"
+                                                blurDataURL="/images/avatar.jpg"
                                             />
                                         </div>
                                     );
@@ -208,7 +212,14 @@ export default function MyAlbum({ personId }: Props) {
                 >
                     {album.map((item) => (
                         <SwiperSlide key={item.publicId}>
-                            <Image src={item.url} layout="fill" alt="post image" objectFit="contain" />
+                            <Image
+                                src={item.url}
+                                layout="fill"
+                                alt="post image"
+                                objectFit="contain"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
+                            />
                         </SwiperSlide>
                     ))}
                 </Swiper>

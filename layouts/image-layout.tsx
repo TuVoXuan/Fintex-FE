@@ -170,7 +170,7 @@ export default function ImageLayout({ images, postId }: Props) {
                     {images.slice(2, 5).map((image, index) => {
                         if (index === 2 && imagesLength > 5) {
                             return (
-                                <div className="relative">
+                                <div key={image.url} className="relative">
                                     <ImageContainer
                                         onClick={handleSeeDetailPost}
                                         key={image.url + Date.now().toString()}

@@ -86,7 +86,7 @@ export default function TempPage() {
         });
 
     return (
-        <div className="fixed top-0 bottom-0 left-0 right-0 z-10 flex justify-center overflow-y-auto bg-secondary-80/60 py-14">
+        <div className="fixed top-0 bottom-0 left-0 right-0 z-10 flex justify-center hover:scrollbar-show overflow-y-auto bg-secondary-80/60 py-14">
             <div className="bg-white rounded-lg w-[700px] h-fit">
                 <div className="grid grid-cols-6 border-b">
                     <div className="flex items-center justify-center col-span-4 col-start-2">

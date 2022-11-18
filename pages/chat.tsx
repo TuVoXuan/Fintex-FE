@@ -84,7 +84,7 @@ export default function Chat() {
                             type="text"
                             register={register}
                         />
-                        <main className="space-y-2 overflow-y-auto">
+                        <main className="space-y-2 overflow-y-auto hover:scrollbar-show">
                             {sConversations.map(({ _id, participants, messages }) => {
                                 if (messages.length === 0) {
                                     return (

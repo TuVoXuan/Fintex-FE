@@ -9,9 +9,14 @@ import Avatar from '../avatar/avatar';
 import LoadingMessages from '../loading/loading-messages';
 import ChatItemFriend from './chat-item-friend';
 import ChatItemMe from './chat-item-me';
+import Image from 'next/image';
 import { selectConversations } from '../../redux/reducers/conversation-slice';
-import { createMessage, getMessageFirstTime } from '../../redux/actions/conversation-action';
+import { createMessage, getMessageFirstTime, getMessagePagination } from '../../redux/actions/conversation-action';
 import { isMessageSeen } from '../../util/is-message-seen';
+import ImageCard from '../card/image-card';
+import DivScrollHorizontal from '../div-scroll-horizontal/div-scroll-horizontal';
+import { toastError } from '../../util/toast';
+import { VscLoading } from 'react-icons/vsc';
 
 interface Props {
     conversationId: string;
@@ -29,23 +34,54 @@ export default function ChatContainer({ conversationId, participants }: Props) {
     const refInfinityScroll = useRef<HTMLDivElement>(null);
 
     const [loading, setLoading] = useState(false);
+    const [images, setImages] = useState<IImageStore[]>([]);
+    const [isSubmit, setIsSubmit] = useState(false);
     // const [isFirst, setIsFirst] = useState(true);
     let first = true;
 
-    const fetchMessages = () => {
+    const fetchMessages = async () => {
         if (sAfter !== 'end') {
-            return 'haha';
+            await dispatch(
+                getMessagePagination({
+                    limit: 10,
+                    after: sAfter,
+                    conversationId,
+                }),
+            );
         }
     };
 
     const onSubmit = async (value: any) => {
-        dispatch(
-            createMessage({
-                conversationId,
-                type: 'text',
-                text: value.message,
-            }),
-        ).catch((error) => console.log('error: ', error));
+        try {
+            setIsSubmit(true);
+            if (value.message) {
+                await dispatch(
+                    createMessage({
+                        conversationId,
+                        type: 'text',
+                        text: value.message,
+                    }),
+                );
+            }
+            if (images.length > 0) {
+                await dispatch(
+                    createMessage({
+                        conversationId,
+                        type: 'image',
+                        images: images.map((item) => item.file) as File[],
+                    }),
+                );
+                setImages([]);
+            }
+            setIsSubmit(false);
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const chooseAnotherImages = (other: IImageStore[]) => {
+        setImages((value) => [...value, ...other]);
     };
 
     useEffect(() => {
@@ -56,7 +92,7 @@ export default function ChatContainer({ conversationId, participants }: Props) {
     }, [conversationId]);
 
     return (
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col w-full h-full overflow-hidden">
             <div className="flex gap-x-4 px-5 py-2 border-b-[1px] border-secondary-20">
                 <Avatar size="small" url={participants[0].avatar} />
                 <aside className="flex flex-col justify-center">
@@ -65,7 +101,11 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                 </aside>
             </div>
 
-            <div id="chat" ref={refInfinityScroll} className="flex flex-col-reverse flex-auto px-5 overflow-y-auto">
+            <div
+                id="chat"
+                ref={refInfinityScroll}
+                className="flex flex-col-reverse flex-auto px-5 overflow-y-auto hover:scrollbar-show"
+            >
                 {loading ? (
                     <LoadingMessages />
                 ) : (
@@ -105,25 +145,53 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                     </InfiniteScroll>
                 )}
             </div>
-            <div className="px-5 py-2 flex border-t-[1px] border-secondary-20 w-full gap-x-4">
-                <form id="chatMessage" className="grow shrink-0" onSubmit={handleSubmit(onSubmit)}>
+            <div className="px-5 py-2 flex border-t-[1px] border-secondary-20 gap-x-4 w-full">
+                <form
+                    id="chatMessage"
+                    className={`overflow-hidden grow border-[1px] rounded-2xl space-y-2 ${
+                        isSubmit && 'cursor-not-allowed'
+                    }`}
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    {images.length > 0 && (
+                        <DivScrollHorizontal className="flex px-2 py-1 overflow-x-auto rounded-2xl bg-secondary-20 hover:scrollbar-show gap-x-2">
+                            {images.map((image) => (
+                                <ImageCard
+                                    key={image.id}
+                                    id={image.id}
+                                    src={image.url}
+                                    onClose={setImages}
+                                    disabled={isSubmit}
+                                />
+                            ))}
+                        </DivScrollHorizontal>
+                    )}
                     <Input
                         name="message"
-                        border={true}
                         isTextArea
                         placeholder="Aa..."
                         isHasEmojiIcon
                         isHasPhotoIcon
+                        isMultipleImages
+                        disabled={isSubmit}
                         type="text"
+                        onChangeImages={chooseAnotherImages}
                         register={register}
                     />
                 </form>
                 <button
                     type="submit"
                     form="chatMessage"
-                    className="self-end h-full bg-blue-200 max-h-14 aspect-square rounded-2xl hover:bg-blue-300 grow-0 shrink-0"
+                    disabled={isSubmit}
+                    className={`self-end h-full bg-blue-200 max-h-14 aspect-square rounded-2xl hover:bg-blue-300 grow-0 shrink-0 ${
+                        isSubmit && 'cursor-not-allowed'
+                    }`}
                 >
-                    <RiSendPlane2Line className="mx-auto text-blue-600" size={24} />
+                    {isSubmit ? (
+                        <VscLoading size={24} className="mx-auto text-blue-600 animate-spin" />
+                    ) : (
+                        <RiSendPlane2Line className="mx-auto text-blue-600" size={24} />
+                    )}
                 </button>
             </div>
         </div>

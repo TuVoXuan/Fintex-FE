@@ -13,7 +13,13 @@ export const AuthLayout = ({ title, subTitle, children }: Props) => {
             <div className="flex justify-start">
                 <div className="w-[200px] h-12">
                     <div className="h-full image-container">
-                        <Image src="/logo-and-brand-name.svg" layout="fill" alt="logo" />
+                        <Image
+                            src="/logo-and-brand-name.svg"
+                            layout="fill"
+                            alt="logo"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
+                        />
                     </div>
                 </div>
             </div>
