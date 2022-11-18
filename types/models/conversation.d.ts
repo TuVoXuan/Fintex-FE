@@ -3,6 +3,7 @@ declare interface IConversationStore {
     participants: IParticipant[];
     messages: IMessage[];
     after: string;
+    name: string;
 }
 
 declare interface IGetMessFirstTime {

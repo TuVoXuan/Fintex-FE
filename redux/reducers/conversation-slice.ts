@@ -62,6 +62,7 @@ export const conversationsSlice = createSlice({
                             },
                         ],
                         participants: conv.participants,
+                        name: '',
                     });
                 } else {
                     state.push({
@@ -69,6 +70,7 @@ export const conversationsSlice = createSlice({
                         _id: conv._id,
                         messages: [],
                         participants: conv.participants,
+                        name: '',
                     });
                 }
             }
@@ -116,6 +118,7 @@ export const conversationsSlice = createSlice({
                 _id: action.payload._id,
                 messages: [],
                 participants: action.payload.participants,
+                name: '',
             });
         });
     },
