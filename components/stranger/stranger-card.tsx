@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import APP_PATH from '../../constants/app-path';
+import { useMQTT } from '../../context/mqtt-context';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { createConversation } from '../../redux/actions/conversation-action';
 import { friendReqCreate } from '../../redux/actions/notify-action';
@@ -17,6 +18,7 @@ interface Props {
 export default function StrangerCard({ stranger }: Props) {
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const mqtt = useMQTT();
     const sConversations = useAppSelector(selectConversations);
 
     const { avatar, fullName, address, _id } = stranger;
@@ -33,9 +35,16 @@ export default function StrangerCard({ stranger }: Props) {
             });
 
             if (conversation) {
-                router.push(`${APP_PATH.CHAT}/${conversation._id}`);
+                if (mqtt) {
+                    console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
+                    mqtt.setConversation(conversation._id);
+                    router.push(APP_PATH.CHAT);
+                }
             } else {
                 await dispatch(createConversation(stranger._id)).unwrap();
+                if (mqtt && mqtt.activedConversation.current) {
+                    mqtt.setConversation('');
+                }
                 router.push(APP_PATH.CHAT);
             }
         } catch (error) {

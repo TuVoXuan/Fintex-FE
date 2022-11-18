@@ -29,14 +29,16 @@ import { resetComments } from '../../redux/reducers/comments-slice';
 import { selectConversations } from '../../redux/reducers/conversation-slice';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { createConversation } from '../../redux/actions/conversation-action';
+import { useMQTT } from '../../context/mqtt-context';
 
 interface Props {
     personId: string;
 }
 
 export default function Profile({ personId }: Props) {
-    const dispatch = useAppDispatch();
+    const mqtt = useMQTT();
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
@@ -168,10 +170,16 @@ export default function Profile({ personId }: Props) {
             });
 
             if (conversation) {
-                router.push(`${APP_PATH.CHAT}/${conversation._id}`);
+                if (mqtt) {
+                    mqtt.setConversation(conversation._id);
+                    router.push(APP_PATH.CHAT);
+                }
             } else {
                 if (user) {
                     await dispatch(createConversation(user._id)).unwrap();
+                    if (mqtt && mqtt.activedConversation.current) {
+                        mqtt.setConversation('');
+                    }
                     router.push(APP_PATH.CHAT);
                 }
             }

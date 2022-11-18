@@ -1,6 +1,6 @@
 import mqtt, { MqttClient } from 'mqtt';
 import { useRouter } from 'next/router';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import APP_PATH from '../constants/app-path';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { seenMessage } from '../redux/actions/conversation-action';
@@ -10,6 +10,7 @@ import { toastError, toastSuccess } from '../util/toast';
 
 type MqttType = {
     mqttClient: MqttClient | null;
+    activedConversation: MutableRefObject<string>;
     setConversation: (value: string) => void;
 };
 
@@ -95,7 +96,9 @@ export const MQTTProvider = ({ children }: Props) => {
     }, []);
 
     return (
-        <MQTTContext.Provider value={{ mqttClient: mqttRef.current, setConversation }}>{children}</MQTTContext.Provider>
+        <MQTTContext.Provider value={{ mqttClient: mqttRef.current, activedConversation, setConversation }}>
+            {children}
+        </MQTTContext.Provider>
     );
 };
 
