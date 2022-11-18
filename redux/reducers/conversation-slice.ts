@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { createMessage, getConversations, getMessageFirstTime, seenMessage } from '../actions/conversation-action';
+import {
+    createConversation,
+    createMessage,
+    getConversations,
+    getMessageFirstTime,
+    seenMessage,
+} from '../actions/conversation-action';
 
 const initialState: IConversationStore[] = [];
 
@@ -103,6 +109,14 @@ export const conversationsSlice = createSlice({
                     }
                 }
             }
+        });
+        builder.addCase(createConversation.fulfilled, (state, action: PayloadAction<IConversation>) => {
+            state.unshift({
+                after: '',
+                _id: action.payload._id,
+                messages: [],
+                participants: action.payload.participants,
+            });
         });
     },
 });

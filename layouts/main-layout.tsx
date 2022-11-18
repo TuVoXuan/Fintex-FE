@@ -26,6 +26,7 @@ import { notifyGetPagination, notifyHandleSee } from '../redux/actions/notify-ac
 import { toastError } from '../util/toast';
 import { selectConversations } from '../redux/reducers/conversation-slice';
 import { isMessageSeen } from '../util/is-message-seen';
+import { getConversations } from '../redux/actions/conversation-action';
 
 interface Props {
     children?: React.ReactNode;
@@ -127,6 +128,17 @@ export const MainLayout = ({ children }: Props) => {
         return num;
     };
 
+    const fetchConversations = async () => {
+        try {
+            if (sConversation.length === 0) {
+                await dispatch(getConversations()).unwrap();
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
     useEffect(() => {
         setNotSeenConversation(handleNotSeenCoversation());
     }, [sConversation]);
@@ -185,6 +197,8 @@ export const MainLayout = ({ children }: Props) => {
             const limit = +(process.env.LIMIT_NOTIFY as string);
             fetchNotify(limit);
         }
+
+        fetchConversations();
     }, []);
 
     return (

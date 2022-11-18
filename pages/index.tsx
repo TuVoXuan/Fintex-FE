@@ -65,17 +65,6 @@ const Home: NextPage = () => {
         }
     };
 
-    const fetchConversations = async () => {
-        try {
-            if (sConversation.length === 0) {
-                await dispatch(getConversations()).unwrap();
-            }
-        } catch (error) {
-            console.log('error: ', error);
-            toastError((error as IResponseError).error);
-        }
-    };
-
     const fetchPost = async (limit: number, after?: string) => {
         try {
             await dispatch(postLoadMore({ limit, after })).unwrap();
@@ -97,8 +86,6 @@ const Home: NextPage = () => {
         if (sPost.posts.length > 0) {
             setLoading(false);
         }
-
-        fetchConversations();
     }, []);
 
     return (

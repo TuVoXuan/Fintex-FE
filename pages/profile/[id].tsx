@@ -26,19 +26,23 @@ import friendReqApi from '../../api/friend-req-api';
 import { friendReqCreate } from '../../redux/actions/notify-action';
 import { VscLoading } from 'react-icons/vsc';
 import { resetComments } from '../../redux/reducers/comments-slice';
+import { selectConversations } from '../../redux/reducers/conversation-slice';
+import { selectUser } from '../../redux/reducers/user-slice';
+import { createConversation } from '../../redux/actions/conversation-action';
 
 interface Props {
     personId: string;
 }
 
 export default function Profile({ personId }: Props) {
-    console.log('personId: ', personId);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const sPost = useAppSelector(selectPost);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
     const swiperRef = useRef<HTMLDivElement>(null);
+    const sConversations = useAppSelector(selectConversations);
+    const sUser = useAppSelector(selectUser);
 
     const [user, setUser] = useState<IUserProfileRes>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -46,6 +50,7 @@ export default function Profile({ personId }: Props) {
     const [swiper, setSwiper] = useState<SwiperCore>();
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
+    const [loadingChat, setLoadingChat] = useState<boolean>(false);
 
     // const id = router.query.id as string;
     // console.log('id: ', id);
@@ -151,6 +156,32 @@ export default function Profile({ personId }: Props) {
         return className;
     };
 
+    const handleChat = async () => {
+        try {
+            setLoading(true);
+            const conversation = sConversations.find((conv) => {
+                const hasCurrFriend = conv.participants.findIndex((item) => item._id === user?._id);
+                if (hasCurrFriend >= 0) {
+                    return conv;
+                }
+                return null;
+            });
+
+            if (conversation) {
+                router.push(`${APP_PATH.CHAT}/${conversation._id}`);
+            } else {
+                if (user) {
+                    await dispatch(createConversation(user._id)).unwrap();
+                    router.push(APP_PATH.CHAT);
+                }
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         getUserProfile(personId);
         getRelationship(personId);
@@ -244,7 +275,17 @@ export default function Profile({ personId }: Props) {
                                 </button>
                             )}
                             {relationship === 'isFriend' && (
-                                <button className="btn btn-primary ripple-bg-primary-80">Nhắn tin</button>
+                                <>
+                                    {loadingChat ? (
+                                        <button disabled className="px-14 btn btn-primary">
+                                            <VscLoading className="animate-spin" size={18} />
+                                        </button>
+                                    ) : (
+                                        <button onClick={handleChat} className="btn btn-primary ripple-bg-primary-80">
+                                            Nhắn tin
+                                        </button>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
