@@ -76,7 +76,7 @@ export default function Chat() {
                             register={register}
                         />
                         <main className="space-y-2 overflow-y-auto hover:scrollbar-show">
-                            {sConversations.map(({ _id, participants, messages }) => {
+                            {sConversations.map(({ _id, participants, messages, name }) => {
                                 if (messages.length === 0) {
                                     return (
                                         <ChatPersonCard
@@ -87,10 +87,11 @@ export default function Chat() {
                                                     mqtt.setConversation(_id);
                                                 }
                                             }}
-                                            name={participants[0].name.fullName}
+                                            conversationId={_id}
+                                            name={name}
                                             active={_id === activedConversation}
                                             notSeen={false}
-                                            avatar={participants[0].avatar}
+                                            participants={participants}
                                         />
                                     );
                                 }
@@ -103,7 +104,8 @@ export default function Chat() {
                                                 mqtt.setConversation(_id);
                                             }
                                         }}
-                                        name={participants[0].name.fullName}
+                                        conversationId={_id}
+                                        name={name}
                                         active={_id === activedConversation}
                                         date={new Date(messages[0].updatedAt)}
                                         message={
@@ -115,7 +117,7 @@ export default function Chat() {
                                             messages[0].message[messages[0].message.length - 1].seen.length === 0 &&
                                             messages[0].sender !== sUser?._id
                                         }
-                                        avatar={participants[0].avatar}
+                                        participants={participants}
                                     />
                                 );
                             })}
@@ -125,6 +127,7 @@ export default function Chat() {
                         {sConversations.length > 0 && activedConversation && (
                             <ChatContainer
                                 conversationId={activedConversation}
+                                name={sConversations.find((conv) => conv._id === activedConversation)?.name || ''}
                                 participants={
                                     sConversations.find((conv) => conv._id === activedConversation)?.participants || []
                                 }

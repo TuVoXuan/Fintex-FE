@@ -46,33 +46,48 @@ export const conversationsSlice = createSlice({
                 }
             }
         },
+        //todo: mới viết hàm chưa test thử
+        setLastActive: (state, action: PayloadAction<string>) => {
+            const conv = state.find((item) => item._id === action.payload);
+            if (conv) {
+                conv.lastActive = new Date().toString();
+            }
+        },
+        setOnline: (state, action: PayloadAction<IOnlineConv>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.isOnline = action.payload.isOnline;
+            }
+        },
     },
     extraReducers(builder) {
         builder.addCase(getConversations.fulfilled, (state, action: PayloadAction<IConversation[]>) => {
-            if (state.length === 0) {
-                for (const conv of action.payload) {
-                    if (conv.messages.length > 0) {
-                        state.push({
-                            after: '',
-                            _id: conv._id,
-                            messages: [
-                                {
-                                    _id: conv.messages[0]._id,
-                                    message: conv.messages[0].message,
-                                    sender: conv.messages[0].sender,
-                                    updatedAt: conv.messages[0].updatedAt,
-                                },
-                            ],
-                            participants: conv.participants,
-                        });
-                    } else {
-                        state.push({
-                            after: '',
-                            _id: conv._id,
-                            messages: [],
-                            participants: conv.participants,
-                        });
-                    }
+            for (const conv of action.payload) {
+                if (conv.messages.length > 0) {
+                    state.push({
+                        after: '',
+                        _id: conv._id,
+                        messages: [
+                            {
+                                _id: conv.messages[0]._id,
+                                message: conv.messages[0].message,
+                                sender: conv.messages[0].sender,
+                                updatedAt: conv.messages[0].updatedAt,
+                            },
+                        ],
+                        participants: conv.participants,
+                        name: conv.name || '',
+                        isOnline: false,
+                    });
+                } else {
+                    state.push({
+                        after: '',
+                        _id: conv._id,
+                        messages: [],
+                        participants: conv.participants,
+                        name: conv.name || '',
+                        isOnline: false,
+                    });
                 }
             }
         });
@@ -119,6 +134,8 @@ export const conversationsSlice = createSlice({
                 _id: action.payload._id,
                 messages: [],
                 participants: action.payload.participants,
+                name: '',
+                isOnline: false,
             });
         });
         builder.addCase(getMessagePagination.fulfilled, (state, action: PayloadAction<IMessagePaginate>) => {
@@ -135,7 +152,7 @@ export const conversationsSlice = createSlice({
     },
 });
 
-export const { addMessage, seen } = conversationsSlice.actions;
+export const { addMessage, seen, setLastActive, setOnline } = conversationsSlice.actions;
 
 export const selectConversations = (state: RootState) => state.conversations;
 
