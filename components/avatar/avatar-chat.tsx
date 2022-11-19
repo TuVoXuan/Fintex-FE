@@ -101,7 +101,7 @@ export default function AvatarChat({ participants, size, conversationId, onlyDis
             </div>
 
             {sConv && sConv.isOnline && size === 'medium' && (
-                <p className="absolute bottom-0 right-0 w-3 h-3 bg-green-600 rounded-full ring-2 ring-white"></p>
+                <p className="absolute bottom-0 right-0 w-4 h-4 bg-green-600 rounded-full ring-2 ring-white"></p>
             )}
         </section>
     );
