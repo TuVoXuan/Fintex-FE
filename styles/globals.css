@@ -31,6 +31,7 @@
     h6 {
         @apply text-h6 leading-h6;
     }
+
     /* width */
     ::-webkit-scrollbar {
         width: 7px;
@@ -38,12 +39,12 @@
     }
     /* Track */
     ::-webkit-scrollbar-track {
-        background: #e8e8e8;
+        background: transparent;
         border-radius: 5px;
     }
     /* Handle */
     ::-webkit-scrollbar-thumb {
-        background: #b7b7b7;
+        background: transparent;
         border-radius: 5px;
     }
     /* Handle on hover */
@@ -134,5 +135,14 @@
     .scrollbar-hide {
         -ms-overflow-style: none; /* IE and Edge */
         scrollbar-width: none; /* Firefox */
+    }
+    .scrollbar-show::-webkit-scrollbar-track {
+        background: #e8e8e8;
+    }
+    .scrollbar-show::-webkit-scrollbar-thumb {
+        background: #b7b7b7;
+    }
+    .scrollbar-show::-webkit-scrollbar-thumb:focus {
+        background: #777e8b;
     }
 }

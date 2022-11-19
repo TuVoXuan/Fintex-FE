@@ -23,6 +23,7 @@ const nextConfig = {
     },
     swcMinify: true,
     images: {
+        minimumCacheTTL: 600,
         domains: ['res.cloudinary.com', 'i.imgur.com'],
     },
 };

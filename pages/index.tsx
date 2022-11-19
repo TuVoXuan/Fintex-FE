@@ -91,7 +91,12 @@ const Home: NextPage = () => {
     return (
         <MainLayout>
             <section className="relative flex h-full">
-                <div id="feetPosts" onScroll={handleShowScrollTop} ref={postsRef} className="w-3/4 overflow-y-auto">
+                <div
+                    id="feetPosts"
+                    onScroll={handleShowScrollTop}
+                    ref={postsRef}
+                    className="w-3/4 hover:scrollbar-show overflow-y-auto"
+                >
                     <InfiniteScroll
                         next={() => {
                             if (!sPost.ended) {
@@ -170,7 +175,7 @@ const Home: NextPage = () => {
                         </div>
                     </InfiniteScroll>
                 </div>
-                <aside className="w-1/4 h-full overflow-y-auto">
+                <aside className="w-1/4 h-full overflow-y-auto hover:scrollbar-show">
                     <p className="ml-5 text-xl font-semibold">Friends</p>
 
                     {onlineFriends.length > 0 ? (
@@ -195,6 +200,8 @@ const Home: NextPage = () => {
                                 alt={'no one onlines'}
                                 layout="responsive"
                                 objectFit="contain"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
                             />
                             <p className="mt-3 text-center">Không có bạn online</p>
                         </div>

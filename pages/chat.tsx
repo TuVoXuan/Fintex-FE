@@ -89,7 +89,7 @@ export default function Chat() {
                             type="text"
                             register={register}
                         />
-                        <main className="space-y-2 overflow-y-auto">
+                        <main className="space-y-2 overflow-y-auto hover:scrollbar-show">
                             {sConversations.map(({ _id, participants, messages, name }) => {
                                 if (messages.length === 0) {
                                     return (
@@ -101,6 +101,7 @@ export default function Chat() {
                                                     mqtt.setConversation(_id);
                                                 }
                                             }}
+                                            conversationId={_id}
                                             name={name}
                                             active={_id === activedConversation}
                                             notSeen={false}
@@ -117,6 +118,7 @@ export default function Chat() {
                                                 mqtt.setConversation(_id);
                                             }
                                         }}
+                                        conversationId={_id}
                                         name={name}
                                         active={_id === activedConversation}
                                         date={new Date(messages[0].updatedAt)}
@@ -139,6 +141,7 @@ export default function Chat() {
                         {sConversations.length > 0 && activedConversation && (
                             <ChatContainer
                                 conversationId={activedConversation}
+                                name={sConversations.find((conv) => conv._id === activedConversation)?.name || ''}
                                 participants={
                                     sConversations.find((conv) => conv._id === activedConversation)?.participants || []
                                 }

@@ -36,7 +36,7 @@ export default function FriendRequest() {
 
     return (
         <SettingLayout>
-            <div id="friendReqDiv" className="h-full overflow-y-auto bg-white">
+            <div id="friendReqDiv" className="h-full overflow-y-auto bg-white hover:scrollbar-show">
                 {loading ? (
                     <div className="px-12 py-4 space-y-3">
                         <h3 className="mb-3">Lời mời kết bạn</h3>
@@ -94,6 +94,9 @@ export default function FriendRequest() {
                                     height={300}
                                     width={300}
                                     objectFit="contain"
+                                    alt="avatar"
+                                    placeholder="blur"
+                                    blurDataURL="/images/avatar.jpg"
                                 />
                                 <p className="pt-5 text-center">Không có lời mời kết bạn</p>
                             </div>

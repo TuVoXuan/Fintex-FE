@@ -24,8 +24,10 @@ interface Props {
     isHasPhotoIcon?: boolean;
     commentId?: string;
     disabled?: boolean;
+    isMultipleImages?: boolean;
     onKeyPress?: () => void;
     onChangeImage?: (data: IImageStore) => void;
+    onChangeImages?: (data: IImageStore[]) => void;
 }
 
 export const Input = ({
@@ -44,8 +46,10 @@ export const Input = ({
     isHasPhotoIcon,
     commentId,
     disabled,
+    isMultipleImages,
     onKeyPress,
     onChangeImage,
+    onChangeImages,
 }: Props) => {
     const refTextArea = useRef<HTMLTextAreaElement | null>(null);
     const refPickerEmoji = useRef<HTMLDivElement>(null);
@@ -75,7 +79,7 @@ export const Input = ({
     };
 
     const handleShowPickerEmoji = () => {
-        if (refPickerEmoji.current) {
+        if (refPickerEmoji.current && !disabled) {
             refPickerEmoji.current.classList.remove('hidden');
         }
     };
@@ -94,17 +98,30 @@ export const Input = ({
     };
 
     const handleInputFileChange = (event: any) => {
-        const file = event.target.files[0];
-        console.log('file: ', file);
+        if (isMultipleImages) {
+            const data: IImageStore[] = [];
+            for (const image of event.target.files) {
+                const url = URL.createObjectURL(image);
+                data.push({
+                    id: Math.floor(Math.random() * 100000).toString(),
+                    url,
+                    file: image,
+                });
+            }
+            if (onChangeImages) {
+                onChangeImages(data);
+            }
+        } else {
+            const file = event.target.files[0];
+            const url = URL.createObjectURL(file);
 
-        const url = URL.createObjectURL(file);
-
-        if (onChangeImage) {
-            onChangeImage({
-                id: '1212',
-                url: url,
-                file: file,
-            });
+            if (onChangeImage) {
+                onChangeImage({
+                    id: '1212',
+                    url: url,
+                    file: file,
+                });
+            }
         }
     };
 
@@ -143,9 +160,10 @@ export const Input = ({
         <>
             {/* remove h-full */}
             <div
-                className={`${border ? 'border' : ''} flex ${
-                    background ? 'bg-secondary-10' : 'bg-white'
-                }  px-[10px] gap-3 relative rounded-lg focus-within:border-secondary-30 `}
+                aria-disabled={disabled}
+                className={`${border ? 'border' : ''} flex ${background ? 'bg-secondary-10' : 'bg-white'} ${
+                    disabled && 'cursor-not-allowed'
+                } px-[10px] gap-3 relative rounded-lg focus-within:border-secondary-30 `}
             >
                 <div className="flex items-center ">{icon}</div>
                 {!isTextArea ? (
@@ -174,24 +192,40 @@ export const Input = ({
                         }}
                         onKeyDown={handleOnPress}
                         placeholder={placeholder}
+                        disabled={disabled}
                         defaultValue={defaultValue}
                         rows={1}
-                        className="items-center w-full py-4 overflow-y-auto bg-transparent resize-none scrollbar-hide max-h-28 h-fit focus:outline-none"
+                        className={`items-center w-full py-4 overflow-y-auto bg-transparent resize-none hover:scrollbar-show max-h-28 h-fit focus:outline-none ${
+                            disabled && 'cursor-not-allowed'
+                        }`}
                     ></textarea>
                 )}
                 {/* {iconEnds && <div className="flex items-end gap-3 pb-[14px]">{iconEnds}</div>} */}
                 <div className="flex items-end gap-3 pb-[14px]">
                     {isHasEmojiIcon && (
-                        <div ref={refIconEmoji} className="cursor-pointer">
-                            <RiUserSmileLine onClick={handleShowPickerEmoji} size={24} key={1} />
+                        <div ref={refIconEmoji} className={`${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                            <RiUserSmileLine
+                                aria-disabled={disabled}
+                                onClick={handleShowPickerEmoji}
+                                size={24}
+                                key={1}
+                            />
                         </div>
                     )}
                     {isHasPhotoIcon && (
                         <>
-                            <BsImage onClick={openInputFile} className="cursor-pointer" size={24} key={2} />
+                            <BsImage
+                                aria-disabled={disabled}
+                                onClick={openInputFile}
+                                className={`${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                size={24}
+                                key={2}
+                            />
                             <input
                                 ref={refInputFile}
                                 type="file"
+                                disabled={disabled}
+                                multiple={isMultipleImages}
                                 onChange={handleInputFileChange}
                                 accept="image/png,image/jpg,image/jpeg"
                                 className="hidden"

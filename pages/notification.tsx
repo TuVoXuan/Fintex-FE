@@ -57,7 +57,10 @@ export default function Notification() {
     return (
         <MainLayout>
             <div className="flex h-full bg-secondary-10 rounded-[15px] p-7 gap-x-3">
-                <div id="nofifyDiv" className="w-1/2 h-full overflow-y-auto bg-white rounded-l-[15px]">
+                <div
+                    id="nofifyDiv"
+                    className="w-1/2 h-full hover:scrollbar-show overflow-y-auto bg-white rounded-l-[15px]"
+                >
                     {sNotify.data.length > 0 ? (
                         <InfiniteScroll
                             next={() => {
@@ -90,7 +93,10 @@ export default function Notification() {
                         </div>
                     )}
                 </div>
-                <div id="friendReqDiv" className="w-1/2 h-full overflow-y-auto bg-white rounded-l-[15px]">
+                <div
+                    id="friendReqDiv"
+                    className="w-1/2 h-full hover:scrollbar-show overflow-y-auto bg-white rounded-l-[15px]"
+                >
                     {sFriendReq.data.length > 0 ? (
                         <InfiniteScroll
                             next={() => {

@@ -59,14 +59,14 @@ export default function ChatImages({ position, me, images, className, seen, part
                             />
                         ))}
                     </div>
-                    {seen && participants && seen.length === 1 && (
-                        <div className="w-4 h-4">
+                    <div className="w-4 h-4">
+                        {seen && participants && seen.length === 1 && (
                             <Avatar
                                 size="super-nano"
                                 url={participants.find((item) => item._id === seen[0])?.avatar || ''}
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
                 {seen && participants && seen.length > 1 && (
                     <div className="flex justify-end">
@@ -125,14 +125,14 @@ export default function ChatImages({ position, me, images, className, seen, part
                             />
                         </div>
                     </div>
-                    {seen && participants && seen.length === 1 && (
-                        <div className="w-4 h-4">
+                    <div className="w-4 h-4">
+                        {seen && participants && seen.length === 1 && (
                             <Avatar
                                 size="super-nano"
                                 url={participants.find((item) => item._id === seen[0])?.avatar || ''}
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
                 {seen && participants && seen.length > 1 && (
                     <div className="flex justify-end">
@@ -203,14 +203,14 @@ export default function ChatImages({ position, me, images, className, seen, part
                             />
                         </div>
                     </div>
-                    {seen && participants && seen.length === 1 && (
-                        <div className="w-4 h-4">
+                    <div className="w-4 h-4">
+                        {seen && participants && seen.length === 1 && (
                             <Avatar
                                 size="super-nano"
                                 url={participants.find((item) => item._id === seen[0])?.avatar || ''}
                             />
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
                 {seen && participants && seen.length > 1 && (
                     <div className="flex justify-end">

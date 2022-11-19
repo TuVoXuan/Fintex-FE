@@ -23,4 +23,5 @@ declare interface IConversation {
         sender: string;
         updatedAt: string;
     }[];
+    name?: string;
 }

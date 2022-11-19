@@ -107,7 +107,7 @@ export default function UploadAvatarModal({ onClose }: Props) {
     return (
         <div
             onClick={handleClickOutSideModal}
-            className="fixed top-0 bottom-0 left-0 right-0 z-10 flex justify-center overflow-y-auto bg-secondary-80/60 py-14"
+            className="fixed top-0 bottom-0 left-0 right-0 z-10 flex justify-center overflow-y-auto hover:scrollbar-show bg-secondary-80/60 py-14"
         >
             <div ref={updateAvatarModal} className="bg-white rounded-lg w-[700px] h-fit">
                 <div className="grid grid-cols-6 border-b">

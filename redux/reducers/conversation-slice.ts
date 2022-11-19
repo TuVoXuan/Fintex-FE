@@ -5,6 +5,7 @@ import {
     createMessage,
     getConversations,
     getMessageFirstTime,
+    getMessagePagination,
     seenMessage,
 } from '../actions/conversation-action';
 
@@ -45,6 +46,19 @@ export const conversationsSlice = createSlice({
                 }
             }
         },
+        //todo: mới viết hàm chưa test thử
+        setLastActive: (state, action: PayloadAction<string>) => {
+            const conv = state.find((item) => item._id === action.payload);
+            if (conv) {
+                conv.lastActive = new Date().toString();
+            }
+        },
+        setOnline: (state, action: PayloadAction<IOnlineConv>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.isOnline = action.payload.isOnline;
+            }
+        },
     },
     extraReducers(builder) {
         builder.addCase(getConversations.fulfilled, (state, action: PayloadAction<IConversation[]>) => {
@@ -62,7 +76,8 @@ export const conversationsSlice = createSlice({
                             },
                         ],
                         participants: conv.participants,
-                        name: '',
+                        name: conv.name || '',
+                        isOnline: false,
                     });
                 } else {
                     state.push({
@@ -70,7 +85,8 @@ export const conversationsSlice = createSlice({
                         _id: conv._id,
                         messages: [],
                         participants: conv.participants,
-                        name: '',
+                        name: conv.name || '',
+                        isOnline: false,
                     });
                 }
             }
@@ -119,12 +135,24 @@ export const conversationsSlice = createSlice({
                 messages: [],
                 participants: action.payload.participants,
                 name: '',
+                isOnline: false,
             });
+        });
+        builder.addCase(getMessagePagination.fulfilled, (state, action: PayloadAction<IMessagePaginate>) => {
+            if (action.payload.conversationId) {
+                const conv = state.find((item) => item._id === action.payload.conversationId);
+                if (conv) {
+                    conv.after = action.payload.after;
+                    for (const mess of action.payload.messages) {
+                        conv.messages.push(mess);
+                    }
+                }
+            }
         });
     },
 });
 
-export const { addMessage, seen } = conversationsSlice.actions;
+export const { addMessage, seen, setLastActive, setOnline } = conversationsSlice.actions;
 
 export const selectConversations = (state: RootState) => state.conversations;
 

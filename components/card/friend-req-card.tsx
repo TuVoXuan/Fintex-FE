@@ -69,7 +69,14 @@ export default function FriendReqCard({ user, friendReqId, type }: Props) {
     return (
         <div className="relative w-full h-full overflow-hidden rounded-lg drop-shadow-md">
             <div className="w-full aspect-square image-container">
-                <Image src={user.avatar} alt="avatar" layout="fill" objectFit="cover" />
+                <Image
+                    src={user.avatar}
+                    alt="avatar"
+                    layout="fill"
+                    objectFit="cover"
+                    placeholder="blur"
+                    blurDataURL="/images/avatar.jpg"
+                />
             </div>
             <div className="p-4 space-y-2 bg-white">
                 <p className="text-xl font-semibold">{user.name.fullName}</p>
