@@ -8,9 +8,10 @@ import ChatImages from './chat-images';
 interface Props {
     message: IMessage;
     participants?: IParticipant[];
+    onImageClick: (value: string) => () => void;
 }
 
-export default function ChatItemMe({ message, participants }: Props) {
+export default function ChatItemMe({ message, participants, onImageClick }: Props) {
     timeago.register('vi', vi);
     const length = message.message.length;
     const [id, setId] = useState<string>('');
@@ -63,6 +64,7 @@ export default function ChatItemMe({ message, participants }: Props) {
                                 key={item._id}
                                 position={locate(index)}
                                 me
+                                onClick={onImageClick}
                                 participants={item._id === id ? participants : undefined}
                                 seen={item._id === id ? item.seen : undefined}
                                 className={(length === 1 && 'rounded-3xl') || 'haha'}

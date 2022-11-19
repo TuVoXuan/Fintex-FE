@@ -9,7 +9,6 @@ import Avatar from '../avatar/avatar';
 import LoadingMessages from '../loading/loading-messages';
 import ChatItemFriend from './chat-item-friend';
 import ChatItemMe from './chat-item-me';
-import Image from 'next/image';
 import { selectConversations } from '../../redux/reducers/conversation-slice';
 import { createMessage, getMessageFirstTime, getMessagePagination } from '../../redux/actions/conversation-action';
 import { isMessageSeen } from '../../util/is-message-seen';
@@ -17,6 +16,8 @@ import ImageCard from '../card/image-card';
 import DivScrollHorizontal from '../div-scroll-horizontal/div-scroll-horizontal';
 import { toastError } from '../../util/toast';
 import { VscLoading } from 'react-icons/vsc';
+import { ImageDetailContainer } from '../image/image-detail-container';
+import { shortHash } from '../../util/short-hash';
 
 interface Props {
     conversationId: string;
@@ -30,13 +31,13 @@ export default function ChatContainer({ conversationId, participants }: Props) {
     const sUser = useAppSelector(selectUser).data;
     const sMessages = useAppSelector(selectConversations).find((item) => item._id === conversationId)?.messages || [];
     const sAfter = useAppSelector(selectConversations).find((item) => item._id === conversationId)?.after;
-
     const refInfinityScroll = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<RefSwiper>(null);
 
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState<IImageStore[]>([]);
     const [isSubmit, setIsSubmit] = useState(false);
-    // const [isFirst, setIsFirst] = useState(true);
+    const [messImages, setMessImages] = useState<IAlbum[]>([]);
     let first = true;
 
     const fetchMessages = async () => {
@@ -85,6 +86,32 @@ export default function ChatContainer({ conversationId, participants }: Props) {
         setImages((value) => [...value, ...other]);
     };
 
+    const onImageClick = (value: string) => () => {
+        const hash = shortHash(value);
+        const index = messImages.findIndex((item) => shortHash(item.url) === hash);
+        if (index > -1 && swiperRef.current && swiperRef.current.swiper) {
+            swiperRef.current.swiper.hidden = false;
+            swiperRef.current.slideTo(index);
+        }
+    };
+
+    useEffect(() => {
+        const result: IAlbum[] = [];
+        for (const mess of sMessages) {
+            for (const subMess of mess.message) {
+                if (subMess.messType === 'image') {
+                    for (const image of subMess.images as string[]) {
+                        result.push({
+                            publicId: shortHash(image),
+                            url: image,
+                        });
+                    }
+                }
+            }
+        }
+        setMessImages(result);
+    }, [sMessages]);
+
     useEffect(() => {
         if (sAfter === '') {
             setLoading(true);
@@ -126,14 +153,22 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                                 console.log('item.sender === sUser?._id: ', item.sender === sUser?._id);
                                 console.log('first: ', first);
                                 first = false;
-                                return <ChatItemMe key={item._id} message={item} participants={participants} />;
+                                return (
+                                    <ChatItemMe
+                                        onImageClick={onImageClick}
+                                        key={item._id}
+                                        message={item}
+                                        participants={participants}
+                                    />
+                                );
                             }
 
                             if (item.sender === sUser?._id) {
-                                return <ChatItemMe key={item._id} message={item} />;
+                                return <ChatItemMe onImageClick={onImageClick} key={item._id} message={item} />;
                             } else {
                                 return (
                                     <ChatItemFriend
+                                        onImageClick={onImageClick}
                                         key={item._id}
                                         message={item}
                                         senderAvatar={
@@ -193,6 +228,7 @@ export default function ChatContainer({ conversationId, participants }: Props) {
                     )}
                 </button>
             </div>
+            <ImageDetailContainer ref={swiperRef} images={messImages} />
         </div>
     );
 }

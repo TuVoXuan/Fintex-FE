@@ -9,9 +9,10 @@ import vi from 'timeago.js/lib/lang/vi';
 interface Props {
     message: IMessage;
     senderAvatar: string;
+    onImageClick: (value: string) => () => void;
 }
 
-export default function ChatItemFriend({ message, senderAvatar }: Props) {
+export default function ChatItemFriend({ message, senderAvatar, onImageClick }: Props) {
     timeago.register('vi', vi);
     const length = message.message.length;
 
@@ -48,6 +49,7 @@ export default function ChatItemFriend({ message, senderAvatar }: Props) {
                                 return (
                                     <ChatImages
                                         key={item._id}
+                                        onClick={onImageClick}
                                         className={(length === 1 && 'rounded-3xl') || 'haha'}
                                         images={item.images || []}
                                         position={locate(index)}

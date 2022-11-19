@@ -30,6 +30,7 @@ import { selectConversations } from '../../redux/reducers/conversation-slice';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { createConversation } from '../../redux/actions/conversation-action';
 import { useMQTT } from '../../context/mqtt-context';
+import { ImageDetailContainer } from '../../components/image/image-detail-container';
 
 interface Props {
     personId: string;
@@ -42,20 +43,16 @@ export default function Profile({ personId }: Props) {
     const sPost = useAppSelector(selectPost);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
-    const swiperRef = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<RefSwiper>(null);
     const sConversations = useAppSelector(selectConversations);
     const sUser = useAppSelector(selectUser);
 
     const [user, setUser] = useState<IUserProfileRes>();
     const [loading, setLoading] = useState<boolean>(true);
     const [album, setAlbum] = useState<IAlbum[]>([]);
-    const [swiper, setSwiper] = useState<SwiperCore>();
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
     const [loadingChat, setLoadingChat] = useState<boolean>(false);
-
-    // const id = router.query.id as string;
-    // console.log('id: ', id);
 
     const handleShowScrollTop = (e: any) => {
         if (e.target.scrollTop > 400) {
@@ -116,12 +113,6 @@ export default function Profile({ personId }: Props) {
         } catch (error) {
             console.log('error: ', error);
             toastError((error as IResponseError).error);
-        }
-    };
-
-    const slideTo = (index: number) => {
-        if (swiper) {
-            swiper.slideTo(index);
         }
     };
 
@@ -215,7 +206,6 @@ export default function Profile({ personId }: Props) {
             setUser(undefined);
             setAlbum([]);
             setRelationship(undefined);
-            setSwiper(undefined);
             dispatch(resetPost());
             dispatch(resetComments());
         };
@@ -351,8 +341,8 @@ export default function Profile({ personId }: Props) {
                                         <div
                                             onClick={() => {
                                                 if (swiperRef.current) {
-                                                    swiperRef.current.hidden = false;
-                                                    slideTo(index);
+                                                    swiperRef.current.swiper.hidden = false;
+                                                    swiperRef.current.slideTo(index);
                                                 }
                                             }}
                                             key={image.publicId}
@@ -415,7 +405,7 @@ export default function Profile({ personId }: Props) {
                     </div>
                 </section>
             </section>
-            <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
+            {/* <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
                 <IoClose
                     onClick={() => {
                         if (swiperRef.current) {
@@ -446,7 +436,8 @@ export default function Profile({ personId }: Props) {
                         </SwiperSlide>
                     ))}
                 </Swiper>
-            </div>
+            </div> */}
+            <ImageDetailContainer images={album} ref={swiperRef} />
         </MainLayout>
     );
 }
