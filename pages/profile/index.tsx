@@ -31,6 +31,7 @@ import educationApi from '../../api/education-api';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { ImageDetailContainer } from '../../components/image/image-detail-container';
+import MiniFriendCard from '../../components/card/mini-friend-card';
 
 const postTemp: IPost = {
     _id: '123',
@@ -80,6 +81,7 @@ export default function Profile() {
     const [educations, setEducations] = useState<IEducation[]>([]);
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
     const [album, setAlbum] = useState<IAlbum[]>([]);
+    const [friends, setFriends] = useState<IFriend[]>([]);
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.8);
@@ -199,12 +201,6 @@ export default function Profile() {
             await dispatch(userUpdateCover(formData));
             await dispatch(postUpdateAvatarCover({ typeUpdate: UploadImage.Cover }));
 
-            // console.log('croppedFile: ', croppedFile);
-            // setTimeout(() => {
-            //     setTempCoverImg('');
-            //     setImageFile(undefined);
-            //     setIsUpdatingCover(true);
-            // }, 2000);
             setTempCoverImg('');
             setImageFile(undefined);
             setCroppedFile(undefined);
@@ -267,7 +263,6 @@ export default function Profile() {
     }, [tempCoverImg, croppedAreaPixels]);
 
     useEffect(() => {
-        console.log('sPost.posts.length: ', sPost.posts.length);
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
 
@@ -289,6 +284,11 @@ export default function Profile() {
         userApi
             .getMyAlbum({ limit: 9 })
             .then((data) => setAlbum(data.album))
+            .catch((error) => toastError(error));
+
+        userApi
+            .getFriends({ limit: 9 })
+            .then((data) => setFriends(data.friends))
             .catch((error) => toastError(error));
     }, []);
 
@@ -402,7 +402,7 @@ export default function Profile() {
                 </section>
 
                 <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
-                    <div className="sticky w-1/3 space-y-4 -top-36 h-fit">
+                    <div className="sticky w-1/3 space-y-4 -top-48 h-fit">
                         <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
                             <h3>Giới thiệu</h3>
                             <div className="flex items-center gap-3 ">
@@ -434,7 +434,7 @@ export default function Profile() {
                             )}
                         </div>
                         <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
-                            <div className="flex items-end justify-between">
+                            <div className="flex items-center justify-between">
                                 <h3>Ảnh</h3>
                                 <p
                                     onClick={() => {
@@ -456,7 +456,11 @@ export default function Profile() {
                                                 }
                                             }}
                                             key={image.publicId}
-                                            className={getImageClasses(index, array.length, 3)}
+                                            className={`${getImageClasses(
+                                                index,
+                                                array.length,
+                                                3,
+                                            )} relative after:absolute after:content-[""] after:top-0 after:bottom-0 after:left-0 after:right-0 hover:after:bg-gray-500 hover:after:opacity-40 cursor-pointer`}
                                         >
                                             <Image
                                                 src={image.url}
@@ -473,6 +477,29 @@ export default function Profile() {
                                         </div>
                                     );
                                 })}
+                            </div>
+                        </div>
+                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                            <div className="flex items-center justify-between">
+                                <h3>Bạn bè</h3>
+                                <p
+                                    onClick={() => {
+                                        router.push(`${APP_PATH.ALBUM}/${sUser.data?._id}`);
+                                    }}
+                                    className="cursor-pointer hover:text-blue-500"
+                                >
+                                    Xem tất cả bạn bè
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                                {friends.map((item) => (
+                                    <MiniFriendCard
+                                        key={item._id}
+                                        id={item._id}
+                                        avatar={item.avatar}
+                                        name={item.name.fullName}
+                                    />
+                                ))}
                             </div>
                         </div>
                     </div>
