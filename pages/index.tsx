@@ -7,7 +7,7 @@ import Post from '../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
-import { selectPost } from '../redux/reducers/post-slice';
+import { resetPost, selectPost } from '../redux/reducers/post-slice';
 import { postLoadMore } from '../redux/actions/post-action';
 import { toastError } from '../util/toast';
 import LoadingPost from '../components/post/loading-post';
@@ -19,11 +19,15 @@ import { FormPost } from '../components/post/form-post/form-post';
 import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
 import Image from 'next/image';
+import { resetComments } from '../redux/reducers/comments-slice';
+import { getConversations } from '../redux/actions/conversation-action';
+import { selectConversations } from '../redux/reducers/conversation-slice';
 
 const Home: NextPage = () => {
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
+    const sConversation = useAppSelector(selectConversations);
     const onlineFriends = useAppSelector(selectFriend).onlineFriends;
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -87,7 +91,12 @@ const Home: NextPage = () => {
     return (
         <MainLayout>
             <section className="relative flex h-full">
-                <div id="feetPosts" onScroll={handleShowScrollTop} ref={postsRef} className="w-3/4 overflow-y-auto">
+                <div
+                    id="feetPosts"
+                    onScroll={handleShowScrollTop}
+                    ref={postsRef}
+                    className="w-3/4 hover:scrollbar-show overflow-y-auto"
+                >
                     <InfiniteScroll
                         next={() => {
                             if (!sPost.ended) {
@@ -166,7 +175,7 @@ const Home: NextPage = () => {
                         </div>
                     </InfiniteScroll>
                 </div>
-                <aside className="w-1/4 h-full overflow-y-auto">
+                <aside className="w-1/4 h-full overflow-y-auto hover:scrollbar-show">
                     <p className="ml-5 text-xl font-semibold">Friends</p>
 
                     {onlineFriends.length > 0 ? (
@@ -188,8 +197,11 @@ const Home: NextPage = () => {
                                 src={'/images/online-user.svg'}
                                 height={100}
                                 width={100}
+                                alt={'no one onlines'}
                                 layout="responsive"
                                 objectFit="contain"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
                             />
                             <p className="mt-3 text-center">Không có bạn online</p>
                         </div>

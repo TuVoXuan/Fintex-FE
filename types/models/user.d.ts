@@ -23,3 +23,8 @@ declare interface IUserSimple {
     };
     avatar: string;
 }
+
+declare interface RefSwiper {
+    swiper: HTMLDivElement;
+    slideTo: (num: number) => void;
+}

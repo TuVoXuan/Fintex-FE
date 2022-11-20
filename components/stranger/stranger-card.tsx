@@ -1,6 +1,13 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useAppDispatch } from '../../hook/redux';
+import APP_PATH from '../../constants/app-path';
+import { useMQTT } from '../../context/mqtt-context';
+import { useAppDispatch, useAppSelector } from '../../hook/redux';
+import { createConversation } from '../../redux/actions/conversation-action';
 import { friendReqCreate } from '../../redux/actions/notify-action';
+import { resetComments } from '../../redux/reducers/comments-slice';
+import { selectConversations } from '../../redux/reducers/conversation-slice';
+import { resetPost } from '../../redux/reducers/post-slice';
 import { toastError, toastSuccess } from '../../util/toast';
 import Avatar from '../avatar/avatar';
 
@@ -10,8 +17,41 @@ interface Props {
 
 export default function StrangerCard({ stranger }: Props) {
     const dispatch = useAppDispatch();
+    const router = useRouter();
+    const mqtt = useMQTT();
+    const sConversations = useAppSelector(selectConversations);
+
     const { avatar, fullName, address, _id } = stranger;
     const [relationship, setRelationship] = useState<string>(stranger.relationship);
+
+    const handleChat = async () => {
+        try {
+            const conversation = sConversations.find((conv) => {
+                const hasCurrFriend = conv.participants.findIndex((item) => item._id === stranger._id);
+                if (hasCurrFriend >= 0) {
+                    return conv;
+                }
+                return null;
+            });
+
+            if (conversation) {
+                if (mqtt) {
+                    console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
+                    mqtt.setConversation(conversation._id);
+                    router.push(APP_PATH.CHAT);
+                }
+            } else {
+                await dispatch(createConversation(stranger._id)).unwrap();
+                if (mqtt && mqtt.activedConversation.current) {
+                    mqtt.setConversation('');
+                }
+                router.push(APP_PATH.CHAT);
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
 
     const handleButton = () => {
         switch (relationship) {
@@ -23,7 +63,10 @@ export default function StrangerCard({ stranger }: Props) {
                 );
             case 'isFriend':
                 return (
-                    <button className="p-3 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300">
+                    <button
+                        onClick={handleChat}
+                        className="p-3 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300"
+                    >
                         Nhắn tin
                     </button>
                 );
@@ -52,12 +95,20 @@ export default function StrangerCard({ stranger }: Props) {
         }
     };
 
+    const handleSeeProfilePage = () => {
+        dispatch(resetComments());
+        dispatch(resetPost());
+        router.push(`${APP_PATH.PROFILE}/${stranger._id}`);
+    };
+
     return (
         <div className="flex items-center justify-between px-4 py-4 bg-white rounded-lg shadow-light">
             <div className="flex items-center gap-3">
                 <Avatar size="semi-large" url={avatar} />
                 <div>
-                    <p className="font-semibold">{fullName}</p>
+                    <p onClick={handleSeeProfilePage} className="font-semibold hover:underline hover:cursor-pointer">
+                        {fullName}
+                    </p>
                     <p>{address}</p>
                 </div>
             </div>

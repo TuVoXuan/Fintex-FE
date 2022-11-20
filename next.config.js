@@ -17,10 +17,13 @@ const nextConfig = {
         API_ADMINISTRATIVE_UNIT_URL: process.env.API_ADMINISTRATIVE_UNIT_URL,
         API_HOST: process.env.API_HOST,
         LIMIT_FQ: process.env.LIMIT_FQ,
+        LIMIT_SFQ: process.env.LIMIT_SFQ,
         LIMIT_NOTIFY: process.env.LIMIT_NOTIFY,
+        MQTT_BROKER: process.env.MQTT_BROKER,
     },
     swcMinify: true,
     images: {
+        minimumCacheTTL: 600,
         domains: ['res.cloudinary.com', 'i.imgur.com'],
     },
 };

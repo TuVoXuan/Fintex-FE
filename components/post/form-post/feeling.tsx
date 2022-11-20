@@ -70,7 +70,7 @@ export default function Feeling({ onClose, onFeeling: onFelling }: Props) {
                     <BsSearch size={16} />
                     <input type="text" className="pt-2 px-[6px] pb-3 bg-inherit focus: outline-none w-full" />
                 </div>
-                <div className="pt-6 overflow-y-auto max-h-64">
+                <div className="pt-6 overflow-y-auto hover:scrollbar-show max-h-64">
                     {loading ? (
                         <div className="flex justify-center">
                             <AiOutlineLoading3Quarters className="animate-spin" />

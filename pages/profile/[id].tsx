@@ -13,7 +13,7 @@ import { IoIosArrowUp } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import userApi from '../../api/user-api';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
-import { selectPost } from '../../redux/reducers/post-slice';
+import { resetPost, selectPost } from '../../redux/reducers/post-slice';
 import { postPersonLoadMore } from '../../redux/actions/post-action';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -23,41 +23,36 @@ import { IoClose } from 'react-icons/io5';
 import SwiperCore from 'swiper';
 import APP_PATH from '../../constants/app-path';
 import friendReqApi from '../../api/friend-req-api';
-import { Button } from '../../components';
 import { friendReqCreate } from '../../redux/actions/notify-action';
 import { VscLoading } from 'react-icons/vsc';
+import { resetComments } from '../../redux/reducers/comments-slice';
+import { selectConversations } from '../../redux/reducers/conversation-slice';
+import { selectUser } from '../../redux/reducers/user-slice';
+import { createConversation } from '../../redux/actions/conversation-action';
+import { useMQTT } from '../../context/mqtt-context';
+import { ImageDetailContainer } from '../../components/image/image-detail-container';
 
 interface Props {
     personId: string;
 }
 
 export default function Profile({ personId }: Props) {
-    const dispatch = useAppDispatch();
+    const mqtt = useMQTT();
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
-    const swiperRef = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<RefSwiper>(null);
+    const sConversations = useAppSelector(selectConversations);
+    const sUser = useAppSelector(selectUser);
 
     const [user, setUser] = useState<IUserProfileRes>();
     const [loading, setLoading] = useState<boolean>(true);
     const [album, setAlbum] = useState<IAlbum[]>([]);
-    const [swiper, setSwiper] = useState<SwiperCore>();
-
-    const [isShowModal, setIsShowModal] = useState<boolean>(false);
-    const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
-    const [isShowsUpdateAvatarModal, setIsShowUpdateAvatarModal] = useState<boolean>(false);
-    const [deletePostId, setDeletePostId] = useState<string>('');
-    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [postEdit, setPostEdit] = useState<IPost | undefined>();
-    const [tempCoverImg, setTempCoverImg] = useState('');
-    const [imageFile, setImageFile] = useState<File>();
-    const [isUpdatingCover, setIsUpdatingCover] = useState(false);
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
-
-    // const id = router.query.id as string;
-    // console.log('id: ', id);
+    const [loadingChat, setLoadingChat] = useState<boolean>(false);
 
     const handleShowScrollTop = (e: any) => {
         if (e.target.scrollTop > 400) {
@@ -112,18 +107,12 @@ export default function Profile({ personId }: Props) {
         try {
             setLoadingMakeFriendReq(true);
             await dispatch(friendReqCreate(personId));
-            // setRelationship('requesting');
+            setRelationship('requesting');
             toastSuccess('Gửi lời mời kết bạn thành công');
             setLoadingMakeFriendReq(false);
         } catch (error) {
             console.log('error: ', error);
             toastError((error as IResponseError).error);
-        }
-    };
-
-    const slideTo = (index: number) => {
-        if (swiper) {
-            swiper.slideTo(index);
         }
     };
 
@@ -154,16 +143,49 @@ export default function Profile({ personId }: Props) {
         }
 
         if (index === 1) {
-            console.log(className);
+            // console.log(className);
         }
 
         return className;
+    };
+
+    const handleChat = async () => {
+        try {
+            setLoading(true);
+            const conversation = sConversations.find((conv) => {
+                const hasCurrFriend = conv.participants.findIndex((item) => item._id === user?._id);
+                if (hasCurrFriend >= 0) {
+                    return conv;
+                }
+                return null;
+            });
+
+            if (conversation) {
+                if (mqtt) {
+                    mqtt.setConversation(conversation._id);
+                    router.push(APP_PATH.CHAT);
+                }
+            } else {
+                if (user) {
+                    await dispatch(createConversation(user._id)).unwrap();
+                    if (mqtt && mqtt.activedConversation.current) {
+                        mqtt.setConversation('');
+                    }
+                    router.push(APP_PATH.CHAT);
+                }
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         getUserProfile(personId);
         getRelationship(personId);
         const limit = +(process.env.LIMIT as string);
+
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             fetchPost(personId, limit);
             setTimeout(() => {
@@ -179,12 +201,20 @@ export default function Profile({ personId }: Props) {
             .getAlbum({ limit: 9, after: '', id: personId })
             .then((data) => setAlbum(data.album))
             .catch((error) => toastError(error));
-    }, []);
+
+        return () => {
+            setUser(undefined);
+            setAlbum([]);
+            setRelationship(undefined);
+            dispatch(resetPost());
+            dispatch(resetComments());
+        };
+    }, [personId]);
 
     return (
         <MainLayout>
             <section
-                className="relative flex flex-col h-full overflow-y-auto"
+                className="relative flex flex-col h-full overflow-y-auto hover:scrollbar-show"
                 id="profile"
                 ref={postsRef}
                 onScroll={handleShowScrollTop}
@@ -200,6 +230,8 @@ export default function Profile({ personId }: Props) {
                                 layout="fill"
                                 objectFit="cover"
                                 objectPosition="top"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
                             />
                         </div>
 
@@ -243,7 +275,17 @@ export default function Profile({ personId }: Props) {
                                 </button>
                             )}
                             {relationship === 'isFriend' && (
-                                <button className="btn btn-primary ripple-bg-primary-80">Nhắn tin</button>
+                                <>
+                                    {loadingChat ? (
+                                        <button disabled className="px-14 btn btn-primary">
+                                            <VscLoading className="animate-spin" size={18} />
+                                        </button>
+                                    ) : (
+                                        <button onClick={handleChat} className="btn btn-primary ripple-bg-primary-80">
+                                            Nhắn tin
+                                        </button>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -299,8 +341,8 @@ export default function Profile({ personId }: Props) {
                                         <div
                                             onClick={() => {
                                                 if (swiperRef.current) {
-                                                    swiperRef.current.hidden = false;
-                                                    slideTo(index);
+                                                    swiperRef.current.swiper.hidden = false;
+                                                    swiperRef.current.slideTo(index);
                                                 }
                                             }}
                                             key={image.publicId}
@@ -319,6 +361,8 @@ export default function Profile({ personId }: Props) {
                                                 layout="responsive"
                                                 objectFit="cover"
                                                 objectPosition="center"
+                                                placeholder="blur"
+                                                blurDataURL="/images/avatar.jpg"
                                             />
                                         </div>
                                     );
@@ -361,7 +405,7 @@ export default function Profile({ personId }: Props) {
                     </div>
                 </section>
             </section>
-            <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
+            {/* <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
                 <IoClose
                     onClick={() => {
                         if (swiperRef.current) {
@@ -381,11 +425,19 @@ export default function Profile({ personId }: Props) {
                 >
                     {album.map((item) => (
                         <SwiperSlide key={item.publicId}>
-                            <Image src={item.url} layout="fill" alt="post image" objectFit="contain" />
+                            <Image
+                                src={item.url}
+                                layout="fill"
+                                alt="post image"
+                                objectFit="contain"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
+                            />
                         </SwiperSlide>
                     ))}
                 </Swiper>
-            </div>
+            </div> */}
+            <ImageDetailContainer images={album} ref={swiperRef} />
         </MainLayout>
     );
 }

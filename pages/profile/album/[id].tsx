@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoIosArrowUp } from 'react-icons/io';
-import { RiUploadCloud2Line } from 'react-icons/ri';
-import { VscLoading } from 'react-icons/vsc';
 import Avatar from '../../../components/avatar/avatar';
 import { useAppSelector } from '../../../hook/redux';
 import { MainLayout } from '../../../layouts/main-layout';
@@ -12,14 +10,12 @@ import { toastError } from '../../../util/toast';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { IoClose } from 'react-icons/io5';
-import SwiperCore from 'swiper';
 import LoadingImage from '../../../components/loading/loading-image';
+import { ImageDetailContainer } from '../../../components/image/image-detail-container';
 
 interface Props {
     personId: string;
+    slideTo: (num: number) => void;
 }
 
 export default function MyAlbum({ personId }: Props) {
@@ -28,13 +24,13 @@ export default function MyAlbum({ personId }: Props) {
     const sUser = useAppSelector(selectUser);
 
     const postsRef = useRef<HTMLDivElement>(null);
-    const swiperRef = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<RefSwiper>(null);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
 
     const [album, setAlbum] = useState<IAlbum[]>([]);
     const [after, setAfter] = useState<string>();
-    const [swiper, setSwiper] = useState<SwiperCore>();
     const [user, setUser] = useState<IUserProfileRes>();
+    const slideTo = useRef(0);
 
     const handleShowScrollTop = (e: any) => {
         if (e.target.scrollTop > 400) {
@@ -54,13 +50,6 @@ export default function MyAlbum({ personId }: Props) {
                 top: 0,
                 behavior: 'smooth',
             });
-        }
-    };
-
-    const slideTo = (index: number) => {
-        if (swiper) {
-            console.log('hello');
-            swiper.slideTo(index);
         }
     };
 
@@ -96,7 +85,7 @@ export default function MyAlbum({ personId }: Props) {
     return (
         <MainLayout>
             <section
-                className="relative flex flex-col h-full overflow-y-auto"
+                className="relative flex flex-col h-full overflow-y-auto hover:scrollbar-show"
                 id="album"
                 ref={postsRef}
                 onScroll={handleShowScrollTop}
@@ -112,6 +101,8 @@ export default function MyAlbum({ personId }: Props) {
                                 layout="fill"
                                 objectFit="cover"
                                 objectPosition="top"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
                             />
                         </div>
 
@@ -152,9 +143,9 @@ export default function MyAlbum({ personId }: Props) {
                                     return (
                                         <div
                                             onClick={() => {
-                                                if (swiperRef.current) {
-                                                    swiperRef.current.hidden = false;
-                                                    slideTo(index);
+                                                if (swiperRef.current && swiperRef.current.swiper) {
+                                                    swiperRef.current.swiper.hidden = false;
+                                                    swiperRef.current.slideTo(index);
                                                 }
                                             }}
                                             key={image.publicId}
@@ -169,6 +160,8 @@ export default function MyAlbum({ personId }: Props) {
                                                 layout="responsive"
                                                 objectFit="cover"
                                                 objectPosition="center"
+                                                placeholder="blur"
+                                                blurDataURL="/images/avatar.jpg"
                                             />
                                         </div>
                                     );
@@ -187,32 +180,7 @@ export default function MyAlbum({ personId }: Props) {
                     </button>
                 </div>
             </section>
-            <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
-                <IoClose
-                    onClick={() => {
-                        if (swiperRef.current) {
-                            swiperRef.current.hidden = true;
-                        }
-                    }}
-                    size={48}
-                    className="fixed z-40 p-2 bg-white rounded-full cursor-pointer drop-shadow-md right-6 top-6"
-                />
-                <Swiper
-                    onSwiper={(e) => {
-                        console.log('e: ', e);
-                        setSwiper(e);
-                    }}
-                    navigation={true}
-                    modules={[Navigation]}
-                    className="w-full h-full"
-                >
-                    {album.map((item) => (
-                        <SwiperSlide key={item.publicId}>
-                            <Image src={item.url} layout="fill" alt="post image" objectFit="contain" />
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </div>
+            <ImageDetailContainer ref={swiperRef} images={album} />
         </MainLayout>
     );
 }

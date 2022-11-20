@@ -30,10 +30,7 @@ import userApi from '../../api/user-api';
 import educationApi from '../../api/education-api';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { IoClose } from 'react-icons/io5';
-import SwiperCore from 'swiper';
+import { ImageDetailContainer } from '../../components/image/image-detail-container';
 
 const postTemp: IPost = {
     _id: '123',
@@ -69,7 +66,7 @@ export default function Profile() {
     const postsRef = useRef<HTMLDivElement>(null);
     const formPostRef = useRef<HTMLDivElement>(null);
     const coverRef = useRef<HTMLInputElement>(null);
-    const swiperRef = useRef<HTMLDivElement>(null);
+    const swiperRef = useRef<RefSwiper>(null);
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isShowModal, setIsShowModal] = useState<boolean>(false);
@@ -83,7 +80,6 @@ export default function Profile() {
     const [educations, setEducations] = useState<IEducation[]>([]);
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
     const [album, setAlbum] = useState<IAlbum[]>([]);
-    const [swiper, setSwiper] = useState<SwiperCore>();
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.8);
@@ -225,12 +221,6 @@ export default function Profile() {
         //  setDisable(false);
     }, []);
 
-    const slideTo = (index: number) => {
-        if (swiper) {
-            swiper.slideTo(index);
-        }
-    };
-
     const getImageClasses = (index: number, arrayLength: number, col: number): string => {
         let className = 'overflow-hidden image-container';
         const row = Math.floor(arrayLength / col);
@@ -277,6 +267,7 @@ export default function Profile() {
     }, [tempCoverImg, croppedAreaPixels]);
 
     useEffect(() => {
+        console.log('sPost.posts.length: ', sPost.posts.length);
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
 
@@ -304,7 +295,7 @@ export default function Profile() {
     return (
         <MainLayout>
             <section
-                className="relative flex flex-col h-full overflow-y-auto"
+                className="relative flex flex-col h-full overflow-y-auto hover:scrollbar-show"
                 id="profile"
                 ref={postsRef}
                 onScroll={handleShowScrollTop}
@@ -340,6 +331,8 @@ export default function Profile() {
                                 layout="fill"
                                 objectFit="cover"
                                 objectPosition="top"
+                                placeholder="blur"
+                                blurDataURL="/images/avatar.jpg"
                             />
                         </div>
 
@@ -458,8 +451,8 @@ export default function Profile() {
                                         <div
                                             onClick={() => {
                                                 if (swiperRef.current) {
-                                                    swiperRef.current.hidden = false;
-                                                    slideTo(index);
+                                                    swiperRef.current.swiper.hidden = false;
+                                                    swiperRef.current.slideTo(index);
                                                 }
                                             }}
                                             key={image.publicId}
@@ -474,6 +467,8 @@ export default function Profile() {
                                                 layout="responsive"
                                                 objectFit="cover"
                                                 objectPosition="center"
+                                                placeholder="blur"
+                                                blurDataURL="/images/avatar.jpg"
                                             />
                                         </div>
                                     );
@@ -512,9 +507,6 @@ export default function Profile() {
                                 <LoadingPost />
                             )}
                         </InfiniteScroll>
-                        {/* <div className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10">
-                            <Post key={postTemp._id} post={postTemp} loadInPage="profile" />
-                        </div> */}
                         <div className="absolute w-10 h-10 bottom-3 right-3">
                             <button
                                 ref={scrollTopRef}
@@ -551,31 +543,7 @@ export default function Profile() {
                 />
             )}
             {isShowsUpdateAvatarModal && <UploadAvatarModal onClose={handleCloseUpdateAvatarModal} />}
-            <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
-                <IoClose
-                    onClick={() => {
-                        if (swiperRef.current) {
-                            swiperRef.current.hidden = true;
-                        }
-                    }}
-                    size={48}
-                    className="fixed z-40 p-2 bg-white rounded-full cursor-pointer drop-shadow-md right-6 top-6"
-                />
-                <Swiper
-                    onSwiper={(e) => {
-                        setSwiper(e);
-                    }}
-                    navigation={true}
-                    modules={[Navigation]}
-                    className="w-full h-full"
-                >
-                    {album.map((item) => (
-                        <SwiperSlide key={item.publicId}>
-                            <Image src={item.url} layout="fill" alt="post image" objectFit="contain" />
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </div>
+            <ImageDetailContainer images={album} ref={swiperRef} />
         </MainLayout>
     );
 }

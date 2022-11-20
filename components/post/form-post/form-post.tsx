@@ -261,7 +261,7 @@ export const FormPost = React.forwardRef<HTMLDivElement, Props>(({ onClose, name
                         placeholder={`${name.lastName} ơi, bạn  đang nghỉ gì thế?`}
                     />
                 </form>
-                <div className="relative overflow-y-auto max-h-64">
+                <div className="relative overflow-y-auto hover:scrollbar-show max-h-64">
                     {images && (
                         <button
                             onClick={handleDeleteImages}

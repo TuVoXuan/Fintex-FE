@@ -23,8 +23,6 @@ export default function DetailPost() {
     const [post, setPost] = useState<IPost>();
 
     const handleBack = () => {
-        dispatch(resetPost());
-        dispatch(resetComments());
         router.back();
     };
 
@@ -45,6 +43,11 @@ export default function DetailPost() {
                 setPost(tempPost);
             }
         }
+
+        return () => {
+            dispatch(resetPost());
+            dispatch(resetComments());
+        };
     }, []);
 
     return (
@@ -60,7 +63,14 @@ export default function DetailPost() {
                     <Swiper navigation={true} modules={[Navigation]} className="w-full h-full">
                         {post && post.images && (
                             <SwiperSlide>
-                                <Image src={post.images[0].url} layout="fill" alt="post image" objectFit="contain" />
+                                <Image
+                                    src={post.images[0].url}
+                                    layout="fill"
+                                    alt="post image"
+                                    objectFit="contain"
+                                    placeholder="blur"
+                                    blurDataURL="/images/avatar.jpg"
+                                />
                             </SwiperSlide>
                         )}
                     </Swiper>
@@ -71,13 +81,20 @@ export default function DetailPost() {
                             post.images &&
                             post.images.map((image) => (
                                 <SwiperSlide key={image.url}>
-                                    <Image src={image.url} layout="fill" alt="post image" objectFit="contain" />
+                                    <Image
+                                        src={image.url}
+                                        layout="fill"
+                                        alt="post image"
+                                        objectFit="contain"
+                                        placeholder="blur"
+                                        blurDataURL="/images/avatar.jpg"
+                                    />
                                 </SwiperSlide>
                             ))}
                     </Swiper>
                 )}
             </div>
-            <div className="h-screen overflow-y-auto">
+            <div className="h-screen overflow-y-auto hover:scrollbar-show">
                 {post && <Post post={post} isViewedDetail={false} hasFrame={false} />}
             </div>
         </section>

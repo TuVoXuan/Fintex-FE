@@ -20,7 +20,7 @@ export default function Notification() {
 
     const fetchFriendReq = async (limit: number, after?: string) => {
         try {
-            await dispatch(friendReqGetPagination({ limit, after })).unwrap();
+            await dispatch(friendReqGetPagination({ limit, after, type: 'receive' })).unwrap();
         } catch (error) {
             toastError((error as IResponseError).error);
         }
@@ -57,7 +57,10 @@ export default function Notification() {
     return (
         <MainLayout>
             <div className="flex h-full bg-secondary-10 rounded-[15px] p-7 gap-x-3">
-                <div id="nofifyDiv" className="w-1/2 h-full overflow-y-auto bg-white rounded-l-[15px]">
+                <div
+                    id="nofifyDiv"
+                    className="w-1/2 h-full hover:scrollbar-show overflow-y-auto bg-white rounded-l-[15px]"
+                >
                     {sNotify.data.length > 0 ? (
                         <InfiniteScroll
                             next={() => {
@@ -90,7 +93,10 @@ export default function Notification() {
                         </div>
                     )}
                 </div>
-                <div id="friendReqDiv" className="w-1/2 h-full overflow-y-auto bg-white rounded-l-[15px]">
+                <div
+                    id="friendReqDiv"
+                    className="w-1/2 h-full hover:scrollbar-show overflow-y-auto bg-white rounded-l-[15px]"
+                >
                     {sFriendReq.data.length > 0 ? (
                         <InfiniteScroll
                             next={() => {
@@ -105,8 +111,8 @@ export default function Notification() {
                             hasMore={!sFriendReq.ended}
                             loader={
                                 <div className="grid grid-cols-2 gap-3 mt-3">
-                                    <LoadingFriendReqCard />
-                                    <LoadingFriendReqCard />
+                                    <LoadingFriendReqCard type="receive" />
+                                    <LoadingFriendReqCard type="receive" />
                                 </div>
                             }
                             dataLength={sFriendReq.data.length}
@@ -117,12 +123,17 @@ export default function Notification() {
                             <div className="grid grid-cols-2 gap-3">
                                 {loading ? (
                                     <>
-                                        <LoadingFriendReqCard />
-                                        <LoadingFriendReqCard />
+                                        <LoadingFriendReqCard type="receive" />
+                                        <LoadingFriendReqCard type="receive" />
                                     </>
                                 ) : (
                                     sFriendReq.data.map((req) => (
-                                        <FriendReqCard key={req._id} user={req.user} friendReqId={req._id} />
+                                        <FriendReqCard
+                                            type="receive"
+                                            key={req._id}
+                                            user={req.user}
+                                            friendReqId={req._id}
+                                        />
                                     ))
                                 )}
                             </div>

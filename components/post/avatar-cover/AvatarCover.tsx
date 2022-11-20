@@ -23,6 +23,8 @@ export default function AvatarCover({ images, postId }: Props) {
                     layout="responsive"
                     objectFit="cover"
                     objectPosition="center"
+                    placeholder="blur"
+                    blurDataURL="/images/avatar.jpg"
                 />
             </div>
             <div

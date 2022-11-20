@@ -13,7 +13,7 @@ export default function AnotherLayout() {
                         sapiente, placeat quisquam perferendis laborum praesentium itaque animi ab esse veniam quam
                         molestias explicabo! Aliquid, nemo in.
                     </div>
-                    <div className="overflow-auto bg-green-200">
+                    <div className="overflow-auto hover:scrollbar-show bg-green-200">
                         <p>this will scroll</p>
                         <p>this will scroll</p>
                         <p>this will scroll</p>

@@ -24,6 +24,9 @@ import { useSocket } from '../context/socket-context';
 import { selectNotification } from '../redux/reducers/notification-slice';
 import { notifyGetPagination, notifyHandleSee } from '../redux/actions/notify-action';
 import { toastError } from '../util/toast';
+import { selectConversations } from '../redux/reducers/conversation-slice';
+import { isMessageSeen } from '../util/is-message-seen';
+import { getConversations } from '../redux/actions/conversation-action';
 
 interface Props {
     children?: React.ReactNode;
@@ -37,6 +40,7 @@ export const MainLayout = ({ children }: Props) => {
     const { register, watch, getValues } = useForm<FormData>();
     const ref = useRef<HTMLDivElement>(null);
     const sUser = useAppSelector(selectUser);
+    const sConversation = useAppSelector(selectConversations);
     const sNotify = useAppSelector(selectNotification).notify;
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -48,6 +52,7 @@ export const MainLayout = ({ children }: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [strangers, setStrangers] = useState<Stranger[]>([]);
     const [after, setAfter] = useState<string>();
+    const [notSeenConversation, setNotSeenConversation] = useState<number>(0);
 
     const handleSignOut = () => {
         try {
@@ -65,6 +70,7 @@ export const MainLayout = ({ children }: Props) => {
 
     const handleGoProfile = () => {
         dispatch(resetPost());
+        dispatch(resetComments());
         router.push(`${APP_PATH.PROFILE}`);
     };
 
@@ -108,11 +114,40 @@ export const MainLayout = ({ children }: Props) => {
         }
     };
 
+    const handleNotSeenCoversation = () => {
+        let num = 0;
+        for (const conv of sConversation) {
+            if (conv.messages.length > 0) {
+                const isSeen = isMessageSeen(conv.messages[0]);
+                if (conv.messages.length > 0 && !isSeen && conv.messages[0].sender !== sUser.data?._id) {
+                    num++;
+                    break;
+                }
+            }
+        }
+        return num;
+    };
+
+    const fetchConversations = async () => {
+        try {
+            if (sConversation.length === 0) {
+                await dispatch(getConversations()).unwrap();
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    useEffect(() => {
+        setNotSeenConversation(handleNotSeenCoversation());
+    }, [sConversation]);
+
     useEffect(() => {
         let delayDebounceFn: any;
         let isFirst = true;
         const subscription = watch((value, { name, type }) => {
-            console.log('loading 1', loading);
+            // console.log('loading 1', loading);
             if (isFirst) {
                 setLoading(true);
                 isFirst = false;
@@ -162,6 +197,8 @@ export const MainLayout = ({ children }: Props) => {
             const limit = +(process.env.LIMIT_NOTIFY as string);
             fetchNotify(limit);
         }
+
+        fetchConversations();
     }, []);
 
     return (
@@ -169,7 +206,11 @@ export const MainLayout = ({ children }: Props) => {
             className="flex justify-center h-screen"
             onClick={() => {
                 if (ref.current) {
-                    ref.current.classList.add('hidden');
+                    setTimeout(() => {
+                        if (ref.current) {
+                            ref.current.classList.add('hidden');
+                        }
+                    }, 500);
                 }
             }}
         >
@@ -197,7 +238,12 @@ export const MainLayout = ({ children }: Props) => {
                             {!loading ? (
                                 <>
                                     {strangers.map((item) => (
-                                        <Stranger key={item._id} name={item.fullName} avatar={item.avatar} />
+                                        <Stranger
+                                            key={item._id}
+                                            userId={item._id}
+                                            name={item.fullName}
+                                            avatar={item.avatar}
+                                        />
                                     ))}
                                     {after ? (
                                         <div
@@ -255,20 +301,13 @@ export const MainLayout = ({ children }: Props) => {
                                     onClick={() => dispatch(resetPost())}
                                 />
                             </div>
-                            {/* <div className="pl-1 pr-5">
-                                <MenuItem
-                                    icon={<FiUsers size={20} />}
-                                    title={'My community'}
-                                    isActive={path === APP_PATH.MY_COMMUNITY}
-                                    link={APP_PATH.MY_COMMUNITY}
-                                />
-                            </div> */}
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<RiChatSmileLine size={20} />}
                                     title={'Message'}
-                                    isActive={false}
-                                    link={'#'}
+                                    isActive={path === APP_PATH.CHAT}
+                                    link={APP_PATH.CHAT}
+                                    notSeenNum={notSeenConversation}
                                 />
                             </div>
                             <div className="pl-1 pr-5">
@@ -281,14 +320,6 @@ export const MainLayout = ({ children }: Props) => {
                                     onClick={handleSeeNotify}
                                 />
                             </div>
-                            {/* <div className="pl-1 pr-5">
-                                <MenuItem
-                                    icon={<FiUser size={20} />}
-                                    title={'Profile'}
-                                    isActive={path === APP_PATH.PROFILE}
-                                    link={APP_PATH.PROFILE}
-                                />
-                            </div> */}
                             <div className="pl-1 pr-5">
                                 <MenuItem
                                     icon={<IoSettingsOutline size={20} />}

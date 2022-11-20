@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { friendReqAccept, friendReqCreate, friendReqGetPagination } from '../actions/notify-action';
+import { userDeleteSendFriendReq, userGetSendFriendReq } from '../actions/user-action';
 
 interface FriendState {
     friendReq: {
@@ -46,6 +47,18 @@ export const friendSlice = createSlice({
     extraReducers(builder) {
         builder.addCase(friendReqCreate.fulfilled, (state, action: PayloadAction<IFriendReq>) => {
             state.friendReq.data = [action.payload, ...state.friendReq.data];
+        });
+        builder.addCase(userGetSendFriendReq.fulfilled, (state, action: PayloadAction<IFriendReqPaginationRes>) => {
+            if (!state.friendReq.after && !state.friendReq.ended) {
+                state.friendReq.data = [...action.payload.friendReqs];
+            } else {
+                state.friendReq.data = [...state.friendReq.data, ...action.payload.friendReqs];
+            }
+            state.friendReq.after = action.payload.after;
+            state.friendReq.ended = action.payload.ended;
+        });
+        builder.addCase(userDeleteSendFriendReq.fulfilled, (state, action: PayloadAction<string>) => {
+            state.friendReq.data = state.friendReq.data.filter((req) => req._id !== action.payload);
         });
     },
 });

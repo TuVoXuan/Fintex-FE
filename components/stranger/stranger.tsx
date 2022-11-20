@@ -1,13 +1,28 @@
+import { useRouter } from 'next/router';
+import APP_PATH from '../../constants/app-path';
+import { useAppDispatch } from '../../hook/redux';
+import { resetComments } from '../../redux/reducers/comments-slice';
+import { resetPost } from '../../redux/reducers/post-slice';
 import Avatar from '../avatar/avatar';
 
 interface Props {
     name: string;
     avatar: string;
+    userId: string;
 }
 
-export default function Stranger({ name, avatar }: Props) {
+export default function Stranger({ name, avatar, userId }: Props) {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+
     const handleClick = () => {
-        alert('helo');
+        const currentRoute = router.asPath;
+        if (currentRoute !== `${APP_PATH.PROFILE}/${userId}`) {
+            console.log('chuyen toi trang ca nhan');
+            dispatch(resetComments());
+            dispatch(resetPost());
+            router.push(`${APP_PATH.PROFILE}/${userId}`);
+        }
     };
 
     return (
