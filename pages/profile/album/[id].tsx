@@ -15,7 +15,6 @@ import { ImageDetailContainer } from '../../../components/image/image-detail-con
 
 interface Props {
     personId: string;
-    slideTo: (num: number) => void;
 }
 
 export default function MyAlbum({ personId }: Props) {
@@ -30,7 +29,6 @@ export default function MyAlbum({ personId }: Props) {
     const [album, setAlbum] = useState<IAlbum[]>([]);
     const [after, setAfter] = useState<string>();
     const [user, setUser] = useState<IUserProfileRes>();
-    const slideTo = useRef(0);
 
     const handleShowScrollTop = (e: any) => {
         if (e.target.scrollTop > 400) {

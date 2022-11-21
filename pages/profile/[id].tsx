@@ -31,6 +31,7 @@ import { selectUser } from '../../redux/reducers/user-slice';
 import { createConversation } from '../../redux/actions/conversation-action';
 import { useMQTT } from '../../context/mqtt-context';
 import { ImageDetailContainer } from '../../components/image/image-detail-container';
+import MiniFriendCard from '../../components/card/mini-friend-card';
 
 interface Props {
     personId: string;
@@ -53,6 +54,7 @@ export default function Profile({ personId }: Props) {
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
     const [loadingChat, setLoadingChat] = useState<boolean>(false);
+    const [friends, setFriends] = useState<IFriend[]>([]);
 
     const handleShowScrollTop = (e: any) => {
         if (e.target.scrollTop > 400) {
@@ -202,6 +204,11 @@ export default function Profile({ personId }: Props) {
             .then((data) => setAlbum(data.album))
             .catch((error) => toastError(error));
 
+        userApi
+            .getFriendsOfFriend({ limit: 9, id: personId })
+            .then((data) => setFriends(data.friends))
+            .catch((error) => toastError(error));
+
         return () => {
             setUser(undefined);
             setAlbum([]);
@@ -291,8 +298,8 @@ export default function Profile({ personId }: Props) {
                     </div>
                 </section>
 
-                <section className="py-[30px] px-20 rounded-[15px] bg-secondary-10 mt-7 flex">
-                    <div className="sticky w-1/3 space-y-4 top-3">
+                <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
+                    <div className="sticky w-1/3 space-y-4 -top-3/4 h-fit">
                         <div className="px-5 py-6 space-y-4 bg-white rounded-2xl h-fit">
                             <h3>Giới thiệu</h3>
                             <div className="flex items-center gap-3 ">
@@ -328,7 +335,7 @@ export default function Profile({ personId }: Props) {
                                 <h3>Ảnh</h3>
                                 <p
                                     onClick={() => {
-                                        router.push(`${APP_PATH.ALBUM}/${user?._id}`);
+                                        router.push(`${APP_PATH.ALBUM}/${personId}`);
                                     }}
                                     className="cursor-pointer hover:text-blue-500"
                                 >
@@ -369,6 +376,29 @@ export default function Profile({ personId }: Props) {
                                 })}
                             </div>
                         </div>
+                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                            <div className="flex items-center justify-between">
+                                <h3>Bạn bè</h3>
+                                <p
+                                    onClick={() => {
+                                        router.push(`${APP_PATH.FRIEND}/${personId}`);
+                                    }}
+                                    className="cursor-pointer hover:text-blue-500"
+                                >
+                                    Xem tất cả bạn bè
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                                {friends.map((item) => (
+                                    <MiniFriendCard
+                                        key={item._id}
+                                        id={item._id}
+                                        avatar={item.avatar}
+                                        name={item.name.fullName}
+                                    />
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="w-2/3">
@@ -405,38 +435,6 @@ export default function Profile({ personId }: Props) {
                     </div>
                 </section>
             </section>
-            {/* <div hidden ref={swiperRef} className="fixed top-0 bottom-0 left-0 right-0 z-30 bg-black">
-                <IoClose
-                    onClick={() => {
-                        if (swiperRef.current) {
-                            swiperRef.current.hidden = true;
-                        }
-                    }}
-                    size={48}
-                    className="fixed z-40 p-2 bg-white rounded-full cursor-pointer drop-shadow-md right-6 top-6"
-                />
-                <Swiper
-                    onSwiper={(e) => {
-                        setSwiper(e);
-                    }}
-                    navigation={true}
-                    modules={[Navigation]}
-                    className="w-full h-full"
-                >
-                    {album.map((item) => (
-                        <SwiperSlide key={item.publicId}>
-                            <Image
-                                src={item.url}
-                                layout="fill"
-                                alt="post image"
-                                objectFit="contain"
-                                placeholder="blur"
-                                blurDataURL="/images/avatar.jpg"
-                            />
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </div> */}
             <ImageDetailContainer images={album} ref={swiperRef} />
         </MainLayout>
     );

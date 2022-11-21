@@ -13,6 +13,7 @@ const APP_PATH = {
     CHANGE_PASS: '/setting/change-pass',
     FRIEND_REQ: '/setting/friend-request',
     ALBUM: '/profile/album',
+    FRIEND: '/profile/friend',
     NOTIFICATION: '/notification',
     DETAIL_POST: '/detail-post',
 };

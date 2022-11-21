@@ -25,7 +25,15 @@ export default function MiniFriendCard({ avatar, name, id }: Props) {
     return (
         <div onClick={handleClick} className="cursor-pointer">
             <div className="w-full overflow-hidden rounded-md aspect-square">
-                <Image alt="friend avatar" src={avatar} width={100} height={100} layout="responsive" />
+                <Image
+                    alt="friend avatar"
+                    src={avatar}
+                    width={100}
+                    height={100}
+                    layout="responsive"
+                    placeholder="blur"
+                    blurDataURL="/images/avatar.jpg"
+                />
             </div>
             <p className="text-xs font-semibold">{name}</p>
         </div>

@@ -22,7 +22,7 @@ import DeleteModal from '../../components/modal/delete-modal';
 import { deleteAllCommentsPost } from '../../redux/actions/comment-action';
 import UploadAvatarModal from '../../components/modal/upload-avatar-modal';
 import { UploadImage } from '../../types/enums';
-import { userUpdateCover } from '../../redux/actions/user-action';
+import { userGetFriends, userUpdateCover } from '../../redux/actions/user-action';
 import { VscLoading } from 'react-icons/vsc';
 import Cropper, { Area } from 'react-easy-crop';
 import { getCroppedImg } from '../../util/crop-image';
@@ -32,6 +32,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { ImageDetailContainer } from '../../components/image/image-detail-container';
 import MiniFriendCard from '../../components/card/mini-friend-card';
+import { selectFriend } from '../../redux/reducers/friend-slice';
 
 const postTemp: IPost = {
     _id: '123',
@@ -60,6 +61,7 @@ const postTemp: IPost = {
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
+    const sFriends = useAppSelector(selectFriend).friends;
     const sPost = useAppSelector(selectPost);
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -81,7 +83,7 @@ export default function Profile() {
     const [educations, setEducations] = useState<IEducation[]>([]);
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
     const [album, setAlbum] = useState<IAlbum[]>([]);
-    const [friends, setFriends] = useState<IFriend[]>([]);
+    // const [friends, setFriends] = useState<IFriend[]>([]);
 
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.8);
@@ -286,11 +288,17 @@ export default function Profile() {
             .then((data) => setAlbum(data.album))
             .catch((error) => toastError(error));
 
-        userApi
-            .getFriends({ limit: 9 })
-            .then((data) => setFriends(data.friends))
-            .catch((error) => toastError(error));
+        // userApi
+        //     .getFriends({ limit: 9 })
+        //     .then((data) => setFriends(data.friends))
+        //     .catch((error) => toastError(error));
     }, []);
+
+    useEffect(() => {
+        if (sFriends.data.length === 0) {
+            dispatch(userGetFriends({ limit: 9 })).catch((error) => toastError(error));
+        }
+    }, [sFriends]);
 
     return (
         <MainLayout>
@@ -402,7 +410,7 @@ export default function Profile() {
                 </section>
 
                 <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
-                    <div className="sticky w-1/3 space-y-4 -top-48 h-fit">
+                    <div className="sticky w-1/3 space-y-4 -top-full h-fit">
                         <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
                             <h3>Giới thiệu</h3>
                             <div className="flex items-center gap-3 ">
@@ -484,7 +492,7 @@ export default function Profile() {
                                 <h3>Bạn bè</h3>
                                 <p
                                     onClick={() => {
-                                        router.push(`${APP_PATH.ALBUM}/${sUser.data?._id}`);
+                                        router.push(`${APP_PATH.FRIEND}/${sUser.data?._id}`);
                                     }}
                                     className="cursor-pointer hover:text-blue-500"
                                 >
@@ -492,7 +500,7 @@ export default function Profile() {
                                 </p>
                             </div>
                             <div className="grid grid-cols-3 gap-3">
-                                {friends.map((item) => (
+                                {sFriends.data.map((item) => (
                                     <MiniFriendCard
                                         key={item._id}
                                         id={item._id}
