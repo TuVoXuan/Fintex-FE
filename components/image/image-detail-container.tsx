@@ -16,7 +16,7 @@ interface Props {
 export const ImageDetailContainer = React.forwardRef<RefSwiper, Props>((props, ref) => {
     const swiperRef = useRef<HTMLDivElement>(null);
     const [images, setImages] = useState<IAlbum[]>(props.images);
-    console.log('images: ', images);
+    // console.log('images: ', images);
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperCore>();
     const [swiper, setSwiper] = useState<SwiperCore>();
 

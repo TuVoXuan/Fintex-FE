@@ -15,9 +15,6 @@ export default function ChatItemMe({ message, participants, onImageClick }: Prop
     timeago.register('vi', vi);
     const length = message.message.length;
     const [id, setId] = useState<string>('');
-    if (participants) {
-        console.log('id: ', id);
-    }
 
     const locate = (index: number) => {
         switch (index) {
@@ -79,7 +76,4 @@ export default function ChatItemMe({ message, participants, onImageClick }: Prop
             </div>
         </div>
     );
-}
-function useSate<T>(arg0: string): [any, any] {
-    throw new Error('Function not implemented.');
 }

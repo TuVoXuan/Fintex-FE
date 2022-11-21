@@ -34,9 +34,9 @@ export default function ChatText({ position, me, text, className, seen, particip
     };
 
     if (seen && participants && seen.length === 1) {
-        console.log('participants: ', participants);
-        console.log('seen: ', seen);
-        console.log('text: ', text);
+        // console.log('participants: ', participants);
+        // console.log('seen: ', seen);
+        // console.log('text: ', text);
     }
 
     return (
