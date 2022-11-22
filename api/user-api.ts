@@ -38,6 +38,22 @@ const userApi = {
 
         return (await axiosService.get<IResponseSuccess<IAlbumPaginate>>(newUrl)).data.data;
     },
+    getFriends: async (param: IPaginate) => {
+        let newUrl = `${URL}/friends?limit=${param.limit}`;
+        if (param.after) {
+            newUrl += `&after=${param.after}`;
+        }
+
+        return (await axiosService.get<IResponseSuccess<IFriendPaginate>>(newUrl)).data.data;
+    },
+    getFriendsOfFriend: async (param: IPaginate) => {
+        let newUrl = `${URL}/friends/${param.id}?limit=${param.limit}`;
+        if (param.after) {
+            newUrl += `&after=${param.after}`;
+        }
+
+        return (await axiosService.get<IResponseSuccess<IFriendPaginate>>(newUrl)).data.data;
+    },
 };
 
 export default userApi;

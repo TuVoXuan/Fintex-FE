@@ -62,3 +62,18 @@ declare interface IAlbumPaginate {
     album: IAlbum[];
     after: string;
 }
+
+declare interface IFriend {
+    _id: string;
+    name: {
+        firstName: string;
+        lastName: string;
+        fullName: string;
+    };
+    avatar: string;
+}
+
+declare interface IFriendPaginate {
+    friends: IFriend[];
+    after: '';
+}

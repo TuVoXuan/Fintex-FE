@@ -2,91 +2,47 @@ import { RiUploadCloud2Line } from 'react-icons/ri';
 import { MainLayout } from '../../layouts/main-layout';
 import Image from 'next/image';
 import Avatar from '../../components/avatar/avatar';
-import { BsGenderAmbiguous } from 'react-icons/bs';
-import { HiOutlineAcademicCap, HiOutlineCake } from 'react-icons/hi';
-import { GrLocation } from 'react-icons/gr';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
-import { selectPost } from '../../redux/reducers/post-slice';
-import LoadingPost from '../../components/post/loading-post';
-import { postDelete, postMineLoadMore, postUpdateAvatarCover } from '../../redux/actions/post-action';
-import { toastError, toastSuccess } from '../../util/toast';
+import { postUpdateAvatarCover } from '../../redux/actions/post-action';
+import { toastError } from '../../util/toast';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Post from '../../components/post/post';
 import { IoIosArrowUp } from 'react-icons/io';
 import { selectUser } from '../../redux/reducers/user-slice';
-import { FormPost } from '../../components/post/form-post/form-post';
 import { useRouter } from 'next/router';
 import APP_PATH from '../../constants/app-path';
-import DeleteModal from '../../components/modal/delete-modal';
-import { deleteAllCommentsPost } from '../../redux/actions/comment-action';
 import UploadAvatarModal from '../../components/modal/upload-avatar-modal';
 import { UploadImage } from '../../types/enums';
 import { userUpdateCover } from '../../redux/actions/user-action';
 import { VscLoading } from 'react-icons/vsc';
 import Cropper, { Area } from 'react-easy-crop';
 import { getCroppedImg } from '../../util/crop-image';
-import userApi from '../../api/user-api';
-import educationApi from '../../api/education-api';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { ImageDetailContainer } from '../../components/image/image-detail-container';
-
-const postTemp: IPost = {
-    _id: '123',
-    avatar: 'https://res.cloudinary.com/cake-shop/image/upload/v1666171462/avatar/cvnjyfjhgxdwz2zzth4n.jpg',
-    createdAt: '2020-10-19',
-    images: [
-        {
-            url: 'https://res.cloudinary.com/cake-shop/image/upload/v1666171462/avatar/cvnjyfjhgxdwz2zzth4n.jpg',
-            orientation: 'vertical',
-        },
-        {
-            url: 'https://res.cloudinary.com/cake-shop/image/upload/v1665307479/cover/default-cover_jyhbec.jpg',
-            orientation: 'horizontal',
-        },
-    ],
-    name: {
-        firstName: 'Vo Xuan',
-        lastName: 'Tu',
-    },
-    reactions: [],
-    comments: 0,
-    visibleFor: 'public',
-    userId: '123',
-    postType: 'avatar',
-};
+import ProfilePostContainer from '../../container/profile-post-container';
+import NavItem from '../../components/nav-item/nav-item';
+import AlbumContainer from '../../container/album-container';
+import FriendsContainer from '../../container/friends-container';
 
 export default function Profile() {
     const sUser = useAppSelector(selectUser);
-    const sPost = useAppSelector(selectPost);
+
     const dispatch = useAppDispatch();
     const router = useRouter();
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
-    const formPostRef = useRef<HTMLDivElement>(null);
     const coverRef = useRef<HTMLInputElement>(null);
-    const swiperRef = useRef<RefSwiper>(null);
 
-    const [loading, setLoading] = useState<boolean>(true);
-    const [isShowModal, setIsShowModal] = useState<boolean>(false);
-    const [isShowsDeleteModal, setIsShowDeleteModal] = useState<boolean>(false);
     const [isShowsUpdateAvatarModal, setIsShowUpdateAvatarModal] = useState<boolean>(false);
-    const [deletePostId, setDeletePostId] = useState<string>('');
-    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-    const [postEdit, setPostEdit] = useState<IPost | undefined>();
     const [tempCoverImg, setTempCoverImg] = useState('');
-    const [imageFile, setImageFile] = useState<File>();
-    const [educations, setEducations] = useState<IEducation[]>([]);
     const [isUpdatingCover, setIsUpdatingCover] = useState(false);
-    const [album, setAlbum] = useState<IAlbum[]>([]);
-
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(0.8);
     const [aspect, setAspect] = useState(16 / 9);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>();
     const [tempCropImgUrl, setTempCropImgUrl] = useState('');
     const [croppedFile, setCroppedFile] = useState<Blob>();
+    const [imageFile, setImageFile] = useState<File>();
+    const [container, setContainer] = useState<'post' | 'album' | 'friend'>('post');
 
     const handleScrollToTop = () => {
         if (postsRef.current) {
@@ -105,55 +61,6 @@ export default function Profile() {
         } else {
             if (scrollTopRef.current) {
                 scrollTopRef.current.hidden = true;
-            }
-        }
-    };
-
-    const fetchPost = async (limit: number, after?: string) => {
-        try {
-            await dispatch(postMineLoadMore({ limit, after })).unwrap();
-        } catch (error) {
-            toastError((error as IResponseError).error);
-        }
-    };
-
-    const handleEditPost = (postId: string) => () => {
-        setPostEdit(sPost.posts.find((item) => item._id === postId));
-        setIsShowModal(true);
-    };
-
-    const handleShowDeleteModal = (postId: string) => () => {
-        setDeletePostId(postId);
-        setIsShowDeleteModal(true);
-    };
-
-    const handleDeletePost = async () => {
-        try {
-            setLoadingDelete(true);
-            //delete comment
-            await dispatch(deleteAllCommentsPost(deletePostId)).unwrap();
-            //delete post
-            await dispatch(postDelete(deletePostId)).unwrap();
-
-            setIsShowDeleteModal(false);
-            setLoadingDelete(false);
-
-            toastSuccess('Xóa bài post thành công!');
-        } catch (error) {
-            toastError((error as IResponseError).error);
-        }
-    };
-
-    const handleColseModal = () => {
-        setIsShowModal(false);
-    };
-
-    const handleClickOutSideFormPost = (event: any) => {
-        const { target } = event;
-
-        if (formPostRef.current && target && 'nodeType' in target) {
-            if (!formPostRef.current.contains(target)) {
-                setIsShowModal(false);
             }
         }
     };
@@ -199,12 +106,6 @@ export default function Profile() {
             await dispatch(userUpdateCover(formData));
             await dispatch(postUpdateAvatarCover({ typeUpdate: UploadImage.Cover }));
 
-            // console.log('croppedFile: ', croppedFile);
-            // setTimeout(() => {
-            //     setTempCoverImg('');
-            //     setImageFile(undefined);
-            //     setIsUpdatingCover(true);
-            // }, 2000);
             setTempCoverImg('');
             setImageFile(undefined);
             setCroppedFile(undefined);
@@ -221,37 +122,21 @@ export default function Profile() {
         //  setDisable(false);
     }, []);
 
-    const getImageClasses = (index: number, arrayLength: number, col: number): string => {
-        let className = 'overflow-hidden image-container';
-        const row = Math.floor(arrayLength / col);
+    const handleSwitchPage = (value: 'post' | 'album' | 'friend') => () => {
+        setContainer(value);
+    };
 
-        if (index === 0) {
-            className += ' rounded-tl-lg';
-            if (arrayLength <= col) {
-                className += ' rounded-bl-lg';
-            }
+    const handleRenderPage = () => {
+        switch (container) {
+            case 'post':
+                return <ProfilePostContainer onSwitchPage={handleSwitchPage} />;
+            case 'album':
+                return <AlbumContainer personId={sUser.data?._id || ''} />;
+            case 'friend':
+                return <FriendsContainer />;
+            default:
+                return <></>;
         }
-        if (index === col - 1) {
-            className += ' rounded-tr-lg';
-        }
-        if (index === arrayLength - 1) {
-            className += ' rounded-br-lg';
-            if (row === 0) {
-                className += ' rounded-tr-lg';
-            }
-        }
-        if (index === row * col) {
-            className += ' rounded-bl-lg';
-        }
-        if (arrayLength - 1 >= row * col && arrayLength < row * col + col && index === row * col - 1) {
-            className += ' rounded-br-lg';
-        }
-
-        if (index === 1) {
-            console.log(className);
-        }
-
-        return className;
     };
 
     useEffect(() => {
@@ -265,32 +150,6 @@ export default function Profile() {
         };
         getCroppedTempImgUrl();
     }, [tempCoverImg, croppedAreaPixels]);
-
-    useEffect(() => {
-        console.log('sPost.posts.length: ', sPost.posts.length);
-        if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
-            const limit = +(process.env.LIMIT as string);
-
-            fetchPost(limit);
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        }
-
-        if (sPost.posts.length > 0) {
-            setLoading(false);
-        }
-
-        educationApi
-            .getEducations()
-            .then((data) => setEducations(data))
-            .catch((error) => toastError(error));
-
-        userApi
-            .getMyAlbum({ limit: 9 })
-            .then((data) => setAlbum(data.album))
-            .catch((error) => toastError(error));
-    }, []);
 
     return (
         <MainLayout>
@@ -391,7 +250,7 @@ export default function Profile() {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between py-8 px-7">
+                    <div className="flex items-center justify-between pt-8 px-7">
                         <h2 className="text-secondary-80">
                             {sUser.data && `${sUser.data.name.firstName} ${sUser.data.name.lastName}`}
                         </h2>
@@ -399,151 +258,24 @@ export default function Profile() {
                             Edit info
                         </button>
                     </div>
+                    <nav className="px-4 space-x-4 overflow-hidden rounded-xl">
+                        <NavItem title="Bài viết" actived={container === 'post'} onClick={handleSwitchPage('post')} />
+                        <NavItem title="Ảnh" actived={container === 'album'} onClick={handleSwitchPage('album')} />
+                        <NavItem title="Bạn bè" actived={container === 'friend'} onClick={handleSwitchPage('friend')} />
+                    </nav>
                 </section>
-
-                <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
-                    <div className="sticky w-1/3 space-y-4 -top-36 h-fit">
-                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
-                            <h3>Giới thiệu</h3>
-                            <div className="flex items-center gap-3 ">
-                                <BsGenderAmbiguous size={20} />
-                                {sUser.data?.gender === 'male' && 'Nam'}
-                                {sUser.data?.gender === 'female' && 'Nữ'}
-                                {sUser.data?.gender === 'other' && 'Khác'}
-                            </div>
-                            <div className="flex items-center gap-3 ">
-                                <HiOutlineCake size={20} />
-                                {new Date(sUser.data?.birthday || '').toLocaleDateString('vi', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: '2-digit',
-                                })}
-                            </div>
-                            {sUser.data?.address && (
-                                <div className="flex items-center gap-3 ">
-                                    <GrLocation size={20} />
-                                    {sUser.data.address}
-                                </div>
-                            )}
-                            {sUser.data?.education && (
-                                <div className="flex items-center gap-3 ">
-                                    <HiOutlineAcademicCap size={20} />
-                                    {educations.find((item) => item._id === sUser.data?.education)?.name}
-                                </div>
-                            )}
-                        </div>
-                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
-                            <div className="flex items-end justify-between">
-                                <h3>Ảnh</h3>
-                                <p
-                                    onClick={() => {
-                                        router.push(`${APP_PATH.ALBUM}/${sUser.data?._id}`);
-                                    }}
-                                    className="cursor-pointer hover:text-blue-500"
-                                >
-                                    Xem tất cả ảnh
-                                </p>
-                            </div>
-                            <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-lg">
-                                {album.map((image, index, array) => {
-                                    return (
-                                        <div
-                                            onClick={() => {
-                                                if (swiperRef.current) {
-                                                    swiperRef.current.swiper.hidden = false;
-                                                    swiperRef.current.slideTo(index);
-                                                }
-                                            }}
-                                            key={image.publicId}
-                                            className={getImageClasses(index, array.length, 3)}
-                                        >
-                                            <Image
-                                                src={image.url}
-                                                key={image.publicId}
-                                                alt="image"
-                                                width={100}
-                                                height={100}
-                                                layout="responsive"
-                                                objectFit="cover"
-                                                objectPosition="center"
-                                                placeholder="blur"
-                                                blurDataURL="/images/avatar.jpg"
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-2/3">
-                        <InfiniteScroll
-                            next={() => {
-                                if (!sPost.ended) {
-                                    const limit = +(process.env.LIMIT as string);
-                                    if (sPost.after) {
-                                        fetchPost(limit, sPost.after);
-                                    }
-                                }
-                            }}
-                            hasMore={!sPost.ended}
-                            loader={<LoadingPost />}
-                            dataLength={sPost.posts.length}
-                            scrollableTarget="profile"
-                            className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10"
-                        >
-                            {!loading ? (
-                                sPost.posts.map((post) => (
-                                    <Post
-                                        key={post._id}
-                                        post={post}
-                                        showActionPost
-                                        editPost={handleEditPost}
-                                        deletePost={handleShowDeleteModal}
-                                    />
-                                ))
-                            ) : (
-                                <LoadingPost />
-                            )}
-                        </InfiniteScroll>
-                        <div className="absolute w-10 h-10 bottom-3 right-3">
-                            <button
-                                ref={scrollTopRef}
-                                onClick={handleScrollToTop}
-                                className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
-                            >
-                                <IoIosArrowUp size={20} />
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            </section>
-            {isShowModal && (
-                <div
-                    onClick={handleClickOutSideFormPost}
-                    className="fixed top-0 bottom-0 left-0 right-0 z-10 flex justify-center bg-secondary-80/60"
-                >
-                    <FormPost
-                        ref={formPostRef}
-                        imageUrl={sUser.data?.avatar || (process.env.DEFAULT_AVATAR as string)}
-                        name={sUser.data?.name || { firstName: 'Võ', lastName: 'Xuân Tú' }}
-                        onClose={handleColseModal}
-                        type="update"
-                        post={postEdit}
-                    />
+                {handleRenderPage()}
+                <div className="absolute w-10 h-10 bottom-3 right-3">
+                    <button
+                        ref={scrollTopRef}
+                        onClick={handleScrollToTop}
+                        className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
+                    >
+                        <IoIosArrowUp size={20} />
+                    </button>
                 </div>
-            )}
-            {isShowsDeleteModal && (
-                <DeleteModal
-                    objectName="bài post"
-                    loading={loadingDelete}
-                    onDelete={handleDeletePost}
-                    onClose={() => setIsShowDeleteModal(false)}
-                />
-            )}
+            </section>
             {isShowsUpdateAvatarModal && <UploadAvatarModal onClose={handleCloseUpdateAvatarModal} />}
-            <ImageDetailContainer images={album} ref={swiperRef} />
         </MainLayout>
     );
 }

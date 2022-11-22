@@ -120,3 +120,12 @@ export const userDeleteSendFriendReq = createAsyncThunk(
         }
     },
 );
+
+export const userGetFriends = createAsyncThunk('user/getFriends', async (param: IPaginate, thunkAPI) => {
+    try {
+        const response = await userApi.getFriends(param);
+        return response;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
