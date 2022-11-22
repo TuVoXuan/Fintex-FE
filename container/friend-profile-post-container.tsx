@@ -116,7 +116,7 @@ export default function FriendProfilePostContainer({
     return (
         <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
             <div className="sticky w-1/3 space-y-4 -top-3/4 h-fit">
-                <div className="px-5 py-6 space-y-4 bg-white rounded-2xl h-fit">
+                <div className="p-6 space-y-4 bg-white rounded-2xl h-fit">
                     <h3>Giới thiệu</h3>
                     <div className="flex items-center gap-3 ">
                         <BsGenderAmbiguous size={20} />
@@ -146,7 +146,7 @@ export default function FriendProfilePostContainer({
                         </div>
                     )}
                 </div>
-                <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                <div className="p-6 space-y-4 bg-white rounded-2xl">
                     <div className="flex items-end justify-between">
                         <h3>Ảnh</h3>
                         <p onClick={onSwitchPage('album')} className="cursor-pointer hover:text-blue-500">
@@ -187,7 +187,7 @@ export default function FriendProfilePostContainer({
                         })}
                     </div>
                 </div>
-                <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                <div className="p-6 space-y-4 bg-white rounded-2xl">
                     <div className="flex items-center justify-between">
                         <h3>Bạn bè</h3>
                         <p onClick={onSwitchPage('friend')} className="cursor-pointer hover:text-blue-500">
