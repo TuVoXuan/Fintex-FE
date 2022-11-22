@@ -146,4 +146,9 @@
     .scrollbar-show::-webkit-scrollbar-thumb:focus {
         background: #777e8b;
     }
+    .prevent-select {
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 }

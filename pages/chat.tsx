@@ -1,11 +1,12 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FiSearch } from 'react-icons/fi';
+import { FiEdit, FiSearch } from 'react-icons/fi';
 import { Input } from '../components';
 import ChatPersonCard from '../components/card/chat-person-card';
 import ChatContainer from '../components/chat/chat-container';
 import LoadingChatCard from '../components/loading/loading-chat-card';
+import CreateConvModal from '../components/modal/create-conv-modal';
 import { useMQTT } from '../context/mqtt-context';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { MainLayout } from '../layouts/main-layout';
@@ -29,6 +30,15 @@ export default function Chat() {
     const [searchConvs, setSearchConvs] = useState<IConversationStore[]>([]);
     const [isSearching, setIsSearching] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);
+    const [showCreateConvModal, setShowCreateConvModal] = useState<boolean>(true);
+
+    const handleShowCreateConvModal = () => {
+        setShowCreateConvModal(true);
+    };
+
+    const handleCloseCreateConvModal = () => {
+        setShowCreateConvModal(false);
+    };
 
     const handleSeenMessage = async (messageId: string, conversationId: string, subMessageId: string) => {
         try {
@@ -120,6 +130,12 @@ export default function Chat() {
             <div className="h-full bg-secondary-10 rounded-[15px] p-7 gap-x-1">
                 <section className="grid h-full grid-cols-3 overflow-hidden gap-x-4">
                     <aside className="bg-white rounded-[15px] p-5 space-y-4 overflow-hidden flex flex-col">
+                        <div className="flex items-center justify-between">
+                            <h3>Trò chuyện</h3>
+                            <button className="p-3 transition-colors duration-150 ease-linear rounded-full hover:bg-secondary-10">
+                                <FiEdit size={20} />
+                            </button>
+                        </div>
                         <Input
                             name="search"
                             border={true}
@@ -266,6 +282,7 @@ export default function Chat() {
                     </aside>
                 </section>
             </div>
+            {showCreateConvModal && <CreateConvModal onClose={handleCloseCreateConvModal} />}
         </MainLayout>
     );
 }
