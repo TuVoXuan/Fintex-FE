@@ -32,6 +32,11 @@ import { createConversation } from '../../redux/actions/conversation-action';
 import { useMQTT } from '../../context/mqtt-context';
 import { ImageDetailContainer } from '../../components/image/image-detail-container';
 import MiniFriendCard from '../../components/card/mini-friend-card';
+import FriendProfilePostContainer from '../../container/friend-profile-post-container';
+import AlbumContainer from '../../container/album-container';
+import FriendsContainer from '../../container/friends-container';
+import FriendFriendContainer from '../../container/friend-friend-container';
+import NavItem from '../../components/nav-item/nav-item';
 
 interface Props {
     personId: string;
@@ -41,20 +46,16 @@ export default function Profile({ personId }: Props) {
     const mqtt = useMQTT();
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const sPost = useAppSelector(selectPost);
     const scrollTopRef = useRef<HTMLButtonElement>(null);
     const postsRef = useRef<HTMLDivElement>(null);
-    const swiperRef = useRef<RefSwiper>(null);
     const sConversations = useAppSelector(selectConversations);
-    const sUser = useAppSelector(selectUser);
 
     const [user, setUser] = useState<IUserProfileRes>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [album, setAlbum] = useState<IAlbum[]>([]);
     const [relationship, setRelationship] = useState<Relationship>();
     const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
     const [loadingChat, setLoadingChat] = useState<boolean>(false);
-    const [friends, setFriends] = useState<IFriend[]>([]);
+    const [container, setContainer] = useState<'post' | 'album' | 'friend'>('post');
 
     const handleShowScrollTop = (e: any) => {
         if (e.target.scrollTop > 400) {
@@ -77,34 +78,6 @@ export default function Profile({ personId }: Props) {
         }
     };
 
-    const fetchPost = async (personId: string, limit: number, after?: string) => {
-        try {
-            await dispatch(postPersonLoadMore({ loadMore: { limit, after }, personId }));
-        } catch (error) {
-            toastError((error as IResponseError).error);
-        }
-    };
-
-    const getUserProfile = async (personId: string) => {
-        try {
-            const response = await userApi.getProfile(personId);
-            setUser(response.data.data);
-        } catch (error) {
-            console.log('error: ', error);
-            toastError((error as IResponseError).error);
-        }
-    };
-
-    const getRelationship = async (personId: string) => {
-        try {
-            const response = await friendReqApi.getRelationship(personId);
-            setRelationship(response.data.data);
-        } catch (error) {
-            console.log('error: ', error);
-            toastError((error as IResponseError).error);
-        }
-    };
-
     const handleMakeFriendReq = async () => {
         try {
             setLoadingMakeFriendReq(true);
@@ -116,39 +89,6 @@ export default function Profile({ personId }: Props) {
             console.log('error: ', error);
             toastError((error as IResponseError).error);
         }
-    };
-
-    const getImageClasses = (index: number, arrayLength: number, col: number): string => {
-        let className = 'overflow-hidden image-container';
-        const row = Math.floor(arrayLength / col);
-
-        if (index === 0) {
-            className += ' rounded-tl-lg';
-            if (arrayLength <= col) {
-                className += ' rounded-bl-lg';
-            }
-        }
-        if (index === col - 1) {
-            className += ' rounded-tr-lg';
-        }
-        if (index === arrayLength - 1) {
-            className += ' rounded-br-lg';
-            if (row === 0) {
-                className += ' rounded-tr-lg';
-            }
-        }
-        if (index === row * col) {
-            className += ' rounded-bl-lg';
-        }
-        if (arrayLength - 1 >= row * col && arrayLength < row * col + col && index === row * col - 1) {
-            className += ' rounded-br-lg';
-        }
-
-        if (index === 1) {
-            // console.log(className);
-        }
-
-        return className;
     };
 
     const handleChat = async () => {
@@ -183,45 +123,61 @@ export default function Profile({ personId }: Props) {
         }
     };
 
+    const getRelationship = async (personId: string) => {
+        try {
+            const response = await friendReqApi.getRelationship(personId);
+            setRelationship(response.data.data);
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const getUserProfile = async (personId: string) => {
+        try {
+            const response = await userApi.getProfile(personId);
+            setUser(response.data.data);
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
+    const handleSwitchPage = (value: 'post' | 'album' | 'friend') => () => {
+        setContainer(value);
+    };
+
+    const handleRenderPage = () => {
+        switch (container) {
+            case 'post':
+                return (
+                    <FriendProfilePostContainer
+                        personId={personId}
+                        address={user?.address}
+                        birthday={user?.birthday || new Date().toISOString()}
+                        gender={user?.gender || 'male'}
+                        education={user?.education.name}
+                        onSwitchPage={handleSwitchPage}
+                    />
+                );
+            case 'album':
+                return <AlbumContainer personId={user?._id || ''} />;
+            case 'friend':
+                return <FriendFriendContainer personId={user?._id || ''} />;
+            default:
+                return <></>;
+        }
+    };
+
     useEffect(() => {
         getUserProfile(personId);
         getRelationship(personId);
-        const limit = +(process.env.LIMIT as string);
-
-        if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
-            fetchPost(personId, limit);
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        }
-
-        if (sPost.posts.length > 0) {
-            setLoading(false);
-        }
-
-        userApi
-            .getAlbum({ limit: 9, after: '', id: personId })
-            .then((data) => setAlbum(data.album))
-            .catch((error) => toastError(error));
-
-        userApi
-            .getFriendsOfFriend({ limit: 9, id: personId })
-            .then((data) => setFriends(data.friends))
-            .catch((error) => toastError(error));
-
-        return () => {
-            setUser(undefined);
-            setAlbum([]);
-            setRelationship(undefined);
-            dispatch(resetPost());
-            dispatch(resetComments());
-        };
-    }, [personId]);
+    }, []);
 
     return (
         <MainLayout>
             <section
-                className="relative flex flex-col h-full overflow-y-auto hover:scrollbar-show"
+                className="relative flex flex-col h-full overflow-y-auto scroll-smooth hover:scrollbar-show"
                 id="profile"
                 ref={postsRef}
                 onScroll={handleShowScrollTop}
@@ -296,146 +252,24 @@ export default function Profile({ personId }: Props) {
                             )}
                         </div>
                     </div>
-                </section>
 
-                <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
-                    <div className="sticky w-1/3 space-y-4 -top-3/4 h-fit">
-                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl h-fit">
-                            <h3>Giới thiệu</h3>
-                            <div className="flex items-center gap-3 ">
-                                <BsGenderAmbiguous size={20} />
-                                {user?.gender === 'male' && 'Nam'}
-                                {user?.gender === 'female' && 'Nữ'}
-                                {user?.gender === 'other' && 'Khác'}
-                            </div>
-                            <div className="flex items-center gap-3 ">
-                                <HiOutlineCake size={20} />
-                                {new Date(user?.birthday || '').toLocaleDateString('vi', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: '2-digit',
-                                })}
-                            </div>
-                            {user?.address && (
-                                <div className="flex items-center gap-3 ">
-                                    <GrLocation size={20} />
-                                    {user.address}
-                                </div>
-                            )}
-                            {user?.education && (
-                                <div className="flex items-center gap-3 ">
-                                    <HiOutlineAcademicCap size={20} />
-                                    {user.education.name}
-                                </div>
-                            )}
-                        </div>
-                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
-                            <div className="flex items-end justify-between">
-                                <h3>Ảnh</h3>
-                                <p
-                                    onClick={() => {
-                                        router.push(`${APP_PATH.ALBUM}/${personId}`);
-                                    }}
-                                    className="cursor-pointer hover:text-blue-500"
-                                >
-                                    Xem tất cả ảnh
-                                </p>
-                            </div>
-                            <div className="grid grid-cols-3 gap-1 overflow-hidden rounded-lg">
-                                {album.map((image, index, array) => {
-                                    return (
-                                        <div
-                                            onClick={() => {
-                                                if (swiperRef.current) {
-                                                    swiperRef.current.swiper.hidden = false;
-                                                    swiperRef.current.slideTo(index);
-                                                }
-                                            }}
-                                            key={image.publicId}
-                                            className={`${getImageClasses(
-                                                index,
-                                                array.length,
-                                                3,
-                                            )} relative after:absolute after:content-[""] after:top-0 after:bottom-0 after:left-0 after:right-0 hover:after:bg-gray-500 hover:after:opacity-40 cursor-pointer`}
-                                        >
-                                            <Image
-                                                src={image.url}
-                                                key={image.publicId}
-                                                alt="image"
-                                                width={100}
-                                                height={100}
-                                                layout="responsive"
-                                                objectFit="cover"
-                                                objectPosition="center"
-                                                placeholder="blur"
-                                                blurDataURL="/images/avatar.jpg"
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                        <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
-                            <div className="flex items-center justify-between">
-                                <h3>Bạn bè</h3>
-                                <p
-                                    onClick={() => {
-                                        router.push(`${APP_PATH.FRIEND}/${personId}`);
-                                    }}
-                                    className="cursor-pointer hover:text-blue-500"
-                                >
-                                    Xem tất cả bạn bè
-                                </p>
-                            </div>
-                            <div className="grid grid-cols-3 gap-3">
-                                {friends.map((item) => (
-                                    <MiniFriendCard
-                                        key={item._id}
-                                        id={item._id}
-                                        avatar={item.avatar}
-                                        name={item.name.fullName}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="w-2/3">
-                        <InfiniteScroll
-                            next={() => {
-                                if (!sPost.ended) {
-                                    const limit = +(process.env.LIMIT as string);
-                                    if (sPost.after) {
-                                        fetchPost(personId, limit, sPost.after);
-                                    }
-                                }
-                            }}
-                            hasMore={!sPost.ended}
-                            loader={<LoadingPost />}
-                            dataLength={sPost.posts.length}
-                            scrollableTarget="profile"
-                            className="relative rounded-[15px] bg-secondary-10 space-y-5 px-10"
-                        >
-                            {!loading ? (
-                                sPost.posts.map((post) => <Post key={post._id} post={post} />)
-                            ) : (
-                                <LoadingPost />
-                            )}
-                        </InfiniteScroll>
-                        <div className="absolute w-10 h-10 bottom-3 right-3">
-                            <button
-                                ref={scrollTopRef}
-                                onClick={handleScrollToTop}
-                                className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
-                            >
-                                <IoIosArrowUp size={20} />
-                            </button>
-                        </div>
-                    </div>
+                    <nav className="px-4 space-x-4 overflow-hidden rounded-xl">
+                        <NavItem title="Bài viết" actived={container === 'post'} onClick={handleSwitchPage('post')} />
+                        <NavItem title="Ảnh" actived={container === 'album'} onClick={handleSwitchPage('album')} />
+                        <NavItem title="Bạn bè" actived={container === 'friend'} onClick={handleSwitchPage('friend')} />
+                    </nav>
                 </section>
+                {handleRenderPage()}
+                <div className="absolute w-10 h-10 bottom-3 right-3">
+                    <button
+                        ref={scrollTopRef}
+                        onClick={handleScrollToTop}
+                        className="fixed p-2 bg-white border rounded-md bottom-3 hover:bg-secondary-30"
+                    >
+                        <IoIosArrowUp size={20} />
+                    </button>
+                </div>
             </section>
-            <ImageDetailContainer images={album} ref={swiperRef} />
         </MainLayout>
     );
 }
