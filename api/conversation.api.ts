@@ -11,6 +11,10 @@ const conversationApi = {
     createConversation: async (friendId: string) => {
         return await axiosService.post<IResponseSuccess<IConversation>>(URL, { users: [{ id: friendId }] });
     },
+    createGroupConv: async (body: ICreateConv) => {
+        const users = body.friendIds.map((item) => ({ id: item }));
+        return await axiosService.post<IResponseSuccess<IConversation>>(URL, { users, name: body.name });
+    },
 };
 
 export default conversationApi;

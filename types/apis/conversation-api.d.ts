@@ -25,3 +25,8 @@ declare interface IConversation {
     }[];
     name?: string;
 }
+
+declare interface ICreateConv {
+    friendIds: string[];
+    name: string;
+}

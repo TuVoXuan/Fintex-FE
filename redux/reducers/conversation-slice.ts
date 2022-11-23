@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
     createConversation,
+    createGroupConversation,
     createMessage,
     getConversations,
     getMessageFirstTime,
@@ -148,6 +149,16 @@ export const conversationsSlice = createSlice({
                     }
                 }
             }
+        });
+        builder.addCase(createGroupConversation.fulfilled, (state, action: PayloadAction<IConversation>) => {
+            state.unshift({
+                after: '',
+                _id: action.payload._id,
+                messages: [],
+                participants: action.payload.participants,
+                name: action.payload.name || '',
+                isOnline: false,
+            });
         });
     },
 });

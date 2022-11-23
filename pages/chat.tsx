@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { MainLayout } from '../layouts/main-layout';
 import { seenMessage } from '../redux/actions/conversation-action';
 import { selectConversations } from '../redux/reducers/conversation-slice';
+import { selectFriend } from '../redux/reducers/friend-slice';
 import { selectUser } from '../redux/reducers/user-slice';
 import { toastError } from '../util/toast';
 
@@ -30,7 +31,7 @@ export default function Chat() {
     const [searchConvs, setSearchConvs] = useState<IConversationStore[]>([]);
     const [isSearching, setIsSearching] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);
-    const [showCreateConvModal, setShowCreateConvModal] = useState<boolean>(true);
+    const [showCreateConvModal, setShowCreateConvModal] = useState<boolean>(false);
 
     const handleShowCreateConvModal = () => {
         setShowCreateConvModal(true);
@@ -132,7 +133,10 @@ export default function Chat() {
                     <aside className="bg-white rounded-[15px] p-5 space-y-4 overflow-hidden flex flex-col">
                         <div className="flex items-center justify-between">
                             <h3>Trò chuyện</h3>
-                            <button className="p-3 transition-colors duration-150 ease-linear rounded-full hover:bg-secondary-10">
+                            <button
+                                onClick={handleShowCreateConvModal}
+                                className="p-3 transition-colors duration-150 ease-linear rounded-full hover:bg-secondary-10"
+                            >
                                 <FiEdit size={20} />
                             </button>
                         </div>

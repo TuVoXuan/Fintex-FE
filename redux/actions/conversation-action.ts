@@ -66,3 +66,15 @@ export const getMessagePagination = createAsyncThunk(
         }
     },
 );
+
+export const createGroupConversation = createAsyncThunk(
+    'converstions/createGroup',
+    async (body: ICreateConv, thunkAPI) => {
+        try {
+            const response = await conversationApi.createGroupConv(body);
+            return response.data.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    },
+);
