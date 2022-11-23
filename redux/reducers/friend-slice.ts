@@ -1,7 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { friendReqAccept, friendReqCreate, friendReqGetPagination } from '../actions/notify-action';
-import { userDeleteSendFriendReq, userGetFriends, userGetSendFriendReq } from '../actions/user-action';
+import {
+    userDeleteFriend,
+    userDeleteSendFriendReq,
+    userGetFriends,
+    userGetSendFriendReq,
+} from '../actions/user-action';
 
 interface FriendState {
     friendReq: {
@@ -51,6 +56,9 @@ export const friendSlice = createSlice({
         removeFriendReq: (state, action: PayloadAction<string>) => {
             state.friendReq.data = state.friendReq.data.filter((req) => req._id !== action.payload);
         },
+        deleteFriend: (state, action: PayloadAction<string>) => {
+            state.friends.data = state.friends.data.filter((friend) => friend._id !== action.payload);
+        },
     },
     extraReducers(builder) {
         builder.addCase(friendReqCreate.fulfilled, (state, action: PayloadAction<IFriendReq>) => {
@@ -72,10 +80,13 @@ export const friendSlice = createSlice({
             state.friends.data = [...state.friends.data, ...action.payload.friends];
             state.friends.after = action.payload.after;
         });
+        builder.addCase(userDeleteFriend.fulfilled, (state, action: PayloadAction<string>) => {
+            state.friends.data = state.friends.data.filter((friend) => friend._id !== action.payload);
+        });
     },
 });
 
-export const { addOnlineFriends, removeOfflineFriend, removeFriendReq } = friendSlice.actions;
+export const { addOnlineFriends, removeOfflineFriend, removeFriendReq, deleteFriend } = friendSlice.actions;
 
 export const selectFriend = (state: RootState) => state.friend;
 

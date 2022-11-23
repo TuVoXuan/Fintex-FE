@@ -6,7 +6,13 @@ import { useSocket } from '../context/socket-context';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { notifyHandleSee } from '../redux/actions/notify-action';
 import { setLastActive } from '../redux/reducers/conversation-slice';
-import { addOnlineFriends, removeFriendReq, removeOfflineFriend, selectFriend } from '../redux/reducers/friend-slice';
+import {
+    addOnlineFriends,
+    deleteFriend,
+    removeFriendReq,
+    removeOfflineFriend,
+    selectFriend,
+} from '../redux/reducers/friend-slice';
 import { addNotifi, addReceiveFriendReq, addSeeNotifi } from '../redux/reducers/notification-slice';
 import { selectUser } from '../redux/reducers/user-slice';
 import { toastError, toastSuccess } from '../util/toast';
@@ -67,6 +73,9 @@ export default function SocketRoute({ children }: Props) {
                 }
                 if (data.friendReqId) {
                     dispatch(removeFriendReq(data.friendReqId));
+                }
+                if (data.type === 'deleteFriend') {
+                    dispatch(deleteFriend(data.from._id));
                 }
                 break;
             default:
