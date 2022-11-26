@@ -118,7 +118,9 @@ export const MainLayout = ({ children }: Props) => {
         let num = 0;
         for (const conv of sConversation) {
             if (conv.messages.length > 0) {
-                const isSeen = isMessageSeen(conv.messages[0]);
+                const isSeen = conv.messages[0].message[conv.messages[0].message.length - 1].seen.includes(
+                    sUser.data?._id || '',
+                );
                 if (conv.messages.length > 0 && !isSeen && conv.messages[0].sender !== sUser.data?._id) {
                     num++;
                     break;

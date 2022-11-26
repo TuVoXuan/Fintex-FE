@@ -44,10 +44,10 @@ export default function DetailPost() {
             }
         }
 
-        return () => {
-            dispatch(resetPost());
-            dispatch(resetComments());
-        };
+        // return () => {
+        //     dispatch(resetPost());
+        //     dispatch(resetComments());
+        // };
     }, []);
 
     return (

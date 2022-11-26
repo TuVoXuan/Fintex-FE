@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import APP_PATH from '../../constants/app-path';
@@ -12,7 +12,7 @@ interface Props {
     id: string;
 }
 
-export default function MiniFriendCard({ avatar, name, id }: Props) {
+function MiniFriendCard({ avatar, name, id }: Props) {
     const router = useRouter();
     const dispatch = useAppDispatch();
 
@@ -39,3 +39,10 @@ export default function MiniFriendCard({ avatar, name, id }: Props) {
         </div>
     );
 }
+
+export default memo(MiniFriendCard, (prevProps, nextProps) => {
+    if (prevProps.avatar === nextProps.avatar && prevProps.id === nextProps.id && prevProps.name === nextProps.name) {
+        return true;
+    }
+    return false;
+});

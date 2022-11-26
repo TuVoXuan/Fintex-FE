@@ -1,12 +1,13 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Avatar from '../../avatar/avatar';
+import { memo } from 'react';
 interface Props {
     images: IImage[];
     postId: string;
 }
 
-export default function AvatarCover({ images, postId }: Props) {
+function AvatarCover({ images, postId }: Props) {
     const router = useRouter();
     const handleViewDetailPost = () => {
         router.push(`/detail-post/${postId}`);
@@ -36,3 +37,10 @@ export default function AvatarCover({ images, postId }: Props) {
         </div>
     );
 }
+
+export default memo(AvatarCover, (prevProps, nextProps) => {
+    if (prevProps.images === nextProps.images && prevProps.postId === nextProps.postId) {
+        return true;
+    }
+    return false;
+});

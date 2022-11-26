@@ -78,7 +78,7 @@ export default function ChatImages({ position, me, images, className, seen, part
                         </div>
                     </div>
                     {seen && participants && seen.length > 1 && (
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-x-2">
                             {seen.map((item) => {
                                 const participant = participants.find((p) => p._id === item);
                                 return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;
@@ -177,7 +177,7 @@ export default function ChatImages({ position, me, images, className, seen, part
                         </div>
                     </div>
                     {seen && participants && seen.length > 1 && (
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-x-2">
                             {seen.map((item) => {
                                 const participant = participants.find((p) => p._id === item);
                                 return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;
@@ -271,7 +271,7 @@ export default function ChatImages({ position, me, images, className, seen, part
                         </div>
                     </div>
                     {seen && participants && seen.length > 1 && (
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-x-2">
                             {seen.map((item) => {
                                 const participant = participants.find((p) => p._id === item);
                                 return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;

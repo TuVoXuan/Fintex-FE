@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectConversations, setLastActive, setOnline } from '../../redux/reducers/conversation-slice';
 import { selectFriend } from '../../redux/reducers/friend-slice';
@@ -11,7 +11,7 @@ interface Props {
     size: 'medium' | 'small';
 }
 
-export default function AvatarChat({ participants, size, conversationId, onlyDisplay = false }: Props) {
+function AvatarChat({ participants, size, conversationId, onlyDisplay = false }: Props) {
     const dispatch = useAppDispatch();
     const sOnlineFriends = useAppSelector(selectFriend).onlineFriends;
     const sConv = useAppSelector(selectConversations).find((item) => item._id === conversationId);
@@ -106,3 +106,15 @@ export default function AvatarChat({ participants, size, conversationId, onlyDis
         </section>
     );
 }
+
+export default memo(AvatarChat, (prevProps, nextProps) => {
+    if (
+        prevProps.conversationId === nextProps.conversationId &&
+        prevProps.onlyDisplay === nextProps.onlyDisplay &&
+        prevProps.participants === nextProps.participants &&
+        prevProps.size === nextProps.size
+    ) {
+        return true;
+    }
+    return false;
+});

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { RiSendPlane2Line } from 'react-icons/ri';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -103,14 +103,17 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
         return false;
     };
 
-    const onImageClick = (value: string) => () => {
-        const hash = shortHash(value);
-        const index = messImages.findIndex((item) => shortHash(item.url) === hash);
-        if (index > -1 && swiperRef.current && swiperRef.current.swiper) {
-            swiperRef.current.swiper.hidden = false;
-            swiperRef.current.slideTo(index);
-        }
-    };
+    const onImageClick = useCallback(
+        (value: string) => () => {
+            const hash = shortHash(value);
+            const index = messImages.findIndex((item) => shortHash(item.url) === hash);
+            if (index > -1 && swiperRef.current && swiperRef.current.swiper) {
+                swiperRef.current.swiper.hidden = false;
+                swiperRef.current.slideTo(index);
+            }
+        },
+        [messImages],
+    );
 
     useEffect(() => {
         const result: IAlbum[] = [];
@@ -160,7 +163,7 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
             <div
                 id="chat"
                 ref={refInfinityScroll}
-                className="flex flex-col-reverse flex-auto px-5 overflow-y-auto hover:scrollbar-show"
+                className="flex flex-col-reverse flex-auto px-5 pb-2 overflow-y-auto hover:scrollbar-show"
             >
                 {loading ? (
                     <LoadingMessages />
@@ -175,7 +178,7 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                         scrollableTarget="chat"
                     >
                         {sConv &&
-                            sConv.messages.map((item) => {
+                            sConv.messages.map((item, index) => {
                                 if (first && item.sender === sUser?._id && isMessageSeen(item)) {
                                     first = false;
                                     return (
@@ -183,6 +186,21 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                                             onImageClick={onImageClick}
                                             key={item._id}
                                             message={item}
+                                            participants={participants}
+                                        />
+                                    );
+                                }
+
+                                if (first && item.sender !== sUser?._id) {
+                                    first = false;
+                                    return (
+                                        <ChatItemFriend
+                                            onImageClick={onImageClick}
+                                            key={item._id}
+                                            message={item}
+                                            senderAvatar={
+                                                participants.find((part) => part._id === item.sender)?.avatar || ''
+                                            }
                                             participants={participants}
                                         />
                                     );

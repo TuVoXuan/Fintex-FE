@@ -43,7 +43,7 @@ export default function ChatText({ position, me, text, className, seen, particip
         <>
             <div className={`${me && 'justify-end'} flex gap-x-1`}>
                 <p className={`inline max-w-[80%] rounded-md p-3 ${getMessageClasses()} ${className}`}>{text}</p>
-                <div className="flex items-end w-4">
+                <div className={`flex items-end ${me ? 'w-4' : 'grow justify-end'}`}>
                     {seen && participants && seen.length === 1 && (
                         <Avatar
                             size="super-nano"
@@ -53,7 +53,7 @@ export default function ChatText({ position, me, text, className, seen, particip
                 </div>
             </div>
             {seen && participants && seen.length > 1 && (
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-x-2">
                     {seen.map((item) => {
                         const participant = participants.find((p) => p._id === item);
                         return <Avatar key={item} size="super-nano" url={participant?.avatar || ''} />;

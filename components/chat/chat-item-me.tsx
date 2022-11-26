@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import ChatText from './chat-text';
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
@@ -11,7 +11,7 @@ interface Props {
     onImageClick: (value: string) => () => void;
 }
 
-export default function ChatItemMe({ message, participants, onImageClick }: Props) {
+function ChatItemMe({ message, participants, onImageClick }: Props) {
     timeago.register('vi', vi);
     const length = message.message.length;
     const [id, setId] = useState<string>('');
@@ -41,7 +41,7 @@ export default function ChatItemMe({ message, participants, onImageClick }: Prop
 
     return (
         <div className="space-y-1">
-            <section className="space-y-1">
+            <section className="relative space-y-1">
                 {message.message.map((item, index) => {
                     if (item.messType === 'text') {
                         return (
@@ -77,3 +77,14 @@ export default function ChatItemMe({ message, participants, onImageClick }: Prop
         </div>
     );
 }
+
+export default memo(ChatItemMe, (prevProps, nextProps) => {
+    if (
+        prevProps.message === nextProps.message &&
+        prevProps.onImageClick === nextProps.onImageClick &&
+        prevProps.participants === nextProps.participants
+    ) {
+        return true;
+    }
+    return false;
+});

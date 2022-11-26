@@ -1,12 +1,10 @@
 import mqtt, { MqttClient } from 'mqtt';
-import { useRouter } from 'next/router';
-import { createContext, MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, MutableRefObject, useContext, useEffect, useRef } from 'react';
 import APP_PATH from '../constants/app-path';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { seenMessage } from '../redux/actions/conversation-action';
 import { addMessage, seen } from '../redux/reducers/conversation-slice';
 import { selectUser } from '../redux/reducers/user-slice';
-import { toastError, toastSuccess } from '../util/toast';
 
 type MqttType = {
     mqttClient: MqttClient | null;
@@ -26,7 +24,6 @@ export const MQTTProvider = ({ children }: Props) => {
     const sUser = useAppSelector(selectUser);
     const userId = sUser.data?._id || '';
     const activedConversation = useRef<string>('');
-    const router = useRouter();
 
     const setConversation = (value: string) => {
         activedConversation.current = value;
@@ -40,7 +37,10 @@ export const MQTTProvider = ({ children }: Props) => {
                 message = JSON.parse(data.data) as IMessageCreateRes;
 
                 dispatch(addMessage(message));
-                if (activedConversation.current === message.conversationId && router.asPath === APP_PATH.CHAT) {
+                if (
+                    activedConversation.current === message.conversationId &&
+                    window.location.pathname === APP_PATH.CHAT
+                ) {
                     try {
                         await dispatch(
                             seenMessage({

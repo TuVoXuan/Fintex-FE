@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { memo } from 'react';
 import ImageContainer from '../components/image/image-container';
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
     postId?: string;
 }
 
-export default function ImageLayout({ images, postId }: Props) {
+function ImageLayout({ images, postId }: Props) {
     const router = useRouter();
 
     const handleSeeDetailPost = () => {
@@ -199,3 +200,10 @@ export default function ImageLayout({ images, postId }: Props) {
 
     return <></>;
 }
+
+export default memo(ImageLayout, (prevProps, nextProps) => {
+    if (prevProps.images === nextProps.images && prevProps.postId === nextProps.postId) {
+        return true;
+    }
+    return false;
+});

@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { memo } from 'react';
 
 interface Props {
     size: 'super-nano' | 'nano' | 'tiny' | 'small' | 'medium' | 'semi-large' | 'large' | 'huge';
@@ -7,7 +8,7 @@ interface Props {
     online?: boolean;
 }
 
-export default function Avatar({ size, url, className, online }: Props) {
+function Avatar({ size, url, className, online }: Props) {
     const handleSize = () => {
         switch (size) {
             case 'super-nano':
@@ -49,3 +50,15 @@ export default function Avatar({ size, url, className, online }: Props) {
         </section>
     );
 }
+
+export default memo(Avatar, (prevProps, nextProps) => {
+    if (
+        prevProps.className === nextProps.className &&
+        prevProps.online === nextProps.online &&
+        prevProps.size === nextProps.size &&
+        prevProps.url === nextProps.url
+    ) {
+        return true;
+    }
+    return false;
+});
