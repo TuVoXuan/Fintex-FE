@@ -7,7 +7,10 @@ import {
     getConversations,
     getMessageFirstTime,
     getMessagePagination,
+    removeMember,
+    renameGroupConv,
     seenMessage,
+    switchAdmin,
 } from '../actions/conversation-action';
 
 const initialState: IConversationStore[] = [];
@@ -79,6 +82,7 @@ export const conversationsSlice = createSlice({
                         participants: conv.participants,
                         name: conv.name || '',
                         isOnline: false,
+                        admin: conv.admin,
                     });
                 } else {
                     state.push({
@@ -88,6 +92,7 @@ export const conversationsSlice = createSlice({
                         participants: conv.participants,
                         name: conv.name || '',
                         isOnline: false,
+                        admin: conv.admin,
                     });
                 }
             }
@@ -137,6 +142,7 @@ export const conversationsSlice = createSlice({
                 participants: action.payload.participants,
                 name: '',
                 isOnline: false,
+                admin: action.payload.admin,
             });
         });
         builder.addCase(getMessagePagination.fulfilled, (state, action: PayloadAction<IMessagePaginate>) => {
@@ -159,6 +165,27 @@ export const conversationsSlice = createSlice({
                 name: action.payload.name || '',
                 isOnline: false,
             });
+        });
+        builder.addCase(renameGroupConv.fulfilled, (state, action: PayloadAction<IRenameConversation>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.name = action.payload.name;
+            }
+        });
+        builder.addCase(switchAdmin.fulfilled, (state, action: PayloadAction<ISwitchAdminRes>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.admin = action.payload.newAdmin;
+            }
+        });
+        builder.addCase(removeMember.fulfilled, (state, action: PayloadAction<IEditMemberConv>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                const indexMember = conv.participants.findIndex((item) => item._id === action.payload.memberId);
+                if (indexMember > -1) {
+                    conv.participants.splice(indexMember, 1);
+                }
+            }
         });
     },
 });

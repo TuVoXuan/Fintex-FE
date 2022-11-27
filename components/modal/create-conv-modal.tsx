@@ -255,11 +255,6 @@ export default function CreateConvModal({ onClose }: Props) {
                         <Button onClick={handleSubmit} color="primary" title="Tạo" className="w-fit" />
                     )}
                 </div>
-                <div>
-                    {selectedFriends.map((item) => (
-                        <p>{item}</p>
-                    ))}
-                </div>
             </div>
         </section>
     );

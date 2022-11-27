@@ -129,3 +129,12 @@ export const userGetFriends = createAsyncThunk('user/getFriends', async (param: 
         return thunkAPI.rejectWithValue(error);
     }
 });
+
+export const userDeleteFriend = createAsyncThunk('user/deleteFriend', async (friendId: string, thunkAPI) => {
+    try {
+        const response = await userApi.deleteFriend(friendId);
+        return friendId;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

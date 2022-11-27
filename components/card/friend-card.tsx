@@ -5,13 +5,16 @@ import APP_PATH from '../../constants/app-path';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { createConversation } from '../../redux/actions/conversation-action';
 import { selectConversations } from '../../redux/reducers/conversation-slice';
-import { toastError } from '../../util/toast';
+import { toastError, toastSuccess } from '../../util/toast';
 import { useMQTT } from '../../context/mqtt-context';
 import { VscLoading } from 'react-icons/vsc';
 import { resetComments } from '../../redux/reducers/comments-slice';
 import { resetPost } from '../../redux/reducers/post-slice';
 import { selectUser } from '../../redux/reducers/user-slice';
 import friendReqApi from '../../api/friend-req-api';
+import LoadingButton from '../loading/loading-button';
+import { userDeleteFriend } from '../../redux/actions/user-action';
+import { friendReqCreate } from '../../redux/actions/notify-action';
 
 interface Props {
     avatar: string;
@@ -28,6 +31,8 @@ export default function FriendCard({ avatar, name, id }: Props) {
 
     const [loadingChat, setLoadingChat] = useState<boolean>(false);
     const [relationship, setRelationship] = useState<Relationship>();
+    const [loadingRelationship, setLoadingRelationship] = useState<boolean>(false);
+    const [loadingMakeFriendReq, setLoadingMakeFriendReq] = useState<boolean>(false);
 
     const handleChat = async () => {
         try {
@@ -61,11 +66,14 @@ export default function FriendCard({ avatar, name, id }: Props) {
 
     const getRelationship = async (personId: string) => {
         try {
+            setLoadingRelationship(true);
             const response = await friendReqApi.getRelationship(personId);
             setRelationship(response.data.data);
+            setLoadingRelationship(false);
         } catch (error) {
             console.log('error: ', error);
             toastError((error as IResponseError).error);
+            setLoadingRelationship(false);
         }
     };
 
@@ -73,6 +81,28 @@ export default function FriendCard({ avatar, name, id }: Props) {
         dispatch(resetPost());
         dispatch(resetComments());
         router.push(`${APP_PATH.PROFILE}/${id}`);
+    };
+
+    const handleDeleteFriend = async () => {
+        try {
+            await dispatch(userDeleteFriend(id)).unwrap();
+            setRelationship('notFriend');
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    };
+
+    const handleMakeFriendReq = async () => {
+        try {
+            setLoadingMakeFriendReq(true);
+            await dispatch(friendReqCreate(id));
+            setRelationship('requesting');
+            toastSuccess('Gửi lời mời kết bạn thành công');
+            setLoadingMakeFriendReq(false);
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
     };
 
     useEffect(() => {
@@ -96,32 +126,54 @@ export default function FriendCard({ avatar, name, id }: Props) {
                 <p className="text-lg font-semibold cursor-pointer" onClick={handleClick}>
                     {name}
                 </p>
-                {sUser?._id !== id && (
-                    <div className="flex gap-x-4">
-                        {relationship !== 'isFriend' ? (
-                            <button className="p-3 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300">
-                                Kết bạn
-                            </button>
-                        ) : (
-                            <>
-                                {loadingChat ? (
-                                    <button className="p-2 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300">
-                                        <VscLoading size={20} className="text-blue-600 animate-spin" />
+                {loadingRelationship ? (
+                    <div className="flex gap-x-2">
+                        <LoadingButton />
+                        <LoadingButton />
+                    </div>
+                ) : (
+                    sUser?._id !== id && (
+                        <div className="flex gap-x-4">
+                            {relationship !== 'isFriend' ? (
+                                relationship === 'requesting' ? (
+                                    <button
+                                        onClick={handleMakeFriendReq}
+                                        className="p-3 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300"
+                                    >
+                                        Đã gửi kết bạn
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={handleChat}
+                                        onClick={handleMakeFriendReq}
                                         className="p-3 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300"
                                     >
-                                        Nhắn tin
+                                        Kết bạn
                                     </button>
-                                )}
-                                <button className="p-3 font-semibold rounded-md text-secondary-80 bg-secondary-20 hover:bg-secondary-30">
-                                    Hủy kết bạn
-                                </button>
-                            </>
-                        )}
-                    </div>
+                                )
+                            ) : (
+                                <>
+                                    {loadingChat ? (
+                                        <button className="p-2 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300">
+                                            <VscLoading size={20} className="text-blue-600 animate-spin" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleChat}
+                                            className="p-3 font-semibold text-blue-600 bg-blue-100 rounded-md hover:bg-blue-300"
+                                        >
+                                            Nhắn tin
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={handleDeleteFriend}
+                                        className="p-3 font-semibold rounded-md text-secondary-80 bg-secondary-20 hover:bg-secondary-30"
+                                    >
+                                        Hủy kết bạn
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    )
                 )}
             </div>
         </div>

@@ -3,7 +3,7 @@ import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import { BsFilePost, BsPeopleFill } from 'react-icons/bs';
-import { FaCommentAlt, FaSmileWink } from 'react-icons/fa';
+import { FaCommentAlt, FaSmileWink, FaUserMinus } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import APP_PATH from '../../constants/app-path';
 
@@ -28,6 +28,8 @@ export default function NotifyCard({ notify }: Props) {
             case 'replyComment':
             case 'commentPost':
                 return <FaCommentAlt size={18} fill="#fff" />;
+            case 'deleteFriend':
+                return <FaUserMinus size={18} fill="#fff" />;
             default:
                 break;
         }

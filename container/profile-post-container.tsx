@@ -117,13 +117,11 @@ export default function ProfilePostContainer({ onSwitchPage }: Props) {
             .getMyAlbum({ limit: 9 })
             .then((data) => setAlbum(data.album))
             .catch((error) => toastError(error));
-    }, []);
 
-    useEffect(() => {
         if (sFriends.data.length === 0) {
             dispatch(userGetFriends({ limit: 9 })).catch((error) => toastError(error));
         }
-    }, [sFriends]);
+    }, []);
 
     const getImageClasses = (index: number, arrayLength: number, col: number): string => {
         let className = 'overflow-hidden image-container';
@@ -162,7 +160,7 @@ export default function ProfilePostContainer({ onSwitchPage }: Props) {
         <>
             <section className="py-[30px] px-12 rounded-[15px] bg-secondary-10 mt-7 flex cursor-default">
                 <div className="sticky w-1/3 space-y-4 -top-full h-fit">
-                    <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                    <div className="p-6 space-y-4 bg-white rounded-2xl">
                         <h3>Giới thiệu</h3>
                         <div className="flex items-center gap-3 ">
                             <BsGenderAmbiguous size={20} />
@@ -192,7 +190,7 @@ export default function ProfilePostContainer({ onSwitchPage }: Props) {
                             </div>
                         )}
                     </div>
-                    <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                    <div className="p-6 space-y-4 bg-white rounded-2xl">
                         <div className="flex items-center justify-between">
                             <h3>Ảnh</h3>
                             <p onClick={onSwitchPage('album')} className="cursor-pointer hover:text-blue-500">
@@ -233,7 +231,7 @@ export default function ProfilePostContainer({ onSwitchPage }: Props) {
                             })}
                         </div>
                     </div>
-                    <div className="px-5 py-6 space-y-4 bg-white rounded-2xl">
+                    <div className="p-6 space-y-4 bg-white rounded-2xl">
                         <div className="flex items-center justify-between">
                             <h3>Bạn bè</h3>
                             <p onClick={onSwitchPage('friend')} className="cursor-pointer hover:text-blue-500">

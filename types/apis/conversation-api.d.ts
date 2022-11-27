@@ -24,9 +24,25 @@ declare interface IConversation {
         updatedAt: string;
     }[];
     name?: string;
+    admin?: IParticipant;
 }
 
 declare interface ICreateConv {
     friendIds: string[];
     name: string;
+}
+
+declare interface IRenameConversation {
+    conversationId: string;
+    name: string;
+}
+
+declare interface IEditMemberConv {
+    conversationId: string;
+    memberId: string;
+}
+
+declare interface ISwitchAdminRes {
+    newAdmin: IParticipant;
+    conversationId: string;
 }
