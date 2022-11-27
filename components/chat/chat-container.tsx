@@ -22,6 +22,8 @@ import vi from 'timeago.js/lib/lang/vi';
 import { selectFriend } from '../../redux/reducers/friend-slice';
 import { ImageDetailContainer } from '../image/image-detail-container';
 import { shortHash } from '../../util/short-hash';
+import { BsThreeDots } from 'react-icons/bs';
+import SettingGroupChatModal from '../modal/setting-group-chat-modal';
 
 interface Props {
     conversationId: string;
@@ -44,7 +46,17 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
     const [images, setImages] = useState<IImageStore[]>([]);
     const [isSubmit, setIsSubmit] = useState(false);
     const [messImages, setMessImages] = useState<IAlbum[]>([]);
+    const [showSettingGroupChatModal, setShowSettingGroupChatModal] = useState<boolean>(false);
+
     let first = true;
+
+    const handleShowSettingModal = () => {
+        setShowSettingGroupChatModal(true);
+    };
+
+    const handleCloseSettingModal = () => {
+        setShowSettingGroupChatModal(false);
+    };
 
     const fetchMessages = async () => {
         if (sConv?.after !== 'end') {
@@ -139,121 +151,136 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
     }, [conversationId]);
 
     return (
-        <div className="flex flex-col w-full h-full overflow-hidden">
-            <div className="flex gap-x-4 px-5 py-2 border-b-[1px] border-secondary-20">
-                <AvatarChat onlyDisplay conversationId={conversationId} participants={participants} size="small" />
-                {/* <Avatar size="small" url={participants[0].avatar} /> */}
-                <aside className="flex flex-col justify-center">
-                    <p className="font-semibold">{name ? name : participants[0].name.fullName}</p>
-                    {sConv && (
-                        <>
-                            {sConv.isOnline ? (
-                                <p>Đang hoạt động</p>
-                            ) : (
-                                <>{sConv.lastActive && <TimeAgo datetime={sConv.lastActive} locale="vi" />}</>
+        <>
+            <div className="flex flex-col w-full h-full overflow-hidden">
+                <div className="flex gap-x-4 px-5 py-2 border-b-[1px] border-secondary-20">
+                    <AvatarChat onlyDisplay conversationId={conversationId} participants={participants} size="small" />
+                    {/* <Avatar size="small" url={participants[0].avatar} /> */}
+                    <aside className="flex items-center justify-between w-full">
+                        <div className="flex flex-col justify-center">
+                            <p className="font-semibold">{name ? name : participants[0].name.fullName}</p>
+                            {sConv && (
+                                <>
+                                    {sConv.isOnline ? (
+                                        <p>Đang hoạt động</p>
+                                    ) : (
+                                        <>{sConv.lastActive && <TimeAgo datetime={sConv.lastActive} locale="vi" />}</>
+                                    )}
+                                </>
                             )}
-                        </>
-                    )}
-                </aside>
-            </div>
+                        </div>
+                        {sConv && sConv.participants.length > 1 && (
+                            <button
+                                onClick={handleShowSettingModal}
+                                className="p-2 transition-colors duration-300 ease-linear bg-white rounded-full bg-secondary-2 hover:bg-secondary-20"
+                            >
+                                <BsThreeDots size={20} />
+                            </button>
+                        )}
+                    </aside>
+                </div>
 
-            <div
-                id="chat"
-                ref={refInfinityScroll}
-                className="flex flex-col-reverse flex-auto px-5 overflow-y-auto hover:scrollbar-show"
-            >
-                {loading ? (
-                    <LoadingMessages />
-                ) : (
-                    <InfiniteScroll
-                        next={fetchMessages}
-                        hasMore={sConv?.after !== 'end'}
-                        dataLength={sConv?.messages.length || 0}
-                        inverse={true}
-                        loader={<LoadingMessages />}
-                        className="flex flex-col-reverse gap-y-5"
-                        scrollableTarget="chat"
-                    >
-                        {sConv &&
-                            sConv.messages.map((item) => {
-                                if (first && item.sender === sUser?._id && isMessageSeen(item)) {
-                                    first = false;
-                                    return (
-                                        <ChatItemMe
-                                            onImageClick={onImageClick}
-                                            key={item._id}
-                                            message={item}
-                                            participants={participants}
-                                        />
-                                    );
-                                }
-
-                                if (item.sender === sUser?._id) {
-                                    return <ChatItemMe onImageClick={onImageClick} key={item._id} message={item} />;
-                                } else {
-                                    return (
-                                        <ChatItemFriend
-                                            onImageClick={onImageClick}
-                                            key={item._id}
-                                            message={item}
-                                            senderAvatar={
-                                                participants.find((part) => part._id === item.sender)?.avatar || ''
-                                            }
-                                        />
-                                    );
-                                }
-                            })}
-                    </InfiniteScroll>
-                )}
-            </div>
-            <div className="px-5 py-2 flex border-t-[1px] border-secondary-20 gap-x-4 w-full">
-                <form
-                    id="chatMessage"
-                    className={`w-4/5 grow border-[1px] rounded-2xl space-y-2 ${isSubmit && 'cursor-not-allowed'}`}
-                    onSubmit={handleSubmit(onSubmit)}
+                <div
+                    id="chat"
+                    ref={refInfinityScroll}
+                    className="flex flex-col-reverse flex-auto px-5 overflow-y-auto hover:scrollbar-show"
                 >
-                    {images.length > 0 && (
-                        <DivScrollHorizontal className="flex px-2 py-1 overflow-x-auto rounded-2xl bg-secondary-20 hover:scrollbar-show gap-x-2">
-                            {images.map((image) => (
-                                <ImageCard
-                                    key={image.id}
-                                    id={image.id}
-                                    src={image.url}
-                                    onClose={setImages}
-                                    disabled={isSubmit}
-                                />
-                            ))}
-                        </DivScrollHorizontal>
-                    )}
-                    <Input
-                        name="message"
-                        isTextArea
-                        placeholder="Aa..."
-                        isHasEmojiIcon
-                        isHasPhotoIcon
-                        isMultipleImages
-                        disabled={isSubmit}
-                        type="text"
-                        onChangeImages={chooseAnotherImages}
-                        register={register}
-                    />
-                </form>
-                <button
-                    type="submit"
-                    form="chatMessage"
-                    disabled={isSubmit}
-                    className={`self-end h-full bg-blue-200 max-h-14 aspect-square rounded-2xl hover:bg-blue-300 grow-0 shrink-0 ${
-                        isSubmit && 'cursor-not-allowed'
-                    }`}
-                >
-                    {isSubmit ? (
-                        <VscLoading size={24} className="mx-auto text-blue-600 animate-spin" />
+                    {loading ? (
+                        <LoadingMessages />
                     ) : (
-                        <RiSendPlane2Line className="mx-auto text-blue-600" size={24} />
+                        <InfiniteScroll
+                            next={fetchMessages}
+                            hasMore={sConv?.after !== 'end'}
+                            dataLength={sConv?.messages.length || 0}
+                            inverse={true}
+                            loader={<LoadingMessages />}
+                            className="flex flex-col-reverse gap-y-5"
+                            scrollableTarget="chat"
+                        >
+                            {sConv &&
+                                sConv.messages.map((item) => {
+                                    if (first && item.sender === sUser?._id && isMessageSeen(item)) {
+                                        first = false;
+                                        return (
+                                            <ChatItemMe
+                                                onImageClick={onImageClick}
+                                                key={item._id}
+                                                message={item}
+                                                participants={participants}
+                                            />
+                                        );
+                                    }
+
+                                    if (item.sender === sUser?._id) {
+                                        return <ChatItemMe onImageClick={onImageClick} key={item._id} message={item} />;
+                                    } else {
+                                        return (
+                                            <ChatItemFriend
+                                                onImageClick={onImageClick}
+                                                key={item._id}
+                                                message={item}
+                                                senderAvatar={
+                                                    participants.find((part) => part._id === item.sender)?.avatar || ''
+                                                }
+                                            />
+                                        );
+                                    }
+                                })}
+                        </InfiniteScroll>
                     )}
-                </button>
+                </div>
+                <div className="px-5 py-2 flex border-t-[1px] border-secondary-20 gap-x-4 w-full">
+                    <form
+                        id="chatMessage"
+                        className={`w-4/5 grow border-[1px] rounded-2xl space-y-2 ${isSubmit && 'cursor-not-allowed'}`}
+                        onSubmit={handleSubmit(onSubmit)}
+                    >
+                        {images.length > 0 && (
+                            <DivScrollHorizontal className="flex px-2 py-1 overflow-x-auto rounded-2xl bg-secondary-20 hover:scrollbar-show gap-x-2">
+                                {images.map((image) => (
+                                    <ImageCard
+                                        key={image.id}
+                                        id={image.id}
+                                        src={image.url}
+                                        onClose={setImages}
+                                        disabled={isSubmit}
+                                    />
+                                ))}
+                            </DivScrollHorizontal>
+                        )}
+                        <Input
+                            name="message"
+                            isTextArea
+                            placeholder="Aa..."
+                            isHasEmojiIcon
+                            isHasPhotoIcon
+                            isMultipleImages
+                            disabled={isSubmit}
+                            type="text"
+                            onChangeImages={chooseAnotherImages}
+                            register={register}
+                        />
+                    </form>
+                    <button
+                        type="submit"
+                        form="chatMessage"
+                        disabled={isSubmit}
+                        className={`self-end h-full bg-blue-200 max-h-14 aspect-square rounded-2xl hover:bg-blue-300 grow-0 shrink-0 ${
+                            isSubmit && 'cursor-not-allowed'
+                        }`}
+                    >
+                        {isSubmit ? (
+                            <VscLoading size={24} className="mx-auto text-blue-600 animate-spin" />
+                        ) : (
+                            <RiSendPlane2Line className="mx-auto text-blue-600" size={24} />
+                        )}
+                    </button>
+                </div>
+                <ImageDetailContainer ref={swiperRef} images={messImages} />
             </div>
-            <ImageDetailContainer ref={swiperRef} images={messImages} />
-        </div>
+            {showSettingGroupChatModal && sConv && (
+                <SettingGroupChatModal conv={sConv} onClose={handleCloseSettingModal} />
+            )}
+        </>
     );
 }

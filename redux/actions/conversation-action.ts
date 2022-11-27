@@ -78,3 +78,30 @@ export const createGroupConversation = createAsyncThunk(
         }
     },
 );
+
+export const renameGroupConv = createAsyncThunk('conversations/rename', async (body: IRenameConversation, thunkAPI) => {
+    try {
+        await conversationApi.renameGroupConv(body);
+        return body;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
+export const switchAdmin = createAsyncThunk('conversations/switch-admin', async (body: IEditMemberConv, thunkAPI) => {
+    try {
+        const response = await conversationApi.switchAdmin(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
+export const removeMember = createAsyncThunk('conversations/remove-member', async (body: IEditMemberConv, thunkAPI) => {
+    try {
+        const response = await conversationApi.deleteMember(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});

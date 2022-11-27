@@ -6,6 +6,7 @@ declare interface IConversationStore {
     name: string;
     lastActive?: string;
     isOnline: boolean;
+    admin?: IParticipant;
 }
 
 declare interface IGetMessFirstTime {

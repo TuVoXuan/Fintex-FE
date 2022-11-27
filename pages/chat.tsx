@@ -7,6 +7,7 @@ import ChatPersonCard from '../components/card/chat-person-card';
 import ChatContainer from '../components/chat/chat-container';
 import LoadingChatCard from '../components/loading/loading-chat-card';
 import CreateConvModal from '../components/modal/create-conv-modal';
+import SettingGroupChatModal from '../components/modal/setting-group-chat-modal';
 import { useMQTT } from '../context/mqtt-context';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { MainLayout } from '../layouts/main-layout';
