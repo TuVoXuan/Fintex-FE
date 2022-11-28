@@ -43,12 +43,14 @@ export default function ChatContainer({ conversationId, participants, removedMem
     const sOnlineFriends = useAppSelector(selectFriend).onlineFriends;
     const refInfinityScroll = useRef<HTMLDivElement>(null);
     const swiperRef = useRef<RefSwiper>(null);
+    const popupRef = useRef<HTMLDivElement>(null);
 
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState<IImageStore[]>([]);
     const [isSubmit, setIsSubmit] = useState(false);
     const [messImages, setMessImages] = useState<IAlbum[]>([]);
     const [showSettingGroupChatModal, setShowSettingGroupChatModal] = useState<boolean>(false);
+    const [showPopup, setshowPopup] = useState<boolean>(false);
 
     let first = true;
 
@@ -58,6 +60,10 @@ export default function ChatContainer({ conversationId, participants, removedMem
 
     const handleCloseSettingModal = () => {
         setShowSettingGroupChatModal(false);
+    };
+
+    const handleShowPopup = () => {
+        setshowPopup(!showPopup);
     };
 
     const fetchMessages = async () => {
@@ -104,17 +110,6 @@ export default function ChatContainer({ conversationId, participants, removedMem
 
     const chooseAnotherImages = (other: IImageStore[]) => {
         setImages((value) => [...value, ...other]);
-    };
-
-    const handleOnline = () => {
-        for (let i = 0; i < participants.length; i++) {
-            const person = participants[i];
-            const indexOnline = sOnlineFriends.findIndex((user) => user._id === person._id);
-            if (indexOnline >= 0) {
-                return true;
-            }
-        }
-        return false;
     };
 
     const onImageClick = useCallback(
@@ -176,10 +171,41 @@ export default function ChatContainer({ conversationId, participants, removedMem
                         </div>
                         {sConv && sConv.participants.length > 1 && (
                             <button
-                                onClick={handleShowSettingModal}
-                                className="p-2 transition-colors duration-300 ease-linear bg-white rounded-full bg-secondary-2 hover:bg-secondary-20"
+                                onClick={handleShowPopup}
+                                className="relative p-2 transition-colors duration-300 ease-linear bg-white rounded-full bg-secondary-2 hover:bg-secondary-20"
                             >
                                 <BsThreeDots size={20} />
+                                {showPopup && (
+                                    <div
+                                        ref={popupRef}
+                                        className="absolute right-[50%] top-[50%] border-[1.5px] rounded-lg bg-secondary-10 z-10"
+                                    >
+                                        <div className="p-1 border-b-[1.5px]">
+                                            <button
+                                                onClick={handleShowSettingModal}
+                                                className="w-full px-3 py-2 transition-colors duration-300 ease-linear rounded-lg hover:bg-secondary-20 whitespace-nowrap"
+                                            >
+                                                Cài đặt
+                                            </button>
+                                        </div>
+                                        <div className="p-1 border-b-[1.5px]">
+                                            <button
+                                                onClick={() => alert('thêm thành viên')}
+                                                className="w-full px-3 py-2 transition-colors duration-300 ease-linear rounded-lg hover:bg-secondary-20 whitespace-nowrap"
+                                            >
+                                                Thêm thành viên
+                                            </button>
+                                        </div>
+                                        <div className="p-1">
+                                            <button
+                                                onClick={() => alert('roi nhom')}
+                                                className="w-full px-3 py-2 transition-colors duration-300 ease-linear rounded-lg whitespace-nowrap hover:bg-secondary-20"
+                                            >
+                                                Rời nhóm
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </button>
                         )}
                     </aside>
