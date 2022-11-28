@@ -1,6 +1,7 @@
 declare interface IConversationStore {
     _id: string;
     participants: IParticipant[];
+    removedMember: IParticipant[];
     messages: IMessage[];
     after: string;
     name: string;

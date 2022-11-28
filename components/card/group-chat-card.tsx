@@ -23,7 +23,7 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
             await dispatch(
                 switchAdmin({
                     conversationId,
-                    memberId: participant._id,
+                    member: participant._id,
                 }),
             );
         } catch (error) {
@@ -34,7 +34,7 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
 
     const handleRemoveMember = async () => {
         try {
-            await dispatch(removeMember({ conversationId, memberId: participant._id }));
+            await dispatch(removeMember({ conversationId, member: participant._id }));
         } catch (error) {
             toastError((error as IResponseError).error);
         }

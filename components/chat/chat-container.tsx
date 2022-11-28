@@ -24,14 +24,16 @@ import { ImageDetailContainer } from '../image/image-detail-container';
 import { shortHash } from '../../util/short-hash';
 import { BsThreeDots } from 'react-icons/bs';
 import SettingGroupChatModal from '../modal/setting-group-chat-modal';
+import ChatNotify from './chat-notify';
 
 interface Props {
     conversationId: string;
     name: string;
     participants: IParticipant[];
+    removedMember: IParticipant[];
 }
 
-export default function ChatContainer({ conversationId, participants, name }: Props) {
+export default function ChatContainer({ conversationId, participants, removedMember, name }: Props) {
     timeago.register('vi', vi);
     const { register, handleSubmit, setValue } = useForm();
     const dispatch = useAppDispatch();
@@ -202,6 +204,26 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                         >
                             {sConv &&
                                 sConv.messages.map((item, index) => {
+                                    if (item.message[0].messType === 'notify') {
+                                        return (
+                                            <ChatNotify
+                                                avatar={
+                                                    participants.find((part) => part._id === item.sender)?.avatar ||
+                                                    removedMember.find((part) => part._id === item.sender)?.avatar ||
+                                                    ''
+                                                }
+                                                name={
+                                                    participants.find((part) => part._id === item.sender)?.name
+                                                        .fullName ||
+                                                    removedMember.find((part) => part._id === item.sender)?.name
+                                                        .fullName ||
+                                                    ''
+                                                }
+                                                message={item.message[0].text || ''}
+                                            />
+                                        );
+                                    }
+
                                     if (first && item.sender === sUser?._id && isMessageSeen(item)) {
                                         first = false;
                                         return (
@@ -209,7 +231,7 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                                                 onImageClick={onImageClick}
                                                 key={item._id}
                                                 message={item}
-                                                participants={participants}
+                                                participants={[...participants, ...removedMember]}
                                             />
                                         );
                                     }
@@ -222,9 +244,11 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                                                 key={item._id}
                                                 message={item}
                                                 senderAvatar={
-                                                    participants.find((part) => part._id === item.sender)?.avatar || ''
+                                                    participants.find((part) => part._id === item.sender)?.avatar ||
+                                                    removedMember.find((part) => part._id === item.sender)?.avatar ||
+                                                    ''
                                                 }
-                                                participants={participants}
+                                                participants={[...participants, ...removedMember]}
                                             />
                                         );
                                     }
@@ -238,7 +262,9 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                                                 key={item._id}
                                                 message={item}
                                                 senderAvatar={
-                                                    participants.find((part) => part._id === item.sender)?.avatar || ''
+                                                    participants.find((part) => part._id === item.sender)?.avatar ||
+                                                    removedMember.find((part) => part._id === item.sender)?.avatar ||
+                                                    ''
                                                 }
                                             />
                                         );
@@ -296,7 +322,7 @@ export default function ChatContainer({ conversationId, participants, name }: Pr
                 </div>
             </div>
             {showSettingGroupChatModal && sConv && (
-                <SettingGroupChatModal conv={sConv} onClose={handleCloseSettingModal} />
+                <SettingGroupChatModal convId={conversationId} onClose={handleCloseSettingModal} />
             )}
         </>
     );

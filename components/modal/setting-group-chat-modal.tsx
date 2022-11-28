@@ -4,6 +4,7 @@ import { IoClose } from 'react-icons/io5';
 import { VscLoading } from 'react-icons/vsc';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { renameGroupConv } from '../../redux/actions/conversation-action';
+import { selectConversations } from '../../redux/reducers/conversation-slice';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { Button } from '../button/button';
 import GroupChatCard from '../card/group-chat-card';
@@ -14,24 +15,25 @@ interface FormData {
 }
 
 interface Props {
-    conv: IConversationStore;
+    convId: string;
     onClose: () => void;
 }
 
-export default function SettingGroupChatModal({ conv, onClose }: Props) {
+export default function SettingGroupChatModal({ convId, onClose }: Props) {
+    const sConv = useAppSelector(selectConversations).find((conv) => conv._id === convId);
     const {
         register,
         formState: { errors },
         handleSubmit,
     } = useForm<FormData>({
         defaultValues: {
-            groupName: conv.name,
+            groupName: sConv?.name,
         },
     });
     const createConvModalRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const sUser = useAppSelector(selectUser).data;
-    const isAdmin: boolean = sUser?._id === conv.admin?._id;
+    const isAdmin: boolean = sUser?._id === sConv?.admin?._id;
 
     const [activeTab, setActiveTab] = useState<'all' | 'admin'>('all');
     const [submitted, setSubmitted] = useState(false);
@@ -56,7 +58,7 @@ export default function SettingGroupChatModal({ conv, onClose }: Props) {
             await dispatch(
                 renameGroupConv({
                     name: value.groupName,
-                    conversationId: conv._id,
+                    conversationId: sConv?._id || '',
                 }),
             ).unwrap();
             setSubmitted(false);
@@ -94,7 +96,7 @@ export default function SettingGroupChatModal({ conv, onClose }: Props) {
                                 type="text"
                                 id="groupName"
                                 {...register('groupName')}
-                                defaultValue={conv.name}
+                                defaultValue={sConv?.name}
                             />
                         </div>
 
@@ -127,39 +129,40 @@ export default function SettingGroupChatModal({ conv, onClose }: Props) {
                         {activeTab === 'all' ? (
                             // all member tab
                             <div className="flex-1 overflow-y-auto hover:scrollbar-show">
-                                {conv.admin && (
+                                {sConv && sConv.admin && (
                                     <GroupChatCard
-                                        conversationId={conv._id}
-                                        adminId={conv.admin._id}
-                                        participant={conv.admin}
+                                        conversationId={sConv._id}
+                                        adminId={sConv.admin._id}
+                                        participant={sConv.admin}
                                     />
                                 )}
-                                {[
-                                    ...conv.participants,
-                                    {
-                                        _id: sUser?._id,
-                                        name: sUser?.name,
-                                        avatar: sUser?.avatar,
-                                    } as IParticipant,
-                                ]
-                                    .filter((item) => item._id !== conv.admin?._id)
-                                    .map((item) => (
-                                        <GroupChatCard
-                                            conversationId={conv._id}
-                                            adminId={conv.admin?._id}
-                                            participant={item}
-                                        />
-                                    ))}
+                                {sConv &&
+                                    [
+                                        ...sConv.participants,
+                                        {
+                                            _id: sUser?._id,
+                                            name: sUser?.name,
+                                            avatar: sUser?.avatar,
+                                        } as IParticipant,
+                                    ]
+                                        .filter((item) => item._id !== sConv.admin?._id)
+                                        .map((item) => (
+                                            <GroupChatCard
+                                                conversationId={sConv._id}
+                                                adminId={sConv.admin?._id}
+                                                participant={item}
+                                            />
+                                        ))}
                             </div>
                         ) : (
                             // admin tab
                             <>
-                                {conv.admin && (
+                                {sConv?.admin && (
                                     <div className="flex-1 overflow-y-auto hover:scrollbar-show">
                                         <GroupChatCard
-                                            conversationId={conv._id}
-                                            adminId={conv.admin._id}
-                                            participant={conv.admin}
+                                            conversationId={sConv._id}
+                                            adminId={sConv.admin._id}
+                                            participant={sConv.admin}
                                         />
                                     </div>
                                 )}

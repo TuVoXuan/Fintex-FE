@@ -11,6 +11,7 @@ declare interface IParticipant {
 declare interface IConversation {
     _id: string;
     participants: IParticipant[];
+    removedMember: IParticipant[];
     messages: {
         _id: string;
         message: {
@@ -39,10 +40,14 @@ declare interface IRenameConversation {
 
 declare interface IEditMemberConv {
     conversationId: string;
-    memberId: string;
+    member: string | IParticipant;
 }
 
 declare interface ISwitchAdminRes {
     newAdmin: IParticipant;
     conversationId: string;
+}
+
+declare interface IEditMemberConvRes extends IEditMemberConv {
+    message: IMessage;
 }

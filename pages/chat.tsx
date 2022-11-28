@@ -61,7 +61,14 @@ export default function Chat() {
         if (mqtt && sConversations.length > 0) {
             console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
             if (mqtt.activedConversation.current) {
-                setActivedConversation(mqtt.activedConversation.current);
+                const indexConv = sConversations.findIndex((conv) => conv._id === mqtt.activedConversation.current);
+                console.log('indexConv: ', indexConv);
+                if (indexConv > -1) {
+                    setActivedConversation(mqtt.activedConversation.current);
+                } else {
+                    setActivedConversation(sConversations[0]._id);
+                    mqtt.setConversation(sConversations[0]._id);
+                }
             } else {
                 setActivedConversation(sConversations[0]._id);
                 mqtt.setConversation(sConversations[0]._id);
@@ -277,10 +284,18 @@ export default function Chat() {
                     <aside className="col-span-2 overflow-hidden bg-white rounded-[15px]">
                         {sConversations.length > 0 && activedConversation && (
                             <ChatContainer
-                                conversationId={activedConversation}
-                                name={sConversations.find((conv) => conv._id === activedConversation)?.name || ''}
+                                conversationId={activedConversation || sConversations[0]._id}
+                                name={
+                                    sConversations.find((conv) => conv._id === activedConversation)?.name ||
+                                    sConversations[0].name
+                                }
                                 participants={
-                                    sConversations.find((conv) => conv._id === activedConversation)?.participants || []
+                                    sConversations.find((conv) => conv._id === activedConversation)?.participants ||
+                                    sConversations[0].participants
+                                }
+                                removedMember={
+                                    sConversations.find((conv) => conv._id === activedConversation)?.removedMember ||
+                                    sConversations[0].removedMember
                                 }
                             />
                         )}

@@ -22,8 +22,8 @@ const conversationApi = {
         return await axiosService.put<IResponseSuccess<ISwitchAdminRes>>(`${URL}/switch-admin`, body);
     },
     deleteMember: async (body: IEditMemberConv) => {
-        return await axiosService.delete<IResponseSuccess<IEditMemberConv>>(
-            `${URL}/${body.conversationId}/member/${body.memberId}`,
+        return await axiosService.delete<IResponseSuccess<IEditMemberConvRes>>(
+            `${URL}/${body.conversationId}/member/${body.member}`,
         );
     },
 };

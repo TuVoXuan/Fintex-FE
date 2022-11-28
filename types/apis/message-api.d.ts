@@ -3,7 +3,7 @@ declare interface IMessageContent {
     text?: string;
     images?: string[];
     seen: string[];
-    messType: 'text' | 'image';
+    messType: 'text' | 'image' | 'notify';
 }
 
 declare interface IMessage {

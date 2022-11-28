@@ -63,6 +63,24 @@ export const conversationsSlice = createSlice({
                 conv.isOnline = action.payload.isOnline;
             }
         },
+        removeParticipant: (state, action: PayloadAction<IEditMemberConvRes>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.messages.unshift(action.payload.message);
+                const indexMember = conv.participants.findIndex((item) => item._id === action.payload.member);
+                console.log('indexMember: ', indexMember);
+                if (indexMember > -1) {
+                    conv.removedMember.push(conv.participants[indexMember]);
+                    conv.participants.splice(indexMember, 1);
+                }
+            }
+        },
+        removeConversation: (state, action: PayloadAction<string>) => {
+            const indexConv = state.findIndex((conv) => conv._id === action.payload);
+            if (indexConv > -1) {
+                state.splice(indexConv, 1);
+            }
+        },
     },
     extraReducers(builder) {
         builder.addCase(getConversations.fulfilled, (state, action: PayloadAction<IConversation[]>) => {
@@ -80,6 +98,7 @@ export const conversationsSlice = createSlice({
                             },
                         ],
                         participants: conv.participants,
+                        removedMember: conv.removedMember,
                         name: conv.name || '',
                         isOnline: false,
                         admin: conv.admin,
@@ -90,6 +109,7 @@ export const conversationsSlice = createSlice({
                         _id: conv._id,
                         messages: [],
                         participants: conv.participants,
+                        removedMember: conv.removedMember,
                         name: conv.name || '',
                         isOnline: false,
                         admin: conv.admin,
@@ -140,6 +160,7 @@ export const conversationsSlice = createSlice({
                 _id: action.payload._id,
                 messages: [],
                 participants: action.payload.participants,
+                removedMember: action.payload.removedMember,
                 name: '',
                 isOnline: false,
                 admin: action.payload.admin,
@@ -162,6 +183,7 @@ export const conversationsSlice = createSlice({
                 _id: action.payload._id,
                 messages: [],
                 participants: action.payload.participants,
+                removedMember: action.payload.removedMember,
                 name: action.payload.name || '',
                 isOnline: false,
             });
@@ -178,11 +200,16 @@ export const conversationsSlice = createSlice({
                 conv.admin = action.payload.newAdmin;
             }
         });
-        builder.addCase(removeMember.fulfilled, (state, action: PayloadAction<IEditMemberConv>) => {
+        builder.addCase(removeMember.fulfilled, (state, action: PayloadAction<IEditMemberConvRes>) => {
             const conv = state.find((item) => item._id === action.payload.conversationId);
             if (conv) {
-                const indexMember = conv.participants.findIndex((item) => item._id === action.payload.memberId);
+                conv.messages.unshift(action.payload.message);
+                const indexMember = conv.participants.findIndex(
+                    (item) => item._id === (action.payload.member as string),
+                );
+                console.log('indexMember: ', indexMember);
                 if (indexMember > -1) {
+                    conv.removedMember.push(conv.participants[indexMember]);
                     conv.participants.splice(indexMember, 1);
                 }
             }
@@ -190,7 +217,8 @@ export const conversationsSlice = createSlice({
     },
 });
 
-export const { addMessage, seen, setLastActive, setOnline } = conversationsSlice.actions;
+export const { addMessage, seen, setLastActive, setOnline, removeParticipant, removeConversation } =
+    conversationsSlice.actions;
 
 export const selectConversations = (state: RootState) => state.conversations;
 

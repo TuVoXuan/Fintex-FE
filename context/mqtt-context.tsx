@@ -3,8 +3,9 @@ import { createContext, MutableRefObject, useContext, useEffect, useRef } from '
 import APP_PATH from '../constants/app-path';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { seenMessage } from '../redux/actions/conversation-action';
-import { addMessage, seen } from '../redux/reducers/conversation-slice';
+import { addMessage, removeConversation, removeParticipant, seen } from '../redux/reducers/conversation-slice';
 import { selectUser } from '../redux/reducers/user-slice';
+import { toastError } from '../util/toast';
 
 type MqttType = {
     mqttClient: MqttClient | null;
@@ -64,6 +65,20 @@ export const MQTTProvider = ({ children }: Props) => {
                     }
                 }
                 break;
+            case `${userId}/chat/system-message`:
+                try {
+                    message = JSON.parse(data.data) as IEditMemberConvRes;
+                    if (typeof message.member === 'string') {
+                        if (sUser.data?._id === message.member) {
+                            dispatch(removeConversation(message.conversationId));
+                        } else {
+                            dispatch(removeParticipant(message));
+                        }
+                    }
+                } catch (error) {
+                    toastError((error as IResponseError).error);
+                }
+                break;
             default:
                 break;
         }
@@ -79,6 +94,9 @@ export const MQTTProvider = ({ children }: Props) => {
             console.log('error subscribe: ', err);
         });
         mqttRef.current.subscribe(`${sUser.data?._id}/chat/seen-message`, { qos: 1 }, function (err) {
+            console.log('error subscribe: ', err);
+        });
+        mqttRef.current.subscribe(`${sUser.data?._id}/chat/system-message`, { qos: 1 }, function (err) {
             console.log('error subscribe: ', err);
         });
         mqttRef.current.on('message', (topic: string, payload: Buffer, packet: mqtt.IPublishPacket) => {
