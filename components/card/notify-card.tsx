@@ -29,6 +29,7 @@ export default function NotifyCard({ notify }: Props) {
             case 'commentPost':
                 return <FaCommentAlt size={18} fill="#fff" />;
             case 'deleteFriend':
+            case 'removeMemberConv':
                 return <FaUserMinus size={18} fill="#fff" />;
             default:
                 break;

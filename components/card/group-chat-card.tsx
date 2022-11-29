@@ -27,7 +27,7 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
                     conversationId,
                     member: participant._id,
                 }),
-            );
+            ).unwrap();
         } catch (error) {
             console.log('error: ', error);
             toastError((error as IResponseError).error);
@@ -36,7 +36,7 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
 
     const handleRemoveMember = async () => {
         try {
-            await dispatch(removeMember({ conversationId, member: participant._id }));
+            await dispatch(removeMember({ conversationId, member: participant._id })).unwrap();
             handleShowDeleteModal();
         } catch (error) {
             toastError((error as IResponseError).error);

@@ -46,17 +46,6 @@ export default function SocketRoute({ children }: Props) {
             case 'friendOffline':
                 console.log('data: ', data);
                 dispatch(removeOfflineFriend(data.offlineUser));
-                // console.log('sOnlineFriends: ', sOnlineFriends);
-                // const onlineIds = sOnlineFriends.reduce((prev, cur) => {
-                //     if (cur._id !== data.offlineUser) {
-                //         return [...prev, cur._id];
-                //     }
-                //     return prev;
-                // }, [] as string[]);
-                // console.log('onlineIds: ', onlineIds);
-
-                // const onlineIds = sOnlineFriends.map((item) => item._id);
-                // dispatch(setLastActive({ offlineId: data.offlineUser, onlineIds }));
                 toastSuccess('Có bạn mới offline');
                 break;
             case 'notify':

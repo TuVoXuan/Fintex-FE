@@ -75,6 +75,19 @@ export const MQTTProvider = ({ children }: Props) => {
                             dispatch(removeParticipant(message));
                         }
                     }
+
+                    if (
+                        activedConversation.current === message.conversationId &&
+                        window.location.pathname === APP_PATH.CHAT
+                    ) {
+                        await dispatch(
+                            seenMessage({
+                                messageId: message.message._id,
+                                conversationId: message.conversationId,
+                                subMessageId: message.message.message[0]._id,
+                            }),
+                        ).unwrap();
+                    }
                 } catch (error) {
                     toastError((error as IResponseError).error);
                 }
