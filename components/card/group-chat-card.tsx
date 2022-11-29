@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { BsThreeDots } from 'react-icons/bs';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { removeMember, switchAdmin } from '../../redux/actions/conversation-action';
+import { selectConversations } from '../../redux/reducers/conversation-slice';
 import { selectUser } from '../../redux/reducers/user-slice';
 import { toastError } from '../../util/toast';
 import Avatar from '../avatar/avatar';
@@ -11,14 +12,17 @@ interface Props {
     adminId: string | undefined;
     participant: IParticipant;
     conversationId: string;
+    onClose: () => void;
 }
 
-export default function GroupChatCard({ adminId, participant, conversationId }: Props) {
+export default function GroupChatCard({ adminId, participant, conversationId, onClose }: Props) {
     const sUser = useAppSelector(selectUser).data;
     const popupRef = useRef<HTMLDivElement>(null);
     const [showPopup, setshowPopup] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const dispatch = useAppDispatch();
+    const numParticipants = useAppSelector(selectConversations).find((conv) => conv._id === conversationId)
+        ?.participants.length;
 
     const handleSwitchAdmin = async () => {
         try {
@@ -38,6 +42,9 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
         try {
             await dispatch(removeMember({ conversationId, member: participant._id })).unwrap();
             handleShowDeleteModal();
+            if (numParticipants === 1) {
+                onClose();
+            }
         } catch (error) {
             toastError((error as IResponseError).error);
         }

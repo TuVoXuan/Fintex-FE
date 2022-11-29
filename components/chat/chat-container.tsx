@@ -199,7 +199,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
                                 </>
                             )}
                         </div>
-                        {sConv && sConv.participants.length > 1 && (
+                        {sConv && sConv.name && (
                             <button
                                 onClick={handleShowPopup}
                                 className="relative p-2 transition-colors duration-300 ease-linear bg-white rounded-full bg-secondary-2 hover:bg-secondary-20"

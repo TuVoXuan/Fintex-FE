@@ -68,6 +68,11 @@ export const conversationsSlice = createSlice({
         removeParticipant: (state, action: PayloadAction<IEditMemberConvRes>) => {
             const conv = state.find((item) => item._id === action.payload.conversationId);
             if (conv) {
+                if (conv.participants.length === 1) {
+                    const index = state.findIndex((item) => item._id === action.payload.conversationId);
+                    state.splice(index, 1);
+                    return;
+                }
                 conv.messages.unshift(action.payload.message);
                 const indexMember = conv.participants.findIndex((item) => item._id === action.payload.member);
                 console.log('indexMember: ', indexMember);
@@ -192,9 +197,10 @@ export const conversationsSlice = createSlice({
                 _id: action.payload._id,
                 messages: [],
                 participants: action.payload.participants,
-                removedMember: action.payload.removedMember,
+                removedMember: action.payload.removedMember || [],
                 name: action.payload.name || '',
                 isOnline: false,
+                admin: action.payload.admin,
             });
         });
         builder.addCase(renameGroupConv.fulfilled, (state, action: PayloadAction<IRenameConversation>) => {
@@ -212,6 +218,11 @@ export const conversationsSlice = createSlice({
         builder.addCase(removeMember.fulfilled, (state, action: PayloadAction<IEditMemberConvRes>) => {
             const conv = state.find((item) => item._id === action.payload.conversationId);
             if (conv) {
+                if (conv.participants.length === 1) {
+                    const index = state.findIndex((item) => item._id === action.payload.conversationId);
+                    state.splice(index, 1);
+                    return;
+                }
                 conv.messages.unshift(action.payload.message);
                 const indexMember = conv.participants.findIndex(
                     (item) => item._id === (action.payload.member as string),

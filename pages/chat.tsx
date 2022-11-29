@@ -7,13 +7,11 @@ import ChatPersonCard from '../components/card/chat-person-card';
 import ChatContainer from '../components/chat/chat-container';
 import LoadingChatCard from '../components/loading/loading-chat-card';
 import CreateConvModal from '../components/modal/create-conv-modal';
-import SettingGroupChatModal from '../components/modal/setting-group-chat-modal';
 import { useMQTT } from '../context/mqtt-context';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { MainLayout } from '../layouts/main-layout';
-import { seenMessage } from '../redux/actions/conversation-action';
+import { removeMember, seenMessage } from '../redux/actions/conversation-action';
 import { selectConversations } from '../redux/reducers/conversation-slice';
-import { selectFriend } from '../redux/reducers/friend-slice';
 import { selectUser } from '../redux/reducers/user-slice';
 import { toastError } from '../util/toast';
 
@@ -54,6 +52,23 @@ export default function Chat() {
         } catch (error) {
             console.log('error: ', error);
             toastError((error as IResponseError).error);
+        }
+    };
+
+    const handleLastesMessage = (messages: IMessage[], participants: IParticipant[], removedMember: IParticipant[]) => {
+        const length = messages[0].message.length;
+        if (messages[0].message[length - 1].messType === 'text') {
+            return messages[0].message[length - 1].text;
+        } else if (messages[0].message[length - 1].messType === 'notify') {
+            const sender =
+                participants.find((item) => item._id === messages[0].sender) ||
+                removedMember.find((item) => item._id === messages[0].sender);
+            return `${sender?.name.lastName} ${messages[0].message[0].text}`;
+        } else {
+            const sender =
+                participants.find((item) => item._id === messages[0].sender) ||
+                removedMember.find((item) => item._id === messages[0].sender);
+            return `${sender?.name.lastName} đã gửi ảnh`;
         }
     };
 
@@ -168,7 +183,7 @@ export default function Chat() {
                                 ) : (
                                     <>
                                         {searchConvs.length > 0 ? (
-                                            searchConvs.map(({ _id, participants, messages, name }) => {
+                                            searchConvs.map(({ _id, participants, messages, name, removedMember }) => {
                                                 if (messages.length === 0) {
                                                     return (
                                                         <ChatPersonCard
@@ -202,13 +217,11 @@ export default function Chat() {
                                                         name={name}
                                                         active={_id === activedConversation}
                                                         date={new Date(messages[0].updatedAt)}
-                                                        message={
-                                                            messages[0].message[messages[0].message.length - 1]
-                                                                .messType === 'text'
-                                                                ? messages[0].message[messages[0].message.length - 1]
-                                                                      .text || ''
-                                                                : `${participants[0].name.lastName} đã gửi ảnh`
-                                                        }
+                                                        message={handleLastesMessage(
+                                                            messages,
+                                                            participants,
+                                                            removedMember,
+                                                        )}
                                                         notSeen={
                                                             messages[0].message[messages[0].message.length - 1].seen
                                                                 .length === 0 && messages[0].sender !== sUser?._id
@@ -233,7 +246,7 @@ export default function Chat() {
                                     </>
                                 )
                             ) : (
-                                sConversations.map(({ _id, participants, messages, name }) => {
+                                sConversations.map(({ _id, participants, messages, name, removedMember }) => {
                                     if (messages.length === 0) {
                                         return (
                                             <ChatPersonCard
@@ -265,11 +278,7 @@ export default function Chat() {
                                             name={name}
                                             active={_id === activedConversation}
                                             date={new Date(messages[0].updatedAt)}
-                                            message={
-                                                messages[0].message[messages[0].message.length - 1].messType === 'text'
-                                                    ? messages[0].message[messages[0].message.length - 1].text || ''
-                                                    : `${participants[0].name.lastName} đã gửi ảnh`
-                                            }
+                                            message={handleLastesMessage(messages, participants, removedMember)}
                                             notSeen={
                                                 messages[0].message[messages[0].message.length - 1].seen.length === 0 &&
                                                 messages[0].sender !== sUser?._id
