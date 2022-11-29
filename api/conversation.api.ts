@@ -31,6 +31,9 @@ const conversationApi = {
             `${URL}/leave-conversation/${conversationId}`,
         );
     },
+    addmember: async (body: IAddMemberConv) => {
+        return await axiosService.put<IResponseSuccess<IAddMemberConvRes>>(`${URL}/add-member`, body);
+    },
 };
 
 export default conversationApi;
