@@ -106,6 +106,15 @@ export const removeMember = createAsyncThunk('conversations/remove-member', asyn
     }
 });
 
+export const leaveConv = createAsyncThunk('conversations/leave-conv', async (body: string, thunkAPI) => {
+    try {
+        const response = await conversationApi.leaveConv(body);
+        return response.data.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+    }
+});
+
 export const addMember = createAsyncThunk('conversations/add-members', async (body: IAddMemberConv, thunkAPI) => {
     try {
         const response = await conversationApi.addmember(body);

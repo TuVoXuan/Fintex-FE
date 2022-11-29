@@ -5,6 +5,7 @@ import { removeMember, switchAdmin } from '../../redux/actions/conversation-acti
 import { selectUser } from '../../redux/reducers/user-slice';
 import { toastError } from '../../util/toast';
 import Avatar from '../avatar/avatar';
+import DeleteModal from '../modal/delete-modal';
 
 interface Props {
     adminId: string | undefined;
@@ -16,6 +17,7 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
     const sUser = useAppSelector(selectUser).data;
     const popupRef = useRef<HTMLDivElement>(null);
     const [showPopup, setshowPopup] = useState<boolean>(false);
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const dispatch = useAppDispatch();
 
     const handleSwitchAdmin = async () => {
@@ -35,9 +37,14 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
     const handleRemoveMember = async () => {
         try {
             await dispatch(removeMember({ conversationId, member: participant._id }));
+            handleShowDeleteModal();
         } catch (error) {
             toastError((error as IResponseError).error);
         }
+    };
+
+    const handleShowDeleteModal = () => {
+        setShowDeleteModal(!showDeleteModal);
     };
 
     const handleShowPopup = () => {
@@ -71,7 +78,7 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
                             </div>
                             <div className="p-1">
                                 <button
-                                    onClick={handleRemoveMember}
+                                    onClick={handleShowDeleteModal}
                                     className="px-3 py-2 transition-colors duration-300 ease-linear rounded-lg whitespace-nowrap hover:bg-secondary-20"
                                 >
                                     Xóa thành viên
@@ -80,6 +87,14 @@ export default function GroupChatCard({ adminId, participant, conversationId }: 
                         </div>
                     )}
                 </button>
+            )}
+            {showDeleteModal && (
+                <DeleteModal
+                    objectName="thành viên"
+                    onClose={handleShowDeleteModal}
+                    onDelete={handleRemoveMember}
+                    loading={false}
+                />
             )}
         </section>
     );
