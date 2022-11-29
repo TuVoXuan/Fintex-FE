@@ -131,6 +131,7 @@ export default function SettingGroupChatModal({ convId, onClose }: Props) {
                             <div className="flex-1 overflow-y-auto hover:scrollbar-show">
                                 {sConv && sConv.admin && (
                                     <GroupChatCard
+                                        onClose={onClose}
                                         conversationId={sConv._id}
                                         adminId={sConv.admin._id}
                                         participant={sConv.admin}
@@ -149,6 +150,7 @@ export default function SettingGroupChatModal({ convId, onClose }: Props) {
                                         .map((item, index) => (
                                             <GroupChatCard
                                                 key={index}
+                                                onClose={onClose}
                                                 conversationId={sConv._id}
                                                 adminId={sConv.admin?._id}
                                                 participant={item}
@@ -161,6 +163,7 @@ export default function SettingGroupChatModal({ convId, onClose }: Props) {
                                 {sConv?.admin && (
                                     <div className="flex-1 overflow-y-auto hover:scrollbar-show">
                                         <GroupChatCard
+                                            onClose={onClose}
                                             conversationId={sConv._id}
                                             adminId={sConv.admin._id}
                                             participant={sConv.admin}
