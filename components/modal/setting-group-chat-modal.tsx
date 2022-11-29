@@ -146,8 +146,9 @@ export default function SettingGroupChatModal({ convId, onClose }: Props) {
                                         } as IParticipant,
                                     ]
                                         .filter((item) => item._id !== sConv.admin?._id)
-                                        .map((item) => (
+                                        .map((item, index) => (
                                             <GroupChatCard
+                                                key={index}
                                                 conversationId={sConv._id}
                                                 adminId={sConv.admin?._id}
                                                 participant={item}

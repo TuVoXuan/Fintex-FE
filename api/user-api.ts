@@ -54,10 +54,16 @@ const userApi = {
 
         return (await axiosService.get<IResponseSuccess<IFriendPaginate>>(newUrl)).data.data;
     },
-
     deleteFriend: async (friendId: string) => {
         let newUrl = `${API}/friend/${friendId}`;
         return (await axiosService.delete<IResponseSuccess<null>>(newUrl)).data;
+    },
+    getSuggestMeber: async (participants: string[]) => {
+        return (
+            await axiosService.post<IResponseSuccess<IParticipant[]>>(`${URL}/suggest-member`, {
+                participants,
+            })
+        ).data.data;
     },
 };
 

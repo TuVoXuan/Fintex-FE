@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import {
+    addMember,
     createConversation,
     createGroupConversation,
     createMessage,
@@ -79,6 +80,13 @@ export const conversationsSlice = createSlice({
             const indexConv = state.findIndex((conv) => conv._id === action.payload);
             if (indexConv > -1) {
                 state.splice(indexConv, 1);
+            }
+        },
+        addParticipant: (state, action: PayloadAction<IEditMemberConvRes>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.participants.push(action.payload.member as IParticipant);
+                conv.messages.unshift(action.payload.message);
             }
         },
     },
@@ -214,10 +222,17 @@ export const conversationsSlice = createSlice({
                 }
             }
         });
+        builder.addCase(addMember.fulfilled, (state, action: PayloadAction<IAddMemberConvRes>) => {
+            const conv = state.find((item) => item._id === action.payload.conversationId);
+            if (conv) {
+                conv.participants = [...conv.participants, ...action.payload.members];
+                conv.messages = [...action.payload.messages, ...conv.messages];
+            }
+        });
     },
 });
 
-export const { addMessage, seen, setLastActive, setOnline, removeParticipant, removeConversation } =
+export const { addMessage, seen, setLastActive, setOnline, removeParticipant, removeConversation, addParticipant } =
     conversationsSlice.actions;
 
 export const selectConversations = (state: RootState) => state.conversations;

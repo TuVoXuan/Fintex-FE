@@ -51,3 +51,14 @@ declare interface ISwitchAdminRes {
 declare interface IEditMemberConvRes extends IEditMemberConv {
     message: IMessage;
 }
+
+declare interface IAddMemberConv {
+    conversationId: string;
+    members: string[];
+}
+
+declare interface IAddMemberConvRes {
+    conversationId: string;
+    members: IParticipant[];
+    messages: IMessage[];
+}

@@ -3,7 +3,13 @@ import { createContext, MutableRefObject, useContext, useEffect, useRef } from '
 import APP_PATH from '../constants/app-path';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { seenMessage } from '../redux/actions/conversation-action';
-import { addMessage, removeConversation, removeParticipant, seen } from '../redux/reducers/conversation-slice';
+import {
+    addMessage,
+    addParticipant,
+    removeConversation,
+    removeParticipant,
+    seen,
+} from '../redux/reducers/conversation-slice';
 import { selectUser } from '../redux/reducers/user-slice';
 import { toastError } from '../util/toast';
 
@@ -73,6 +79,24 @@ export const MQTTProvider = ({ children }: Props) => {
                             dispatch(removeConversation(message.conversationId));
                         } else {
                             dispatch(removeParticipant(message));
+                        }
+                    } else {
+                        dispatch(addParticipant(message));
+                        if (
+                            activedConversation.current === message.conversationId &&
+                            window.location.pathname === APP_PATH.CHAT
+                        ) {
+                            try {
+                                await dispatch(
+                                    seenMessage({
+                                        messageId: message.message._id,
+                                        conversationId: message.conversationId,
+                                        subMessageId: message.message.message[0]._id,
+                                    }),
+                                );
+                            } catch (error) {
+                                console.log('error: ', error);
+                            }
                         }
                     }
                 } catch (error) {

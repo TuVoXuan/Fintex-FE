@@ -25,6 +25,7 @@ import { shortHash } from '../../util/short-hash';
 import { BsThreeDots } from 'react-icons/bs';
 import SettingGroupChatModal from '../modal/setting-group-chat-modal';
 import ChatNotify from './chat-notify';
+import AddMemeberModal from '../modal/add-memeber-modal';
 
 interface Props {
     conversationId: string;
@@ -51,6 +52,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
     const [messImages, setMessImages] = useState<IAlbum[]>([]);
     const [showSettingGroupChatModal, setShowSettingGroupChatModal] = useState<boolean>(false);
     const [showPopup, setshowPopup] = useState<boolean>(false);
+    const [showAddMember, setShowAddMember] = useState<boolean>(false);
 
     let first = true;
 
@@ -60,6 +62,14 @@ export default function ChatContainer({ conversationId, participants, removedMem
 
     const handleCloseSettingModal = () => {
         setShowSettingGroupChatModal(false);
+    };
+
+    const handleShowAddMemberModal = () => {
+        setShowAddMember(true);
+    };
+
+    const handleCloseAddMemberModal = () => {
+        setShowAddMember(false);
     };
 
     const handleShowPopup = () => {
@@ -190,7 +200,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
                                         </div>
                                         <div className="p-1 border-b-[1.5px]">
                                             <button
-                                                onClick={() => alert('thêm thành viên')}
+                                                onClick={handleShowAddMemberModal}
                                                 className="w-full px-3 py-2 transition-colors duration-300 ease-linear rounded-lg hover:bg-secondary-20 whitespace-nowrap"
                                             >
                                                 Thêm thành viên
@@ -233,6 +243,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
                                     if (item.message[0].messType === 'notify') {
                                         return (
                                             <ChatNotify
+                                                key={item._id}
                                                 avatar={
                                                     participants.find((part) => part._id === item.sender)?.avatar ||
                                                     removedMember.find((part) => part._id === item.sender)?.avatar ||
@@ -349,6 +360,13 @@ export default function ChatContainer({ conversationId, participants, removedMem
             </div>
             {showSettingGroupChatModal && sConv && (
                 <SettingGroupChatModal convId={conversationId} onClose={handleCloseSettingModal} />
+            )}
+            {showAddMember && sConv && (
+                <AddMemeberModal
+                    onClose={handleCloseAddMemberModal}
+                    conversationId={sConv._id}
+                    participants={sConv.participants}
+                />
             )}
         </>
     );
