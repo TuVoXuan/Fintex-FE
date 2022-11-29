@@ -3,9 +3,10 @@ import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 import vi from 'timeago.js/lib/lang/vi';
 import { BsFilePost, BsPeopleFill } from 'react-icons/bs';
-import { FaCommentAlt, FaSmileWink, FaUserMinus } from 'react-icons/fa';
+import { FaCommentAlt, FaSmileWink, FaUserMinus, FaUserPlus } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import APP_PATH from '../../constants/app-path';
+import { useMQTT } from '../../context/mqtt-context';
 
 interface Props {
     notify: INotify;
@@ -14,6 +15,7 @@ interface Props {
 export default function NotifyCard({ notify }: Props) {
     timeago.register('vi', vi);
     const router = useRouter();
+    const mqtt = useMQTT();
 
     const handleNotifyIcon = () => {
         switch (notify.type) {
@@ -31,6 +33,8 @@ export default function NotifyCard({ notify }: Props) {
             case 'deleteFriend':
             case 'removeMemberConv':
                 return <FaUserMinus size={18} fill="#fff" />;
+            case 'addMemberConv':
+                return <FaUserPlus size={18} fill="#fff" />;
             default:
                 break;
         }
@@ -39,6 +43,11 @@ export default function NotifyCard({ notify }: Props) {
     const handleClick = () => {
         if (notify.postId) {
             router.push(`${APP_PATH.DETAIL_POST}/${notify.postId}?postPersonId=${notify.postPersonId}`);
+        } else if (notify.conversationId) {
+            if (mqtt) {
+                mqtt.setConversation(notify.conversationId);
+                router.push(APP_PATH.CHAT);
+            }
         }
     };
 
@@ -46,7 +55,7 @@ export default function NotifyCard({ notify }: Props) {
         <div
             onClick={handleClick}
             className={`flex overflow-hidden bg-white rounded-2xl shadow-light ${
-                notify.postId ? 'cursor-pointer' : null
+                notify.postId || notify.conversationId ? 'cursor-pointer' : null
             }`}
         >
             <div className="flex items-center p-3 bg-blue-400">{handleNotifyIcon()}</div>

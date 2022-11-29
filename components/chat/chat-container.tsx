@@ -185,7 +185,6 @@ export default function ChatContainer({ conversationId, participants, removedMem
             <div className="flex flex-col w-full h-full overflow-hidden">
                 <div className="flex gap-x-4 px-5 py-2 border-b-[1px] border-secondary-20">
                     <AvatarChat onlyDisplay conversationId={conversationId} participants={participants} size="small" />
-                    {/* <Avatar size="small" url={participants[0].avatar} /> */}
                     <aside className="flex items-center justify-between w-full">
                         <div className="flex flex-col justify-center">
                             <p className="font-semibold">{name ? name : participants[0].name.fullName}</p>
@@ -199,7 +198,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
                                 </>
                             )}
                         </div>
-                        {sConv && sConv.participants.length > 1 && (
+                        {sConv && sConv.name && (
                             <button
                                 onClick={handleShowPopup}
                                 className="relative p-2 transition-colors duration-300 ease-linear bg-white rounded-full bg-secondary-2 hover:bg-secondary-20"
