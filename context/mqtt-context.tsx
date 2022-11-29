@@ -77,27 +77,12 @@ export const MQTTProvider = ({ children }: Props) => {
                     if (typeof message.member === 'string') {
                         if (sUser.data?._id === message.member) {
                             dispatch(removeConversation(message.conversationId));
+                            return;
                         } else {
                             dispatch(removeParticipant(message));
                         }
                     } else {
                         dispatch(addParticipant(message));
-                        if (
-                            activedConversation.current === message.conversationId &&
-                            window.location.pathname === APP_PATH.CHAT
-                        ) {
-                            try {
-                                await dispatch(
-                                    seenMessage({
-                                        messageId: message.message._id,
-                                        conversationId: message.conversationId,
-                                        subMessageId: message.message.message[0]._id,
-                                    }),
-                                );
-                            } catch (error) {
-                                console.log('error: ', error);
-                            }
-                        }
                     }
 
                     if (
