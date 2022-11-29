@@ -9,7 +9,12 @@ import LoadingMessages from '../loading/loading-messages';
 import ChatItemFriend from './chat-item-friend';
 import ChatItemMe from './chat-item-me';
 import { selectConversations } from '../../redux/reducers/conversation-slice';
-import { createMessage, getMessageFirstTime, getMessagePagination } from '../../redux/actions/conversation-action';
+import {
+    createMessage,
+    getMessageFirstTime,
+    getMessagePagination,
+    leaveConv,
+} from '../../redux/actions/conversation-action';
 import { isMessageSeen } from '../../util/is-message-seen';
 import ImageCard from '../card/image-card';
 import DivScrollHorizontal from '../div-scroll-horizontal/div-scroll-horizontal';
@@ -25,6 +30,7 @@ import { shortHash } from '../../util/short-hash';
 import { BsThreeDots } from 'react-icons/bs';
 import SettingGroupChatModal from '../modal/setting-group-chat-modal';
 import ChatNotify from './chat-notify';
+import NormalModal from '../modal/normal-modal';
 
 interface Props {
     conversationId: string;
@@ -51,6 +57,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
     const [messImages, setMessImages] = useState<IAlbum[]>([]);
     const [showSettingGroupChatModal, setShowSettingGroupChatModal] = useState<boolean>(false);
     const [showPopup, setshowPopup] = useState<boolean>(false);
+    const [showLeaveGroupModal, setShowLeaveGroupModal] = useState<boolean>(false);
 
     let first = true;
 
@@ -64,6 +71,19 @@ export default function ChatContainer({ conversationId, participants, removedMem
 
     const handleShowPopup = () => {
         setshowPopup(!showPopup);
+    };
+
+    const handleShowLeaveGroupModal = () => {
+        setShowLeaveGroupModal(!showLeaveGroupModal);
+    };
+
+    const handleLeaveConv = async () => {
+        try {
+            await dispatch(leaveConv(conversationId)).unwrap();
+            setShowLeaveGroupModal(false);
+        } catch (error) {
+            toastError((error as IResponseError).error);
+        }
     };
 
     const fetchMessages = async () => {
@@ -198,7 +218,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
                                         </div>
                                         <div className="p-1">
                                             <button
-                                                onClick={() => alert('roi nhom')}
+                                                onClick={handleShowLeaveGroupModal}
                                                 className="w-full px-3 py-2 transition-colors duration-300 ease-linear rounded-lg whitespace-nowrap hover:bg-secondary-20"
                                             >
                                                 Rời nhóm
@@ -349,6 +369,16 @@ export default function ChatContainer({ conversationId, participants, removedMem
             </div>
             {showSettingGroupChatModal && sConv && (
                 <SettingGroupChatModal convId={conversationId} onClose={handleCloseSettingModal} />
+            )}
+            {showLeaveGroupModal && (
+                <NormalModal
+                    acceptBtnTitle="Rời nhóm"
+                    cancleBtnTitle="Hủy bỏ"
+                    onAccept={handleLeaveConv}
+                    onCancle={handleShowLeaveGroupModal}
+                    subTitle="Khi rời nhóm bạn sẽ không nhận được bất kì tin nhắn mới nào nữa."
+                    title="Rời nhóm"
+                />
             )}
         </>
     );

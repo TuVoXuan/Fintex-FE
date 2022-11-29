@@ -26,6 +26,11 @@ const conversationApi = {
             `${URL}/${body.conversationId}/member/${body.member}`,
         );
     },
+    leaveConv: async (conversationId: string) => {
+        return await axiosService.put<IResponseSuccess<IEditMemberConvRes>>(
+            `${URL}/leave-conversation/${conversationId}`,
+        );
+    },
 };
 
 export default conversationApi;

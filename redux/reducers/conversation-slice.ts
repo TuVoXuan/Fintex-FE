@@ -7,6 +7,7 @@ import {
     getConversations,
     getMessageFirstTime,
     getMessagePagination,
+    leaveConv,
     removeMember,
     renameGroupConv,
     seenMessage,
@@ -212,6 +213,12 @@ export const conversationsSlice = createSlice({
                     conv.removedMember.push(conv.participants[indexMember]);
                     conv.participants.splice(indexMember, 1);
                 }
+            }
+        });
+        builder.addCase(leaveConv.fulfilled, (state, action: PayloadAction<IEditMemberConvRes>) => {
+            const indexConv = state.findIndex((item) => item._id === action.payload.conversationId);
+            if (indexConv > -1) {
+                state.splice(indexConv, 1);
             }
         });
     },
