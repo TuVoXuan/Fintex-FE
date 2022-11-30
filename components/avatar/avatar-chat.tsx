@@ -3,6 +3,7 @@ import { useEffect, useState, memo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hook/redux';
 import { selectConversations, setLastActive, setOnline } from '../../redux/reducers/conversation-slice';
 import { selectFriend } from '../../redux/reducers/friend-slice';
+import { selectUser } from '../../redux/reducers/user-slice';
 
 interface Props {
     conversationId: string;
@@ -15,8 +16,16 @@ function AvatarChat({ participants, size, conversationId, onlyDisplay = false }:
     const dispatch = useAppDispatch();
     const sOnlineFriends = useAppSelector(selectFriend).onlineFriends;
     const sConv = useAppSelector(selectConversations).find((item) => item._id === conversationId);
+    const sUser = useAppSelector(selectUser).data;
 
-    // const [isOnlineConv, setIsOnlineConv] = useState<boolean>(false);
+    const handleSecondAvatar = () => {
+        if (sConv && sConv.participants.length > 1) {
+            return sConv.participants[1].avatar;
+        } else if (sUser) {
+            return sUser.avatar;
+        }
+        return '';
+    };
 
     const handleOnline = () => {
         for (let i = 0; i < participants.length; i++) {
@@ -43,30 +52,6 @@ function AvatarChat({ participants, size, conversationId, onlyDisplay = false }:
         }
     }, [sOnlineFriends]);
 
-    if (participants.length === 1) {
-        return (
-            <section className="relative">
-                <div
-                    className={`overflow-hidden rounded-full image-container ${
-                        size === 'medium' ? 'w-14 h-14' : 'w-12 h-12'
-                    }`}
-                >
-                    <Image
-                        src={participants[0].avatar}
-                        alt="avatar"
-                        layout="fill"
-                        objectFit="cover"
-                        placeholder="blur"
-                        blurDataURL="/images/avatar.jpg"
-                    />
-                </div>
-                {sConv && sConv.isOnline && size === 'medium' && (
-                    <p className="absolute bottom-0 right-0 w-4 h-4 bg-green-600 rounded-full ring-2 ring-white"></p>
-                )}
-            </section>
-        );
-    }
-
     return (
         <section className="relative ">
             <div className={`${size === 'medium' ? 'w-14 h-14' : 'w-12 h-12'}`}>
@@ -90,7 +75,7 @@ function AvatarChat({ participants, size, conversationId, onlyDisplay = false }:
                     }`}
                 >
                     <Image
-                        src={participants[1].avatar}
+                        src={handleSecondAvatar()}
                         alt="avatar"
                         layout="fill"
                         objectFit="cover"
