@@ -95,6 +95,18 @@ export const conversationsSlice = createSlice({
                 conv.messages.unshift(action.payload.message);
             }
         },
+        addConversation: (state, action: PayloadAction<IConversation>) => {
+            state.unshift({
+                after: '',
+                _id: action.payload._id,
+                messages: [],
+                participants: action.payload.participants,
+                removedMember: action.payload.removedMember || [],
+                name: action.payload.name || '',
+                isOnline: false,
+                admin: action.payload.admin,
+            });
+        },
     },
     extraReducers(builder) {
         builder.addCase(getConversations.fulfilled, (state, action: PayloadAction<IConversation[]>) => {
@@ -250,8 +262,16 @@ export const conversationsSlice = createSlice({
     },
 });
 
-export const { addMessage, seen, setLastActive, setOnline, removeParticipant, removeConversation, addParticipant } =
-    conversationsSlice.actions;
+export const {
+    addConversation,
+    addMessage,
+    seen,
+    setLastActive,
+    setOnline,
+    removeParticipant,
+    removeConversation,
+    addParticipant,
+} = conversationsSlice.actions;
 
 export const selectConversations = (state: RootState) => state.conversations;
 

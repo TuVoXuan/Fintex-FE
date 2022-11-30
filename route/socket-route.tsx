@@ -5,7 +5,7 @@ import APP_PATH from '../constants/app-path';
 import { useSocket } from '../context/socket-context';
 import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { notifyHandleSee } from '../redux/actions/notify-action';
-import { setLastActive } from '../redux/reducers/conversation-slice';
+import { addConversation, setLastActive } from '../redux/reducers/conversation-slice';
 import {
     addOnlineFriends,
     deleteFriend,
@@ -50,6 +50,9 @@ export default function SocketRoute({ children }: Props) {
                 break;
             case 'notify':
                 console.log('data: ', data);
+                if (data.conversation) {
+                    dispatch(addConversation(data.conversation));
+                }
                 if (window.location.pathname !== APP_PATH.NOTIFICATION) {
                     dispatch(addNotifi(data.notify));
                 } else {
