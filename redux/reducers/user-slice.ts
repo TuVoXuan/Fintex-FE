@@ -54,6 +54,7 @@ export const userSlice = createSlice({
                     name: {
                         firstName: '',
                         lastName: '',
+                        fullName: '',
                     },
                 };
             }
