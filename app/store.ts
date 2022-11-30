@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { AnyAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 import user from '../redux/reducers/user-slice';
 import otp from '../redux/reducers/otp-slice';
 import comments from '../redux/reducers/comments-slice';
@@ -8,17 +8,26 @@ import notification from '../redux/reducers/notification-slice';
 import friend from '../redux/reducers/friend-slice';
 import conversations from '../redux/reducers/conversation-slice';
 
+const combinedReducer = combineReducers({
+    user,
+    otp,
+    comments,
+    feeling,
+    post,
+    notification,
+    friend,
+    conversations,
+});
+
+const rootReducer = (state: any, action: AnyAction) => {
+    if (action.type === 'user/signOut') {
+        state = undefined;
+    }
+    return combinedReducer(state, action);
+};
+
 export const store = configureStore({
-    reducer: {
-        user,
-        otp,
-        comments,
-        feeling,
-        post,
-        notification,
-        friend,
-        conversations,
-    },
+    reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {

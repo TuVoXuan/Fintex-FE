@@ -37,18 +37,11 @@ export const otpSlice = createSlice({
         setIsLoginGoogle: (state, action: PayloadAction<boolean>) => {
             state.isLoginGoogle = action.payload;
         },
-        resetOtp: (state) => {
-            state.isLoginGoogle = initialState.isLoginGoogle;
-            state.isSignUp = initialState.isSignUp;
-            state.redirectUrl = initialState.redirectUrl;
-            state.verify = initialState.verify;
-        },
     },
     extraReducers(builder) {},
 });
 
-export const { addVerifyOtp, addRedirectUrl, resetVerifyOtp, setIsSignUp, setIsLoginGoogle, resetOtp } =
-    otpSlice.actions;
+export const { addVerifyOtp, addRedirectUrl, resetVerifyOtp, setIsSignUp, setIsLoginGoogle } = otpSlice.actions;
 
 export const selectOTP = (state: RootState) => state.otp;
 

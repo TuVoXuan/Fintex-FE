@@ -59,10 +59,7 @@ export const userSlice = createSlice({
                 };
             }
         },
-        signOut: (state) => {
-            state.data = initialState.data;
-            state.isLogin = false;
-        },
+        signOut: (state) => {},
     },
     extraReducers(builder) {
         builder.addCase(userSignUp.fulfilled, (state: UserState, action: PayloadAction<IAuthResponse>) => {

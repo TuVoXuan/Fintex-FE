@@ -28,7 +28,7 @@ export default function StrangerCard({ stranger }: Props) {
         try {
             const conversation = sConversations.find((conv) => {
                 const hasCurrFriend = conv.participants.findIndex((item) => item._id === stranger._id);
-                if (hasCurrFriend >= 0) {
+                if (hasCurrFriend >= 0 && conv.participants.length === 1) {
                     return conv;
                 }
                 return null;

@@ -1,10 +1,9 @@
-import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { Input, MenuItem } from '../components';
 import { FiSearch } from 'react-icons/fi';
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlineViewGrid } from 'react-icons/hi';
-import { FiUsers, FiUser, FiLogOut } from 'react-icons/fi';
+import { FiLogOut } from 'react-icons/fi';
 import { RiChatSmileLine, RiNotification3Line } from 'react-icons/ri';
 import { IoSettingsOutline } from 'react-icons/io5';
 import APP_PATH from '../constants/app-path';
@@ -14,8 +13,6 @@ import { useAppDispatch, useAppSelector } from '../hook/redux';
 import { selectUser, signOut } from '../redux/reducers/user-slice';
 import { resetPost } from '../redux/reducers/post-slice';
 import { resetComments } from '../redux/reducers/comments-slice';
-import { resetFeeling } from '../redux/reducers/feeling-slice';
-import { resetOtp } from '../redux/reducers/otp-slice';
 import { deleteCookie } from 'cookies-next';
 import { userGetStranger } from '../redux/actions/user-action';
 import Stranger from '../components/stranger/stranger';
@@ -25,7 +22,6 @@ import { selectNotification } from '../redux/reducers/notification-slice';
 import { notifyGetPagination, notifyHandleSee } from '../redux/actions/notify-action';
 import { toastError } from '../util/toast';
 import { selectConversations } from '../redux/reducers/conversation-slice';
-import { isMessageSeen } from '../util/is-message-seen';
 import { getConversations } from '../redux/actions/conversation-action';
 
 interface Props {
@@ -59,10 +55,6 @@ export const MainLayout = ({ children }: Props) => {
             socket?.disconnect();
             deleteCookie('Authorization');
             dispatch(signOut());
-            dispatch(resetPost());
-            dispatch(resetComments());
-            dispatch(resetFeeling());
-            dispatch(resetOtp());
         } catch (error) {
             console.log('error: ', error);
         }
@@ -72,10 +64,6 @@ export const MainLayout = ({ children }: Props) => {
         dispatch(resetPost());
         dispatch(resetComments());
         router.push(`${APP_PATH.PROFILE}`);
-    };
-
-    const handleGoEditInfo = () => {
-        router.push(APP_PATH.EDIT_PROFILE);
     };
 
     const handleSearch = () => {

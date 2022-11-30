@@ -20,10 +20,15 @@ import OnlineCard from '../components/card/online-card';
 import { selectFriend } from '../redux/reducers/friend-slice';
 import Image from 'next/image';
 import { resetComments } from '../redux/reducers/comments-slice';
-import { getConversations } from '../redux/actions/conversation-action';
+import { createConversation, getConversations } from '../redux/actions/conversation-action';
 import { selectConversations } from '../redux/reducers/conversation-slice';
+import { useMQTT } from '../context/mqtt-context';
+import { useRouter } from 'next/router';
+import APP_PATH from '../constants/app-path';
 
 const Home: NextPage = () => {
+    const mqtt = useMQTT();
+    const router = useRouter();
     const dispatch = useAppDispatch();
     const sPost = useAppSelector(selectPost);
     const sUser = useAppSelector(selectUser);
@@ -73,6 +78,35 @@ const Home: NextPage = () => {
         }
     };
 
+    const handleChat = (userId: string) => async () => {
+        try {
+            const conversation = sConversation.find((conv) => {
+                const hasCurrFriend = conv.participants.findIndex((item) => item._id === userId);
+                if (hasCurrFriend >= 0 && conv.participants.length === 1) {
+                    return conv;
+                }
+                return null;
+            });
+
+            if (conversation) {
+                if (mqtt) {
+                    console.log('mqtt.activedConversation.current: ', mqtt.activedConversation.current);
+                    mqtt.setConversation(conversation._id);
+                    router.push(APP_PATH.CHAT);
+                }
+            } else {
+                await dispatch(createConversation(userId)).unwrap();
+                if (mqtt && mqtt.activedConversation.current) {
+                    mqtt.setConversation('');
+                }
+                router.push(APP_PATH.CHAT);
+            }
+        } catch (error) {
+            console.log('error: ', error);
+            toastError((error as IResponseError).error);
+        }
+    };
+
     useEffect(() => {
         if (sPost.posts.length === 0 && !sPost.after && !sPost.ended) {
             const limit = +(process.env.LIMIT as string);
@@ -95,7 +129,7 @@ const Home: NextPage = () => {
                     id="feetPosts"
                     onScroll={handleShowScrollTop}
                     ref={postsRef}
-                    className="w-3/4 hover:scrollbar-show overflow-y-auto"
+                    className="w-3/4 overflow-y-auto hover:scrollbar-show"
                 >
                     <InfiniteScroll
                         next={() => {
@@ -135,12 +169,8 @@ const Home: NextPage = () => {
                             <div className="flex items-center justify-between">
                                 <div className="flex gap-7">
                                     <button className="flex items-center gap-2">
-                                        <BsCameraVideo size={16} />
-                                        Trực tiếp
-                                    </button>
-                                    <button className="flex items-center gap-2">
                                         <BsImage size={16} />
-                                        Ảnh/Video
+                                        Ảnh
                                     </button>
                                     <button className="flex items-center gap-2">
                                         <RiUserSmileLine size={16} />
@@ -189,6 +219,7 @@ const Home: NextPage = () => {
                                         ? `${friend.name.firstName} ${friend.name.lastName}`
                                         : friend.name.firstName
                                 }
+                                onClick={handleChat(friend._id)}
                             />
                         ))
                     ) : (
