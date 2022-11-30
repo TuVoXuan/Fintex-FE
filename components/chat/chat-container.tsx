@@ -60,6 +60,7 @@ export default function ChatContainer({ conversationId, participants, removedMem
     const [showPopup, setshowPopup] = useState<boolean>(false);
     const [showLeaveGroupModal, setShowLeaveGroupModal] = useState<boolean>(false);
     const [showAddMember, setShowAddMember] = useState<boolean>(false);
+    const [showWarningModal, setShowWarning] = useState<boolean>(false);
 
     let first = true;
 
@@ -84,8 +85,14 @@ export default function ChatContainer({ conversationId, participants, removedMem
     };
 
     const handleShowLeaveGroupModal = () => {
-        setShowLeaveGroupModal(!showLeaveGroupModal);
+        if (sUser?._id === sConv?.admin?._id) {
+            setShowWarning(!showWarningModal);
+        } else {
+            setShowLeaveGroupModal(!showLeaveGroupModal);
+        }
     };
+
+    const handleCloseWarningModal = () => [setShowWarning(false)];
 
     const handleLeaveConv = async () => {
         try {
@@ -388,6 +395,16 @@ export default function ChatContainer({ conversationId, participants, removedMem
                     onCancle={handleShowLeaveGroupModal}
                     subTitle="Khi rời nhóm bạn sẽ không nhận được bất kì tin nhắn mới nào nữa."
                     title="Rời nhóm"
+                />
+            )}
+            {showWarningModal && (
+                <NormalModal
+                    acceptBtnTitle="Ok"
+                    cancleBtnTitle="Hủy bỏ"
+                    onAccept={handleCloseWarningModal}
+                    onCancle={handleCloseWarningModal}
+                    subTitle="Bạn không thể rời nhóm, vì bạn đang là admin của nhóm. Muốn rời nhóm thì hãy nhường chức admin cho thành viên khác trong nhóm"
+                    title="Cảnh báo"
                 />
             )}
             {showAddMember && sConv && (

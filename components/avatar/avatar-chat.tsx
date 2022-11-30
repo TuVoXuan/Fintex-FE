@@ -52,39 +52,62 @@ function AvatarChat({ participants, size, conversationId, onlyDisplay = false }:
         }
     }, [sOnlineFriends]);
 
-    return (
-        <section className="relative ">
-            <div className={`${size === 'medium' ? 'w-14 h-14' : 'w-12 h-12'}`}>
-                <div
-                    className={`absolute overflow-hidden rounded-full border-2 border-transparent translate-x-[50%] image-container ${
-                        size === 'medium' ? 'w-10 h-10' : 'w-8 h-8'
-                    }`}
-                >
-                    <Image
-                        src={participants[0].avatar}
-                        alt="avatar"
-                        layout="fill"
-                        objectFit="cover"
-                        placeholder="blur"
-                        blurDataURL="/images/avatar.jpg"
-                    />
+    if (sConv && sConv.name) {
+        return (
+            <section className="relative ">
+                <div className={`${size === 'medium' ? 'w-14 h-14' : 'w-12 h-12'}`}>
+                    <div
+                        className={`absolute overflow-hidden rounded-full border-2 border-transparent translate-x-[50%] image-container ${
+                            size === 'medium' ? 'w-10 h-10' : 'w-8 h-8'
+                        }`}
+                    >
+                        <Image
+                            src={participants[0].avatar}
+                            alt="avatar"
+                            layout="fill"
+                            objectFit="cover"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
+                        />
+                    </div>
+                    <div
+                        className={`-translate-y-[50%] absolute overflow-hidden border-2 border-white rounded-full image-container ${
+                            size === 'medium' ? 'w-10 h-10' : 'w-8 h-8'
+                        }`}
+                    >
+                        <Image
+                            src={handleSecondAvatar()}
+                            alt="avatar"
+                            layout="fill"
+                            objectFit="cover"
+                            placeholder="blur"
+                            blurDataURL="/images/avatar.jpg"
+                        />
+                    </div>
                 </div>
-                <div
-                    className={`-translate-y-[50%] absolute overflow-hidden border-2 border-white rounded-full image-container ${
-                        size === 'medium' ? 'w-10 h-10' : 'w-8 h-8'
-                    }`}
-                >
-                    <Image
-                        src={handleSecondAvatar()}
-                        alt="avatar"
-                        layout="fill"
-                        objectFit="cover"
-                        placeholder="blur"
-                        blurDataURL="/images/avatar.jpg"
-                    />
-                </div>
-            </div>
 
+                {sConv && sConv.isOnline && size === 'medium' && (
+                    <p className="absolute bottom-0 right-0 w-4 h-4 bg-green-600 rounded-full ring-2 ring-white"></p>
+                )}
+            </section>
+        );
+    }
+    return (
+        <section className="relative">
+            <div
+                className={`overflow-hidden rounded-full image-container ${
+                    size === 'medium' ? 'w-14 h-14' : 'w-12 h-12'
+                }`}
+            >
+                <Image
+                    src={participants[0].avatar}
+                    alt="avatar"
+                    layout="fill"
+                    objectFit="cover"
+                    placeholder="blur"
+                    blurDataURL="/images/avatar.jpg"
+                />
+            </div>
             {sConv && sConv.isOnline && size === 'medium' && (
                 <p className="absolute bottom-0 right-0 w-4 h-4 bg-green-600 rounded-full ring-2 ring-white"></p>
             )}

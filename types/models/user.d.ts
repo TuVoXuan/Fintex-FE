@@ -3,6 +3,7 @@ declare interface IUser {
     name: {
         firstName: string;
         lastName: string;
+        fullName: string;
     };
     birthday: string;
     gender: 'male' | 'female' | 'other';

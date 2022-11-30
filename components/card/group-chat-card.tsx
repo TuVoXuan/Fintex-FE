@@ -16,6 +16,7 @@ interface Props {
 }
 
 export default function GroupChatCard({ adminId, participant, conversationId, onClose }: Props) {
+    console.log('participant: ', participant);
     const sUser = useAppSelector(selectUser).data;
     const popupRef = useRef<HTMLDivElement>(null);
     const [showPopup, setshowPopup] = useState<boolean>(false);
